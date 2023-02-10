@@ -547,6 +547,8 @@ def temperature_conversion_numbers_inline_keyboard():
     temperature_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_temperature_converter")
     temperature_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_temperature_converter")
     temperature_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_temperature_converter")
+    temperature_converter__mines_button = types.InlineKeyboardButton(text="+/₋",
+                                                                     callback_data="neg_or_pos_maker_temperature_converter")
     temperature_converter__clear_button = types.InlineKeyboardButton(text="C",
                                                                      callback_data="clear_temperature_converter")
     temperature_converter__backward_button = types.InlineKeyboardButton(text="«",
@@ -563,6 +565,7 @@ def temperature_conversion_numbers_inline_keyboard():
         temperature_converter__7_button,
         temperature_converter__8_button,
         temperature_converter__9_button,
+        temperature_converter__mines_button,
         temperature_converter__dot_button,
         temperature_converter__0_button).add(
         temperature_converter__clear_button, temperature_converter__backward_button, temperature_converter__done_button)
@@ -1038,6 +1041,7 @@ temperature_conversion_callback_data_list = ["0_temperature_converter", "1_tempe
                                              "8_temperature_converter", "9_temperature_converter",
                                              "dot_temperature_converter", "clear_temperature_converter",
                                              "backward_temperature_converter", "done_temperature_converter",
+                                             "neg_or_pos_maker_temperature_converter",
                                              "celsius_temperature_conversion_starter",
                                              "fahrenheit_temperature_conversion_starter",
                                              "kelvin_temperature_conversion_starter",

@@ -18,15 +18,8 @@ def numeral_converter(from_base, to_base, data):
     number = data.replace(" ", "")
     global_phrase = number
 
-    # allowed_characters = []
-    # for _ in string.ascii_letters:
-    #     allowed_characters.append(_)
-    # for __ in range(0, 10):
-    #     allowed_characters.append(__)
-    # allowed_characters.append(".")
-
     if global_from_base in range(2, 11) and not str(number).isdigit():
-        global_answer = f"""Sorry , Only digits are allowed when you are converting a number from base {global_from_base} to base {global_to_base} !"""
+        global_answer = f"""Sorry , Only digits are allowed when you are converting a number from base {global_from_base} to base {global_to_base}!"""
         return global_answer, data, from_base, to_base,
 
     else:

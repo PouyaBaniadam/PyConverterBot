@@ -36,7 +36,7 @@ Hope that helped , but if you can't find your way in , you can still choose help
 async def welcome(message: types.Message):
     await message.reply(
         """100000100111011111010011001101101100111111101101001
-        
+
 I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love to code.👨🏻‍💻
 
 100000100111011111010011001101101100111111101101001""")
@@ -250,10 +250,11 @@ async def query_handler(call: types.CallbackQuery):
                 await bot.edit_message_text(text=f"""Weight : {weight} kg
 Height : {height} cm
 
-BMI : {bmi_calculator(weight=float(weight), height=float(height))[0]}
+BMI : <code>{bmi_calculator(weight=float(weight), height=float(height))[0]}</code>
 
 BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""", chat_id=chat_id, message_id=message_id,
-                                            reply_markup=bmi__conversion_see_bmi_chart_inline_keyboard())
+                                            reply_markup=bmi__conversion_see_bmi_chart_inline_keyboard(),
+                                            parse_mode="HTML")
 
     if message in bmi__conversion_see_bmi_chart_callback_data_list:
         if message == "see_chart_bmi":
@@ -429,8 +430,9 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
         if message == "done_calculator":
             data_to_be_calculate = call.message.text
 
-            await bot.edit_message_text(text=f"""{data_to_be_calculate} = {calculator(data_to_be_calculate)}""",
-                                        chat_id=chat_id, message_id=message_id)
+            await bot.edit_message_text(
+                text=f"""{data_to_be_calculate} = <code>{calculator(data_to_be_calculate)}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
     if message in data_conversion_callback_data_list:
         text = call.message.text
@@ -563,58 +565,58 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
         if message == "bit_data_conversion_destination":
             second_symbol = "b"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "byte_data_conversion_destination":
             second_symbol = "B"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "kilo_byte_data_conversion_destination":
             second_symbol = "KB"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "mega_byte_data_conversion_destination":
             second_symbol = "MB"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "giga_byte_data_conversion_destination":
             second_symbol = "GB"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "tera_byte_data_conversion_destination":
             second_symbol = "TB"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "peta_byte_data_conversion_destination":
             second_symbol = "PB"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "exa_byte_data_conversion_destination":
             second_symbol = "EB"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
     if message in length_conversion_callback_data_list:
         text = call.message.text
@@ -807,128 +809,128 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
         if message == "pico_meter_length_conversion_destination":
             second_symbol = "pm"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "nano_meter_length_conversion_destination":
             second_symbol = "nm"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "micro_meter_length_conversion_destination":
             second_symbol = "μm"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "milli_meter_length_conversion_destination":
             second_symbol = "mm"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "centi_meter_length_conversion_destination":
             second_symbol = "cm"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "desi_meter_length_conversion_destination":
             second_symbol = "dm"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "meter_length_conversion_destination":
             second_symbol = "m"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "kilo_meter_length_conversion_destination":
             second_symbol = "Km"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "mile_length_conversion_destination":
             second_symbol = "mi"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "nautical_mile_length_conversion_starter":
             second_symbol = "nmi"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "foot_length_conversion_destination":
             second_symbol = "ft"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "inch_length_conversion_destination":
             second_symbol = "in"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "yard_length_conversion_destination":
             second_symbol = "yd"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "femara_length_conversion_destination":
             second_symbol = "fur"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "fathom_length_conversion_destination":
             second_symbol = "ftm"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "chi_length_conversion_destination":
             second_symbol = "chi"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "gongli_length_conversion_destination":
             second_symbol = "gongli"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "light_year_length_conversion_destination":
             second_symbol = "ly"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                    number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                           number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
     if message in mass_conversion_callback_data_list:
         text = call.message.text
@@ -1127,154 +1129,154 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
         if message == "nano_gram_mass_conversion_destination":
             second_symbol = "ng"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "micro_gram_mass_conversion_destination":
             second_symbol = "μg"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "quintal_mass_conversion_destination":
             second_symbol = "q"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "mili_gram_mass_conversion_destination":
             second_symbol = "mg"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "centi_gram_mass_conversion_destination":
             second_symbol = "cg"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "desi_gram_mass_conversion_destination":
             second_symbol = "dg"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "gram_mass_conversion_destination":
             second_symbol = "g"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "kilo_gram_mass_conversion_destination":
             second_symbol = "Kg"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "tone_mass_conversion_destination":
             second_symbol = "t"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "pound_mass_conversion_destination":
             second_symbol = "lb"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "ounce_mass_conversion_destination":
             second_symbol = "oz"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "carat_mass_conversion_destination":
             second_symbol = "ct"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "grain_mass_conversion_destination":
             second_symbol = "gr"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "long_ton_mass_conversion_destination":
             second_symbol = "l.t"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "short_ton_mass_conversion_destination":
             second_symbol = "sh.t"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "stone_mass_conversion_destination":
             second_symbol = "st"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "dram_mass_conversion_destination":
             second_symbol = "dr"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "dan_mass_conversion_destination":
             second_symbol = "dan"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
         if message == "sir_mass_conversion_destination":
             second_symbol = "sir"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
+                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
                 chat_id=chat_id,
-                message_id=message_id)
+                message_id=message_id, parse_mode="HTML")
 
     if message in numeral_conversion_callback_data_list:
         phrase = call.message.text
@@ -1333,7 +1335,8 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
                                         reply_markup=numeral_conversion_numbers_inline_keyboard())
 
         if message == "dot_numeral_converter":
-            phrase += "."
+            if "." not in phrase:
+                phrase += "."
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=phrase,
                                         reply_markup=numeral_conversion_numbers_inline_keyboard())
 
@@ -1702,8 +1705,9 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "3_to_base":
             to_base = "3"
@@ -1712,8 +1716,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "4_to_base":
             to_base = "4"
@@ -1722,8 +1727,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "5_to_base":
             to_base = "5"
@@ -1732,8 +1738,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "6_to_base":
             to_base = "6"
@@ -1742,8 +1749,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "7_to_base":
             to_base = "7"
@@ -1752,8 +1760,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "8_to_base":
             to_base = "8"
@@ -1762,8 +1771,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "9_to_base":
             to_base = "9"
@@ -1772,8 +1782,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "10_to_base":
             to_base = "10"
@@ -1782,8 +1793,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "11_to_base":
             to_base = "11"
@@ -1792,8 +1804,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "12_to_base":
             to_base = "12"
@@ -1802,8 +1815,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "13_to_base":
             to_base = "13"
@@ -1812,8 +1826,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "14_to_base":
             to_base = "14"
@@ -1822,8 +1837,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "15_to_base":
             to_base = "15"
@@ -1832,8 +1848,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "16_to_base":
             to_base = "16"
@@ -1842,8 +1859,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "17_to_base":
             to_base = "17"
@@ -1852,8 +1870,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "18_to_base":
             to_base = "18"
@@ -1862,8 +1881,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "19_to_base":
             to_base = "19"
@@ -1872,8 +1892,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "20_to_base":
             to_base = "20"
@@ -1882,8 +1903,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "21_to_base":
             to_base = "21"
@@ -1892,8 +1914,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "22_to_base":
             to_base = "22"
@@ -1902,8 +1925,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "23_to_base":
             to_base = "23"
@@ -1912,8 +1936,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "24_to_base":
             to_base = "24"
@@ -1922,8 +1947,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "25_to_base":
             to_base = "25"
@@ -1932,8 +1958,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "26_to_base":
             to_base = "26"
@@ -1942,8 +1969,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "27_to_base":
             to_base = "27"
@@ -1952,8 +1980,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "28_to_base":
             to_base = "28"
@@ -1962,8 +1991,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "29_to_base":
             to_base = "29"
@@ -1972,8 +2002,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "30_to_base":
             to_base = "30"
@@ -1982,8 +2013,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "31_to_base":
             to_base = "31"
@@ -1992,8 +2024,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "32_to_base":
             to_base = "32"
@@ -2002,8 +2035,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "33_to_base":
             to_base = "33"
@@ -2012,8 +2046,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "34_to_base":
             to_base = "34"
@@ -2022,8 +2057,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "35_to_base":
             to_base = "35"
@@ -2032,8 +2068,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
         if message == "36_to_base":
             to_base = "36"
@@ -2042,8 +2079,9 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
 From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
 To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
 
-Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}""", chat_id=chat_id,
-                message_id=message_id)
+Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
+                chat_id=chat_id,
+                message_id=message_id, parse_mode="HTML")
 
     if message in temperature_conversion_callback_data_list:
         text = call.message.text
@@ -2101,6 +2139,17 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=temperature_conversion_numbers_inline_keyboard())
 
+        if message == "neg_or_pos_maker_temperature_converter":
+            if text[0] == "-":
+                text = text[1:]
+            elif text[0].isnumeric():
+                text = f"-{text}"
+            elif text[0] == "+":
+                text = f"-{text}"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=temperature_conversion_numbers_inline_keyboard())
+
         if message == "dot_temperature_converter":
             if "." not in text:
                 text += "."
@@ -2149,23 +2198,23 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
         if message == "celsius_temperature_conversion_destination":
             second_symbol = "C°"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                                number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "fahrenheit_temperature_conversion_destination":
             second_symbol = "F°"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                                number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "kelvin_temperature_conversion_destination":
             second_symbol = "K"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                                number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
     if message in time_conversion_callback_data_list:
         text = call.message.text
@@ -2322,86 +2371,86 @@ Answer : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_d
         if message == "pico_second_time_conversion_destination":
             second_symbol = "ps"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "nano_second_time_conversion_destination":
             second_symbol = "ns"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "micro_second_time_conversion_destination":
             second_symbol = "μs"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "milli_second_time_conversion_destination":
             second_symbol = "ms"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "second_time_conversion_destination":
             second_symbol = "s"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "min_time_conversion_destination":
             second_symbol = "min"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "hour_time_conversion_destination":
             second_symbol = "h"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "day_time_conversion_destination":
             second_symbol = "d"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "month_time_conversion_destination":
             second_symbol = "mo"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "year_time_conversion_destination":
             second_symbol = "y"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "decade_time_conversion_destination":
             second_symbol = "dec"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
         if message == "century_time_conversion_destination":
             second_symbol = "cent"
             await bot.edit_message_text(
-                text=f"""{number}{first_symbol} = {time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                  number=number)}{second_symbol}""",
-                chat_id=chat_id, message_id=message_id)
+                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
+                                                                         number=number)} {second_symbol}</code>""",
+                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
 
 executor.start_polling(dp)
