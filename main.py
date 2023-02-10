@@ -18,6 +18,16 @@ calculator_mode = False
 numeral_system_flag = False
 bmi_calculator_flag = False
 
+user_ids = []
+states = {}
+bmi_status = {}
+data_status = {}
+length_status = {}
+mass_status = {}
+numeral_status = {}
+temperature_status = {}
+time_status = {}
+
 
 @dp.message_handler(commands="help")
 async def welcome(message: types.Message):
@@ -44,7 +54,11 @@ I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love 
 
 @dp.message_handler(commands="start")
 async def welcome(message: types.Message):
-    await message.reply("""Please select bot mode from the list below.👇🏻""", reply_markup=bot_options_keyboard())
+    user_ids.append(message.chat.full_name)
+    states.update({message.chat.id: "start"})
+    await message.reply(f"""Welcome home {message.chat.full_name}.😀
+    
+Please select bot mode from the list below.👇🏻""", reply_markup=bot_options_keyboard())
 
 
 @dp.message_handler()
@@ -54,44 +68,53 @@ async def options_keyboard_answer(message: types.Message):
     if message.text == "BMI":
         await bot.send_message(chat_id=message.chat.id, text="Please enter your weight-number (kg) : ",
                                reply_markup=bmi__conversion_weight_inline_keyboard())
+        states.update({message.chat.id: "BMI"})
 
     if message.text == "Calculation":
         await bot.send_message(chat_id=message.chat.id,
                                text="""Please choose one of the calculators from the list below.👇🏻""",
                                reply_markup=calculation__options_keyboard())
+        states.update({message.chat.id: "Calculation"})
 
     if message.text == "Calculator":
         await bot.send_message(chat_id=message.chat.id, text="Please enter your phrase : ",
                                reply_markup=calculator__inline_keyboard())
-        calculator_mode = True
+        states.update({message.chat.id: "Calculator"})
 
     if message.text == "Unit Conversion":
         await message.answer("Which of the following conversions do you prefer to use ?👇🏻",
                              reply_markup=unit_conversion_options_keyboard())
+        states.update({message.chat.id: "Unit Conversion"})
 
     if message.text == "Data":
         await bot.send_message(chat_id=message.chat.id, text="Please enter your data-number : ",
                                reply_markup=data_conversion_numbers_inline_keyboard())
+        states.update({message.chat.id: "Data"})
 
     if message.text == "Length":
         await bot.send_message(chat_id=message.chat.id, text="Please enter your length-number : ",
                                reply_markup=length_conversion_numbers_inline_keyboard())
+        states.update({message.chat.id: "Length"})
 
     if message.text == "Mass":
         await bot.send_message(chat_id=message.chat.id, text="Please enter your mass-number : ",
                                reply_markup=mass_conversion_numbers_inline_keyboard())
+        states.update({message.chat.id: "Mass"})
 
     if message.text == "Numeral":
         await message.answer("Please enter your numeral-number : ",
                              reply_markup=numeral_conversion_numbers_inline_keyboard())
+        states.update({message.chat.id: "Numeral"})
 
     if message.text == "Temperature":
         await bot.send_message(chat_id=message.chat.id, text="Please enter your temperature-number : ",
                                reply_markup=temperature_conversion_numbers_inline_keyboard())
+        states.update({message.chat.id: "Temperature"})
 
     if message.text == "Time":
         await bot.send_message(chat_id=message.chat.id, text="Please enter your time-number : ",
                                reply_markup=time_conversion_numbers_inline_keyboard())
+        states.update({message.chat.id: "Time"})
 
     if message.text == "⬅️ Back ⬅️":
         await bot.send_message(chat_id=message.chat.id, text="""Please select bot mode from the list below.👇🏻""",
@@ -100,7 +123,7 @@ async def options_keyboard_answer(message: types.Message):
 
 @dp.callback_query_handler()
 async def query_handler(call: types.CallbackQuery):
-    global from_base, to_base, weight_unit, height_unit, first_symbol, number, numeral_data
+    global from_base, to_base, weight_unit, height_unit, first_symbol, number, numeral_data, bmi_status, data_status
     global weight, height
     global phrase, numeral_system_flag
 
@@ -116,52 +139,64 @@ async def query_handler(call: types.CallbackQuery):
 
         if message == "0_weight_bmi":
             text += "0"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "1_weight_bmi":
             text += "1"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "2_weight_bmi":
             text += "2"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "3_weight_bmi":
             text += "3"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "4_weight_bmi":
             text += "4"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "5_weight_bmi":
             text += "5"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "6_weight_bmi":
             text += "6"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "7_weight_bmi":
             text += "7"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "8_weight_bmi":
             text += "8"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "9_weight_bmi":
             text += "9"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
         if message == "dot_weight_bmi":
             if "." not in call.message.text:
                 text += "."
+
                 await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                             reply_markup=bmi__conversion_weight_inline_keyboard())
 
         if message == "clear_weight_bmi":
             text = "Please enter your weight-number (kg) : "
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
 
@@ -174,7 +209,11 @@ async def query_handler(call: types.CallbackQuery):
 
         if message == "done_weight_bmi":
             weight = call.message.text
+
             if "weight" not in weight:
+                bmi_status.update(
+                    {call.from_user.id: {"weight": weight, "height": None, "message_id": call.message.message_id}})
+
                 await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                             text="Please enter your height-number (cm) : ",
                                             reply_markup=bmi__conversion_height_inline_keyboard())
@@ -245,16 +284,27 @@ async def query_handler(call: types.CallbackQuery):
                                         reply_markup=bmi__conversion_height_inline_keyboard())
 
         if message == "done_height_bmi":
+
             height = call.message.text
             if "height" not in height:
-                await bot.edit_message_text(text=f"""Weight : {weight} kg
-Height : {height} cm
+                bmi_status.update(
+                    {call.from_user.id: {"weight": bmi_status[call.from_user.id]["weight"], "height": height,
+                                         "message_id": bmi_status[call.from_user.id]["message_id"]}})
+                try:
+                    for chat_id, weight_and_height_and_message_id in bmi_status.items():
+                        await bot.edit_message_text(text=f"""Weight : {weight_and_height_and_message_id["weight"]} kg
+Height : {weight_and_height_and_message_id["height"]} cm
 
-BMI : <code>{bmi_calculator(weight=float(weight), height=float(height))[0]}</code>
+BMI : <code>{bmi_calculator(weight=float(weight_and_height_and_message_id["weight"]), height=float(weight_and_height_and_message_id["height"]))[0]}</code>
 
-BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""", chat_id=chat_id, message_id=message_id,
-                                            reply_markup=bmi__conversion_see_bmi_chart_inline_keyboard(),
-                                            parse_mode="HTML")
+BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weight"]), height=float(weight_and_height_and_message_id["height"]))[1]}""",
+                                                    chat_id=chat_id,
+                                                    message_id=weight_and_height_and_message_id["message_id"],
+                                                    reply_markup=bmi__conversion_see_bmi_chart_inline_keyboard(),
+                                                    parse_mode="HTML")
+                        bmi_status.pop(chat_id)
+                except:
+                    pass
 
     if message in bmi__conversion_see_bmi_chart_callback_data_list:
         if message == "see_chart_bmi":
@@ -262,7 +312,6 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
                                  caption="BMI chart")
 
     if message in calculator_callback_data_list:
-        digits = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
         text = call.message.text
 
         if "phrase" in text:
@@ -365,7 +414,7 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
 
         if message == "pi_calculator":
             try:
-                if text[-1] in digits:
+                if text[-1].isdigit():
                     text += f"×{str(pi)[:8]}"
                 else:
                     text += f"{str(pi)[:8]}"
@@ -408,7 +457,7 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
         if message == "neg_or_pos_maker_calculator":
             if text[0] == "-":
                 text = text[1:]
-            elif text[0] in digits:
+            elif text[0].isdigit():
                 text = f"-{text}"
             elif text[0] == "+":
                 text = f"-{text}"
@@ -510,113 +559,229 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
 
         if message == "done_data_converter":
             number = text
+            data_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please enter the data-unit that you want to start the conversion with : ",
                                         reply_markup=data_conversion_starter_inline_keyboard())
 
         if message == "bit_data_conversion_starter":
             first_symbol = "b"
+            data_status.update(
+                {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": data_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
 
         if message == "byte_data_conversion_starter":
             first_symbol = "B"
+            data_status.update(
+                {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": data_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(
                 text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
 
         if message == "kilo_byte_data_conversion_starter":
             first_symbol = "KB"
+            data_status.update(
+                {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": data_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(
                 text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
 
         if message == "mega_byte_data_conversion_starter":
             first_symbol = "MB"
+            data_status.update(
+                {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": data_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(
                 text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
 
         if message == "giga_byte_data_conversion_starter":
             first_symbol = "GB"
+            data_status.update(
+                {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": data_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(
                 text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
 
         if message == "tera_byte_data_conversion_starter":
             first_symbol = "TB"
+            data_status.update(
+                {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": data_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(
                 text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
 
         if message == "peta_byte_data_conversion_starter":
             first_symbol = "PB"
+            data_status.update(
+                {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": data_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(
                 text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
 
         if message == "exa_byte_data_conversion_starter":
             first_symbol = "EB"
+            data_status.update(
+                {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": data_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(
                 text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
 
         if message == "bit_data_conversion_destination":
             second_symbol = "b"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            data_status.update({call.from_user.id: {"number": data_status[call.from_user.id]["number"],
+                                                    "first_symbol": data_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "byte_data_conversion_destination":
             second_symbol = "B"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            data_status.update({call.from_user.id: {"number": data_status[call.from_user.id]["number"],
+                                                    "first_symbol": data_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "kilo_byte_data_conversion_destination":
             second_symbol = "KB"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            data_status.update({call.from_user.id: {"number": data_status[call.from_user.id]["number"],
+                                                    "first_symbol": data_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "mega_byte_data_conversion_destination":
             second_symbol = "MB"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            data_status.update({call.from_user.id: {"number": data_status[call.from_user.id]["number"],
+                                                    "first_symbol": data_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "giga_byte_data_conversion_destination":
             second_symbol = "GB"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            data_status.update({call.from_user.id: {"number": data_status[call.from_user.id]["number"],
+                                                    "first_symbol": data_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "tera_byte_data_conversion_destination":
             second_symbol = "TB"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            data_status.update({call.from_user.id: {"number": data_status[call.from_user.id]["number"],
+                                                    "first_symbol": data_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "peta_byte_data_conversion_destination":
             second_symbol = "PB"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            data_status.update({call.from_user.id: {"number": data_status[call.from_user.id]["number"],
+                                                    "first_symbol": data_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "exa_byte_data_conversion_destination":
             second_symbol = "EB"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{data_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            data_status.update({call.from_user.id: {"number": data_status[call.from_user.id]["number"],
+                                                    "first_symbol": data_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
     if message in length_conversion_callback_data_list:
         text = call.message.text
@@ -694,243 +859,514 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
 
         if message == "done_length_converter":
             number = text
+            length_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please enter the length-unit that you want to start the conversion with : "
                                         , reply_markup=length_conversion_starter_inline_keyboard())
 
         if message == "pico_meter_length_conversion_starter":
             first_symbol = "pm"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "nano_meter_length_conversion_starter":
             first_symbol = "nm"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "micro_meter_length_conversion_starter":
             first_symbol = "μm"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "milli_meter_length_conversion_starter":
             first_symbol = "mm"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "centi_meter_length_conversion_starter":
             first_symbol = "cm"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "desi_meter_length_conversion_starter":
             first_symbol = "dm"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "meter_length_conversion_starter":
             first_symbol = "m"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "kilo_meter_length_conversion_starter":
             first_symbol = "Km"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "mile_length_conversion_starter":
             first_symbol = "mi"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "nautical_mile_length_conversion_starter":
             first_symbol = "nmi"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "foot_length_conversion_starter":
             first_symbol = "ft"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "inch_length_conversion_starter":
             first_symbol = "in"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "yard_length_conversion_starter":
             first_symbol = "yd"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "femara_length_conversion_starter":
             first_symbol = "fur"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "fathom_length_conversion_starter":
             first_symbol = "ftm"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "chi_length_conversion_starter":
             first_symbol = "chi"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "gongli_length_conversion_starter":
             first_symbol = "gongli"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "light_year_length_conversion_starter":
             first_symbol = "ly"
+            length_status.update(
+                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
 
         if message == "pico_meter_length_conversion_destination":
             second_symbol = "pm"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "nano_meter_length_conversion_destination":
             second_symbol = "nm"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "micro_meter_length_conversion_destination":
             second_symbol = "μm"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "milli_meter_length_conversion_destination":
             second_symbol = "mm"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "centi_meter_length_conversion_destination":
             second_symbol = "cm"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "desi_meter_length_conversion_destination":
             second_symbol = "dm"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "meter_length_conversion_destination":
             second_symbol = "m"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "kilo_meter_length_conversion_destination":
             second_symbol = "Km"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "mile_length_conversion_destination":
             second_symbol = "mi"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "nautical_mile_length_conversion_starter":
             second_symbol = "nmi"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "foot_length_conversion_destination":
             second_symbol = "ft"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "inch_length_conversion_destination":
             second_symbol = "in"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "yard_length_conversion_destination":
             second_symbol = "yd"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "femara_length_conversion_destination":
             second_symbol = "fur"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "fathom_length_conversion_destination":
             second_symbol = "ftm"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "chi_length_conversion_destination":
             second_symbol = "chi"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "gongli_length_conversion_destination":
             second_symbol = "gongli"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
         if message == "light_year_length_conversion_destination":
             second_symbol = "ly"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{length_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                           number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
+                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
+                                                      "second_symbol": second_symbol,
+                                                      "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    length_status.pop(chat_id)
+            except:
+                pass
 
     if message in mass_conversion_callback_data_list:
         text = call.message.text
@@ -1008,275 +1444,542 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
 
         if message == "done_mass_converter":
             number = text
+            mass_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please enter the mass-unit that you want to start the conversion with : "
                                         , reply_markup=mass_conversion_starter_inline_keyboard())
 
         if message == "nano_gram_mass_conversion_starter":
             first_symbol = "ng"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "micro_gram_mass_conversion_starter":
             first_symbol = "μg"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "quintal_mass_conversion_starter":
             first_symbol = "q"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "mili_gram_mass_conversion_starter":
             first_symbol = "mg"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "centi_gram_mass_conversion_starter":
             first_symbol = "cg"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "desi_gram_mass_conversion_starter":
             first_symbol = "dg"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "gram_mass_conversion_starter":
             first_symbol = "g"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "kilo_gram_mass_conversion_starter":
             first_symbol = "Kg"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "tone_mass_conversion_starter":
             first_symbol = "t"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "pound_mass_conversion_starter":
             first_symbol = "lb"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "ounce_mass_conversion_starter":
             first_symbol = "oz"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "carat_mass_conversion_starter":
             first_symbol = "ct"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "grain_mass_conversion_starter":
             first_symbol = "gr"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "long_ton_mass_conversion_starter":
             first_symbol = "l.t"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "short_ton_mass_conversion_starter":
             first_symbol = "sh.t"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "stone_mass_conversion_starter":
             first_symbol = "st"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "dram_mass_conversion_starter":
             first_symbol = "dr"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "dan_mass_conversion_starter":
             first_symbol = "dan"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "sir_mass_conversion_starter":
             first_symbol = "sir"
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+            mass_status.update(
+                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            await bot.edit_message_text(
+                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                chat_id=chat_id,
+                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
         if message == "nano_gram_mass_conversion_destination":
             second_symbol = "ng"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "micro_gram_mass_conversion_destination":
             second_symbol = "μg"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "quintal_mass_conversion_destination":
             second_symbol = "q"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "mili_gram_mass_conversion_destination":
             second_symbol = "mg"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "centi_gram_mass_conversion_destination":
             second_symbol = "cg"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "desi_gram_mass_conversion_destination":
             second_symbol = "dg"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "gram_mass_conversion_destination":
             second_symbol = "g"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "kilo_gram_mass_conversion_destination":
             second_symbol = "Kg"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "tone_mass_conversion_destination":
             second_symbol = "t"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "pound_mass_conversion_destination":
             second_symbol = "lb"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "ounce_mass_conversion_destination":
             second_symbol = "oz"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "carat_mass_conversion_destination":
             second_symbol = "ct"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "grain_mass_conversion_destination":
             second_symbol = "gr"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "long_ton_mass_conversion_destination":
             second_symbol = "l.t"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "short_ton_mass_conversion_destination":
             second_symbol = "sh.t"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "stone_mass_conversion_destination":
             second_symbol = "st"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "dram_mass_conversion_destination":
             second_symbol = "dr"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "dan_mass_conversion_destination":
             second_symbol = "dan"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
         if message == "sir_mass_conversion_destination":
             second_symbol = "sir"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{mass_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
+                                                    "first_symbol": mass_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    mass_status.pop(chat_id)
+            except:
+                pass
 
     if message in numeral_conversion_callback_data_list:
         phrase = call.message.text
@@ -1484,604 +2187,1095 @@ BMI Status : {bmi_calculator(weight=float(weight), height=float(height))[1]}""",
 
         if message == "done_numeral_converter":
             numeral_data = phrase
+            numeral_status.update({call.from_user.id: {"data": numeral_data, "message_id": call.message.message_id}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select starting base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_from_base_inline_keyboard())
 
         if message == "2_from_base":
             from_base = "2"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "3_from_base":
             from_base = "3"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "4_from_base":
             from_base = "4"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "5_from_base":
             from_base = "5"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "6_from_base":
             from_base = "6"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "7_from_base":
             from_base = "7"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "8_from_base":
             from_base = "8"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "9_from_base":
             from_base = "9"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "10_from_base":
             from_base = "10"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "11_from_base":
             from_base = "11"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "12_from_base":
             from_base = "12"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "13_from_base":
             from_base = "13"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "14_from_base":
             from_base = "14"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "15_from_base":
             from_base = "15"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "16_from_base":
             from_base = "16"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "17_from_base":
             from_base = "17"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "18_from_base":
             from_base = "18"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "19_from_base":
             from_base = "19"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "20_from_base":
             from_base = "20"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "21_from_base":
             from_base = "21"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "22_from_base":
             from_base = "22"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "23_from_base":
             from_base = "23"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "24_from_base":
             from_base = "24"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "25_from_base":
             from_base = "25"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "26_from_base":
             from_base = "26"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "27_from_base":
             from_base = "27"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "28_from_base":
             from_base = "28"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "29_from_base":
             from_base = "29"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "30_from_base":
             from_base = "30"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "31_from_base":
             from_base = "31"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "32_from_base":
             from_base = "32"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "33_from_base":
             from_base = "33"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "34_from_base":
             from_base = "34"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "35_from_base":
             from_base = "35"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "36_from_base":
             from_base = "36"
+            numeral_status.update(
+                {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
+                                     "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please select ending base from the list below.👇🏻",
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "2_to_base":
             to_base = "2"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "3_to_base":
             to_base = "3"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "4_to_base":
             to_base = "4"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "5_to_base":
             to_base = "5"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "6_to_base":
             to_base = "6"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "7_to_base":
             to_base = "7"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "8_to_base":
             to_base = "8"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "9_to_base":
             to_base = "9"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "10_to_base":
             to_base = "10"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "11_to_base":
             to_base = "11"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "12_to_base":
             to_base = "12"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "13_to_base":
             to_base = "13"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "14_to_base":
             to_base = "14"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "15_to_base":
             to_base = "15"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "16_to_base":
             to_base = "16"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "17_to_base":
             to_base = "17"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "18_to_base":
             to_base = "18"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "19_to_base":
             to_base = "19"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "20_to_base":
             to_base = "20"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "21_to_base":
             to_base = "21"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "22_to_base":
             to_base = "22"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "23_to_base":
             to_base = "23"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "24_to_base":
             to_base = "24"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "25_to_base":
             to_base = "25"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "26_to_base":
             to_base = "26"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "27_to_base":
             to_base = "27"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "28_to_base":
             to_base = "28"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "29_to_base":
             to_base = "29"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "30_to_base":
             to_base = "30"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "31_to_base":
             to_base = "31"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "32_to_base":
             to_base = "32"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "33_to_base":
             to_base = "33"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "34_to_base":
             to_base = "34"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "35_to_base":
             to_base = "35"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
         if message == "36_to_base":
             to_base = "36"
-            await bot.edit_message_text(
-                text=f"""Phrase : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[1]}
-From base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[2]}
-To base : {numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[3]}
+            numeral_status.update({call.from_user.id: {"data": numeral_status[call.from_user.id]["data"],
+                                                       "from_base": numeral_status[call.from_user.id]["from_base"],
+                                                       "to_base": to_base,
+                                                       "message_id": call.message.message_id}})
 
-Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=numeral_data)[0]}</code>""",
-                chat_id=chat_id,
-                message_id=message_id, parse_mode="HTML")
+            try:
+                for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    await bot.edit_message_text(
+                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+
+Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                        chat_id=chat_id,
+                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+
+                    data_status.pop(chat_id)
+            except:
+                pass
 
     if message in temperature_conversion_callback_data_list:
         text = call.message.text
@@ -2170,12 +3364,18 @@ Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=num
 
         if message == "done_temperature_converter":
             number = text
+            temperature_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please enter the temperature-unit that you want to start the conversion with : ",
                                         reply_markup=temperature_conversion_starter_inline_keyboard())
 
         if message == "celsius_temperature_conversion_starter":
             first_symbol = "C°"
+            temperature_status.update(
+                {call.from_user.id: {"number": temperature_status[call.from_user.id]["number"],
+                                     "first_symbol": first_symbol,
+                                     "message_id": temperature_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the temperature-unit that you want to finish the conversion with : ",
                 chat_id=chat_id,
@@ -2183,6 +3383,11 @@ Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=num
 
         if message == "fahrenheit_temperature_conversion_starter":
             first_symbol = "F°"
+            temperature_status.update(
+                {call.from_user.id: {"number": temperature_status[call.from_user.id]["number"],
+                                     "first_symbol": first_symbol,
+                                     "message_id": temperature_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the temperature-unit that you want to finish the conversion with : ",
                 chat_id=chat_id,
@@ -2190,6 +3395,11 @@ Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=num
 
         if message == "kelvin_temperature_conversion_starter":
             first_symbol = "K"
+            temperature_status.update(
+                {call.from_user.id: {"number": temperature_status[call.from_user.id]["number"],
+                                     "first_symbol": first_symbol,
+                                     "message_id": temperature_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the temperature-unit that you want to finish the conversion with : ",
                 chat_id=chat_id,
@@ -2197,24 +3407,60 @@ Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=num
 
         if message == "celsius_temperature_conversion_destination":
             second_symbol = "C°"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                                number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            temperature_status.update({call.from_user.id: {"number": temperature_status[call.from_user.id]["number"],
+                                                           "first_symbol": temperature_status[call.from_user.id][
+                                                               "first_symbol"],
+                                                           "second_symbol": second_symbol,
+                                                           "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in temperature_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    temperature_status.pop(chat_id)
+            except:
+                pass
 
         if message == "fahrenheit_temperature_conversion_destination":
             second_symbol = "F°"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                                number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            temperature_status.update({call.from_user.id: {"number": temperature_status[call.from_user.id]["number"],
+                                                           "first_symbol": temperature_status[call.from_user.id][
+                                                               "first_symbol"],
+                                                           "second_symbol": second_symbol,
+                                                           "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in temperature_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    temperature_status.pop(chat_id)
+            except:
+                pass
 
         if message == "kelvin_temperature_conversion_destination":
             second_symbol = "K"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{temperature_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                                number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            temperature_status.update({call.from_user.id: {"number": temperature_status[call.from_user.id]["number"],
+                                                           "first_symbol": temperature_status[call.from_user.id][
+                                                               "first_symbol"],
+                                                           "second_symbol": second_symbol,
+                                                           "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in temperature_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    temperature_status.pop(chat_id)
+            except:
+                pass
 
     if message in time_conversion_callback_data_list:
         text = call.message.text
@@ -2292,165 +3538,346 @@ Answer : <code>{numeral_converter(from_base=from_base, to_base=to_base, data=num
 
         if message == "done_time_converter":
             number = text
+            time_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text="Please enter the time-unit that you want to start the conversion with : "
                                         , reply_markup=time_conversion_starter_inline_keyboard())
 
         if message == "pico_second_time_conversion_starter":
             first_symbol = "ps"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "nano_second_time_conversion_starter":
             first_symbol = "ns"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "micro_second_time_conversion_starter":
             first_symbol = "μs"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "milli_second_time_conversion_starter":
             first_symbol = "ms"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "second_time_conversion_starter":
             first_symbol = "s"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "min_time_conversion_starter":
             first_symbol = "min"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "hour_time_conversion_starter":
             first_symbol = "h"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "day_time_conversion_starter":
             first_symbol = "d"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "month_time_conversion_starter":
             first_symbol = "mo"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "year_time_conversion_starter":
             first_symbol = "y"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "decade_time_conversion_starter":
             first_symbol = "dec"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "century_time_conversion_starter":
             first_symbol = "cent"
+            time_status.update(
+                {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
+                                     "message_id": time_status[call.from_user.id]["message_id"]}})
+
             await bot.edit_message_text(
                 text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
                 message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
 
         if message == "pico_second_time_conversion_destination":
             second_symbol = "ps"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "nano_second_time_conversion_destination":
             second_symbol = "ns"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "micro_second_time_conversion_destination":
             second_symbol = "μs"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "milli_second_time_conversion_destination":
             second_symbol = "ms"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "second_time_conversion_destination":
             second_symbol = "s"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "min_time_conversion_destination":
             second_symbol = "min"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "hour_time_conversion_destination":
             second_symbol = "h"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "day_time_conversion_destination":
             second_symbol = "d"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "month_time_conversion_destination":
             second_symbol = "mo"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "year_time_conversion_destination":
             second_symbol = "y"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "decade_time_conversion_destination":
             second_symbol = "dec"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
         if message == "century_time_conversion_destination":
             second_symbol = "cent"
-            await bot.edit_message_text(
-                text=f"""{number} {first_symbol} = <code>{time_converter(first_symbol=first_symbol, second_symbol=second_symbol,
-                                                                         number=number)} {second_symbol}</code>""",
-                chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+            time_status.update({call.from_user.id: {"number": time_status[call.from_user.id]["number"],
+                                                    "first_symbol": time_status[call.from_user.id]["first_symbol"],
+                                                    "second_symbol": second_symbol,
+                                                    "message_id": call.message.message_id}})
+            try:
+                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
+                    await bot.edit_message_text(
+                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                        chat_id=chat_id,
+                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    time_status.pop(chat_id)
+            except:
+                pass
 
 
 executor.start_polling(dp)
