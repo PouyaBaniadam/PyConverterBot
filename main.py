@@ -2,6 +2,7 @@ from math import pi
 from aiogram import Bot, Dispatcher, executor
 from Calculation.BMI.bmi import bmi_calculator
 from Calculation.Calculator.calculator import calculator
+from Settings.languages.users_languages import users_first_language, user_language_update, get_user_current_language
 from UnitConversion.Data.data_converter import data_converter
 from UnitConversion.Length.length_converter import length_converter
 from UnitConversion.Mass.mass_converter import mass_converter
@@ -10,7 +11,7 @@ from UnitConversion.Temperature.temperature_converter import temperature_convert
 from UnitConversion.Time.time_converter import time_converter
 from keyboards_and_callbacks_data_list import *
 
-TOKEN = "YOUR_BOT_TOKEN"
+TOKEN = "YOUR_VOT_TOKEN"
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
@@ -29,96 +30,223 @@ temperature_status = {}
 time_status = {}
 
 
+@dp.message_handler(commands="start")
+async def welcome(message: types.Message):
+    user_ids.append(message.chat.id)
+
+    # user_id_to_sql_adder(user_id=message.chat.id)
+
+    users_first_language(user_id=message.chat.id)
+
+    states.update({message.chat.id: "start"})
+
+    user_language = get_user_current_language(user_id=message.chat.id)
+    await message.reply(text=f"""{languages[user_language]['start_command']} {message.from_user.full_name}.😀
+{languages[user_language]['start_command_choose_button']}""",
+                        reply_markup=bot_options_keyboard(user_language=user_language))
+
+
 @dp.message_handler(commands="help")
 async def welcome(message: types.Message):
-    await message.reply(
-        """This bot is made for some handy math stuff such as calculator , or popular conversions such as length , mass , data and much more.
-The bot is easy to use.🤖 You just have to follow the correct directions.
-for example , if you wanna use the calculator , all you have to do is to stick to buttons related to calculator.😀
-
-Hope that helped , but if you can't find your way in , you can still choose help button for each part individually in the next update of the bot.😁
-""")
+    user_language = get_user_current_language(user_id=message.chat.id)
+    await message.reply(text=languages[user_language]["help_command"])
 
     await bot.send_video(video=open('Assets/Videos/Tutorial/MainTutorial.mp4', 'rb'), chat_id=message.chat.id)
 
 
 @dp.message_handler(commands="about")
 async def welcome(message: types.Message):
-    await message.reply(
-        """100000100111011111010011001101101100111111101101001
-
-I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love to code.👨🏻‍💻
-
-100000100111011111010011001101101100111111101101001""")
-
-
-@dp.message_handler(commands="start")
-async def welcome(message: types.Message):
-    user_ids.append(message.chat.full_name)
-    states.update({message.chat.id: "start"})
-    await message.reply(f"""Welcome home {message.chat.full_name}.😀
-    
-Please select bot mode from the list below.👇🏻""", reply_markup=bot_options_keyboard())
+    user_language = get_user_current_language(user_id=message.chat.id)
+    await message.reply(text=languages[user_language]["about_command"])
 
 
 @dp.message_handler()
 async def options_keyboard_answer(message: types.Message):
     global calculator_mode
 
-    if message.text == "BMI":
-        await bot.send_message(chat_id=message.chat.id, text="Please enter your weight-number (kg) : ",
+    user_language = get_user_current_language(user_id=message.chat.id)
+
+    if message.text == languages[user_language]['BMI']:
+        await bot.send_message(chat_id=message.chat.id, text=languages[user_language]['enter_weight_bmi'],
                                reply_markup=bmi__conversion_weight_inline_keyboard())
-        states.update({message.chat.id: "BMI"})
+        states.update({message.chat.id: "bmi"})
 
-    if message.text == "Calculation":
+    if message.text == languages[user_language]['calculation']:
         await bot.send_message(chat_id=message.chat.id,
-                               text="""Please choose one of the calculators from the list below.👇🏻""",
-                               reply_markup=calculation__options_keyboard())
-        states.update({message.chat.id: "Calculation"})
+                               text=f"""{languages[user_language]['calculation_option_selection']}""",
+                               reply_markup=calculation__options_keyboard(user_language=user_language))
+        states.update({message.chat.id: "calculation"})
 
-    if message.text == "Calculator":
-        await bot.send_message(chat_id=message.chat.id, text="Please enter your phrase : ",
+    if message.text == languages[user_language]['calculator']:
+        await bot.send_message(chat_id=message.chat.id, text=languages[user_language]['enter_phrase_calculator'],
                                reply_markup=calculator__inline_keyboard())
-        states.update({message.chat.id: "Calculator"})
+        states.update({message.chat.id: "calculator"})
 
-    if message.text == "Unit Conversion":
-        await message.answer("Which of the following conversions do you prefer to use ?👇🏻",
-                             reply_markup=unit_conversion_options_keyboard())
-        states.update({message.chat.id: "Unit Conversion"})
+    if message.text == languages[user_language]['unit_conversion']:
+        await message.answer(text=f"{languages[user_language]['unit_conversion_option_selection']}",
+                             reply_markup=unit_conversion_options_keyboard(user_language=user_language))
+        states.update({message.chat.id: "unit_conversion"})
 
-    if message.text == "Data":
-        await bot.send_message(chat_id=message.chat.id, text="Please enter your data-number : ",
+    if message.text == languages[user_language]['data']:
+        await bot.send_message(chat_id=message.chat.id, text=languages[user_language]['data_converter_enter_number'],
                                reply_markup=data_conversion_numbers_inline_keyboard())
-        states.update({message.chat.id: "Data"})
+        states.update({message.chat.id: "data_converter"})
 
-    if message.text == "Length":
-        await bot.send_message(chat_id=message.chat.id, text="Please enter your length-number : ",
+    if message.text == languages[user_language]['length']:
+        await bot.send_message(chat_id=message.chat.id, text=languages[user_language]['length_converter_enter_number'],
                                reply_markup=length_conversion_numbers_inline_keyboard())
-        states.update({message.chat.id: "Length"})
+        states.update({message.chat.id: "length_converter"})
 
-    if message.text == "Mass":
-        await bot.send_message(chat_id=message.chat.id, text="Please enter your mass-number : ",
+    if message.text == languages[user_language]['mass']:
+        await bot.send_message(chat_id=message.chat.id, text=languages[user_language]['mass_converter_enter_number'],
                                reply_markup=mass_conversion_numbers_inline_keyboard())
-        states.update({message.chat.id: "Mass"})
+        states.update({message.chat.id: "mass_converter"})
 
-    if message.text == "Numeral":
-        await message.answer("Please enter your numeral-number : ",
+    if message.text == languages[user_language]['numeral']:
+        await message.answer(text=languages[user_language]['numeral_converter_enter_number'],
                              reply_markup=numeral_conversion_numbers_inline_keyboard())
-        states.update({message.chat.id: "Numeral"})
+        states.update({message.chat.id: "numeral_converter"})
 
-    if message.text == "Temperature":
-        await bot.send_message(chat_id=message.chat.id, text="Please enter your temperature-number : ",
+    if message.text == languages[user_language]['temperature']:
+        await bot.send_message(chat_id=message.chat.id,
+                               text=languages[user_language]['temperature_converter_enter_number'],
                                reply_markup=temperature_conversion_numbers_inline_keyboard())
-        states.update({message.chat.id: "Temperature"})
+        states.update({message.chat.id: "temperature_converter"})
 
-    if message.text == "Time":
-        await bot.send_message(chat_id=message.chat.id, text="Please enter your time-number : ",
+    if message.text == languages[user_language]['time']:
+        await bot.send_message(chat_id=message.chat.id, text=languages[user_language]['time_converter_enter_number'],
                                reply_markup=time_conversion_numbers_inline_keyboard())
-        states.update({message.chat.id: "Time"})
+        states.update({message.chat.id: "time_converter"})
 
-    if message.text == "⬅️ Back ⬅️":
-        await bot.send_message(chat_id=message.chat.id, text="""Please select bot mode from the list below.👇🏻""",
-                               reply_markup=bot_options_keyboard())
+    if message.text == languages[user_language]['settings_option_selection']:
+        user_language = get_user_current_language(user_id=message.from_user.id)
+
+        await bot.send_message(chat_id=message.chat.id,
+                               text=f"{languages[user_language]['choose_setting_option']}",
+                               reply_markup=settings__options_keyboard(user_language=user_language))
+        states.update({message.chat.id: "settings"})
+
+    if message.text == languages[user_language]['language_option_selection']:
+        await bot.send_message(chat_id=message.chat.id,
+                               text=languages[user_language]['choose_language'],
+                               reply_markup=languages_inline_keyboard())
+        states.update({message.chat.id: "select_language"})
+
+    if message.text == languages[user_language]['back_option_selection']:
+
+        user_state = states[message.from_user.id]
+
+        if user_state == "start":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=f"{languages[user_language]['start_command_choose_button']}",
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+        if user_state == "calculation":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=f"{languages[user_language]['start_command_choose_button']}",
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "start"})
+
+        if user_state == "calculator":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "calculation"})
+
+        if user_state == "bmi":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "calculation"})
+
+        if user_state == "unit_conversion":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=f"{languages[user_language]['start_command_choose_button']}",
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "start"})
+
+        if user_state == "mass_converter":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "start"})
+
+        if user_state == "data_converter":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "start"})
+
+        if user_state == "length_converter":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "start"})
+
+        if user_state == "time_converter":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "start"})
+
+        if user_state == "numeral_converter":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+            states.update({message.chat.id: "start"})
+
+        if user_state == "temperature_converter":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+            states.update({message.chat.id: "start"})
+
+        if user_state == "settings":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+            states.update({message.chat.id: "start"})
+
+        if user_state == "select_language":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=languages[user_language]['start_command_choose_button'],
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+            states.update({message.chat.id: "settings"})
 
 
 @dp.callback_query_handler()
@@ -134,7 +262,7 @@ async def query_handler(call: types.CallbackQuery):
     if message in bmi_conversion_weight_callback_data_list:
         text = call.message.text
 
-        if "weight" in text:
+        if "weight" in text or "وزن" in text:
             text = ""
 
         if message == "0_weight_bmi":
@@ -195,33 +323,40 @@ async def query_handler(call: types.CallbackQuery):
                                             reply_markup=bmi__conversion_weight_inline_keyboard())
 
         if message == "clear_weight_bmi":
-            text = "Please enter your weight-number (kg) : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['enter_weight_bmi']
 
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
 
         if message == "backward_weight_bmi":
             text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if text == "":
-                text = "Please enter your weight-number (kg) : "
+                text = languages[user_language]['enter_weight_bmi']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_weight_inline_keyboard())
 
         if message == "done_weight_bmi":
             weight = call.message.text
 
-            if "weight" not in weight:
+            if "weight" not in weight or "قد" not in height:
                 bmi_status.update(
                     {call.from_user.id: {"weight": weight, "height": None, "message_id": call.message.message_id}})
 
+                user_language = get_user_current_language(user_id=call.from_user.id)
+
                 await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                            text="Please enter your height-number (cm) : ",
+                                            text=languages[user_language]['enter_height_bmi'],
                                             reply_markup=bmi__conversion_height_inline_keyboard())
 
     if message in bmi_conversion_height_callback_data_list:
         text = call.message.text
 
-        if "height" in text:
+        if "height" in text or "قد" in text:
             text = ""
 
         if message == "0_height_bmi":
@@ -272,49 +407,59 @@ async def query_handler(call: types.CallbackQuery):
 
         if message == "backward_height_bmi":
             text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if text == "":
-                text = "Please enter your height-number (cm) : "
+                text = languages[user_language]['enter_height_bmi']
 
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_height_inline_keyboard())
 
         if message == "clear_height_bmi":
-            text = "Please enter your height-number (cm) : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['enter_height_bmi']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=bmi__conversion_height_inline_keyboard())
 
         if message == "done_height_bmi":
 
             height = call.message.text
-            if "height" not in height:
+            if "height" not in height or "قد" not in height:
                 bmi_status.update(
                     {call.from_user.id: {"weight": bmi_status[call.from_user.id]["weight"], "height": height,
                                          "message_id": bmi_status[call.from_user.id]["message_id"]}})
                 try:
                     for chat_id, weight_and_height_and_message_id in bmi_status.items():
-                        await bot.edit_message_text(text=f"""Weight : {weight_and_height_and_message_id["weight"]} kg
-Height : {weight_and_height_and_message_id["height"]} cm
+                        user_language = get_user_current_language(user_id=chat_id)
+                        await bot.edit_message_text(
+                            text=f"""{languages[user_language]['weight']} : {weight_and_height_and_message_id["weight"]} kg
+{languages[user_language]['height']} : {weight_and_height_and_message_id["height"]} cm
 
-BMI : <code>{bmi_calculator(weight=float(weight_and_height_and_message_id["weight"]), height=float(weight_and_height_and_message_id["height"]))[0]}</code>
+{languages[user_language]['BMI']} : <code>{bmi_calculator(weight=float(weight_and_height_and_message_id["weight"]), height=float(weight_and_height_and_message_id["height"]), user_id=chat_id)[0]}</code>
 
-BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weight"]), height=float(weight_and_height_and_message_id["height"]))[1]}""",
-                                                    chat_id=chat_id,
-                                                    message_id=weight_and_height_and_message_id["message_id"],
-                                                    reply_markup=bmi__conversion_see_bmi_chart_inline_keyboard(),
-                                                    parse_mode="HTML")
+{languages[user_language]['BMI_status']} : {bmi_calculator(weight=float(weight_and_height_and_message_id["weight"]), height=float(weight_and_height_and_message_id["height"]), user_id=chat_id)[1]}""",
+                            chat_id=chat_id, message_id=weight_and_height_and_message_id["message_id"],
+                            reply_markup=bmi__conversion_see_bmi_chart_inline_keyboard(user_language=user_language),
+                            parse_mode="HTML")
+
                         bmi_status.pop(chat_id)
                 except:
                     pass
 
     if message in bmi__conversion_see_bmi_chart_callback_data_list:
         if message == "see_chart_bmi":
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.send_photo(photo=open('Assets/Images/BMI/BMIChart.jpg', 'rb'), chat_id=chat_id,
-                                 caption="BMI chart")
+                                 caption=languages[user_language]['bmi_chart'])
 
     if message in calculator_callback_data_list:
+
         text = call.message.text
 
-        if "phrase" in text:
+        if "phrase" in text or "عبارت" in text:
             text = ""
 
         if message == "0_calculator":
@@ -461,18 +606,24 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 text = f"-{text}"
             elif text[0] == "+":
                 text = f"-{text}"
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=calculator__inline_keyboard())
 
         if message == "backward_calculator":
             text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if text == "":
-                text = "Please enter your phrase : "
+                text = languages[user_language]['enter_phrase_calculator']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=calculator__inline_keyboard())
 
         if message == "clear_calculator":
-            text = "Please enter your phrase : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['enter_phrase_calculator']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=calculator__inline_keyboard())
 
@@ -480,13 +631,13 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             data_to_be_calculate = call.message.text
 
             await bot.edit_message_text(
-                text=f"""{data_to_be_calculate} = <code>{calculator(data_to_be_calculate)}</code>""",
+                text=f"""{data_to_be_calculate} = <code>{calculator(data_to_be_calculate, user_id=call.from_user.id)}</code>""",
                 chat_id=chat_id, message_id=message_id, parse_mode="HTML")
 
     if message in data_conversion_callback_data_list:
         text = call.message.text
 
-        if "data" in text:
+        if "data" in text or "داده" in text:
             text = ""
 
         if message == "0_data_converter":
@@ -546,14 +697,19 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                                             reply_markup=data_conversion_numbers_inline_keyboard())
 
         if message == "clear_data_converter":
-            text = "Please enter your data-number : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['data_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=data_conversion_numbers_inline_keyboard())
 
         if message == "backward_data_converter":
             text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if text == "":
-                text = "Please enter your data-number : "
+                text = languages[user_language]['data_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=data_conversion_numbers_inline_keyboard())
 
@@ -561,9 +717,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             number = text
             data_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please enter the data-unit that you want to start the conversion with : ",
-                                        reply_markup=data_conversion_starter_inline_keyboard())
+                                        text=languages[user_language]['data_converter_start'],
+                                        reply_markup=data_conversion_starter_inline_keyboard(
+                                            user_language=get_user_current_language(user_id=call.from_user.id)))
 
         if message == "bit_data_conversion_starter":
             first_symbol = "b"
@@ -571,72 +730,103 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": data_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
+                text=languages[user_language]['data_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=data_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "byte_data_conversion_starter":
             first_symbol = "B"
             data_status.update(
                 {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": data_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
+                text=languages[user_language]['data_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=data_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "kilo_byte_data_conversion_starter":
             first_symbol = "KB"
             data_status.update(
                 {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": data_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
+                text=languages[user_language]['data_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=data_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "mega_byte_data_conversion_starter":
             first_symbol = "MB"
             data_status.update(
                 {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": data_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
+                text=languages[user_language]['data_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=data_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "giga_byte_data_conversion_starter":
             first_symbol = "GB"
             data_status.update(
                 {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": data_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
+                text=languages[user_language]['data_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=data_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "tera_byte_data_conversion_starter":
             first_symbol = "TB"
             data_status.update(
                 {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": data_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
+                text=languages[user_language]['data_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=data_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "peta_byte_data_conversion_starter":
             first_symbol = "PB"
             data_status.update(
                 {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": data_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
+                text=languages[user_language]['data_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=data_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "exa_byte_data_conversion_starter":
             first_symbol = "EB"
             data_status.update(
                 {call.from_user.id: {"number": data_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": data_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=data_conversion_destination_inline_keyboard())
+                text=languages[user_language]['data_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=data_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "bit_data_conversion_destination":
             second_symbol = "b"
@@ -786,7 +976,7 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
     if message in length_conversion_callback_data_list:
         text = call.message.text
 
-        if "length" in text:
+        if "length" in text or "طول" in text:
             text = ""
 
         if message == "0_length_converter":
@@ -846,23 +1036,33 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                                             reply_markup=length_conversion_numbers_inline_keyboard())
 
         if message == "clear_length_converter":
-            text = "Please enter your length-number : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['length_converter_enter_number']
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=length_conversion_numbers_inline_keyboard())
 
         if message == "backward_length_converter":
             text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if text == "":
-                text = "Please enter your length-number : "
+                text = languages[user_language]['length_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=length_conversion_numbers_inline_keyboard())
 
         if message == "done_length_converter":
             number = text
             length_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please enter the length-unit that you want to start the conversion with : "
-                                        , reply_markup=length_conversion_starter_inline_keyboard())
+                                        text=languages[user_language]['length_converter_start']
+                                        , reply_markup=length_conversion_starter_inline_keyboard(
+                    user_language=user_language))
 
         if message == "pico_meter_length_conversion_starter":
             first_symbol = "pm"
@@ -870,9 +1070,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "nano_meter_length_conversion_starter":
             first_symbol = "nm"
@@ -880,9 +1083,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "micro_meter_length_conversion_starter":
             first_symbol = "μm"
@@ -890,9 +1096,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "milli_meter_length_conversion_starter":
             first_symbol = "mm"
@@ -900,9 +1109,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "centi_meter_length_conversion_starter":
             first_symbol = "cm"
@@ -910,9 +1122,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "desi_meter_length_conversion_starter":
             first_symbol = "dm"
@@ -920,9 +1135,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "meter_length_conversion_starter":
             first_symbol = "m"
@@ -930,9 +1148,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "kilo_meter_length_conversion_starter":
             first_symbol = "Km"
@@ -940,9 +1161,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "mile_length_conversion_starter":
             first_symbol = "mi"
@@ -950,9 +1174,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "nautical_mile_length_conversion_starter":
             first_symbol = "nmi"
@@ -960,9 +1187,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "foot_length_conversion_starter":
             first_symbol = "ft"
@@ -970,9 +1200,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "inch_length_conversion_starter":
             first_symbol = "in"
@@ -980,9 +1213,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "yard_length_conversion_starter":
             first_symbol = "yd"
@@ -990,19 +1226,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
-            await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
-
-        if message == "femara_length_conversion_starter":
-            first_symbol = "fur"
-            length_status.update(
-                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
-                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+            user_language = get_user_current_language(user_id=call.from_user.id)
 
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "fathom_length_conversion_starter":
             first_symbol = "ftm"
@@ -1010,29 +1239,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
-            await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
-
-        if message == "chi_length_conversion_starter":
-            first_symbol = "chi"
-            length_status.update(
-                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
-                                     "message_id": length_status[call.from_user.id]["message_id"]}})
+            user_language = get_user_current_language(user_id=call.from_user.id)
 
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
-
-        if message == "gongli_length_conversion_starter":
-            first_symbol = "gongli"
-            length_status.update(
-                {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
-                                     "message_id": length_status[call.from_user.id]["message_id"]}})
-
-            await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "light_year_length_conversion_starter":
             first_symbol = "ly"
@@ -1040,9 +1252,12 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": length_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": length_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the length-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=length_conversion_destination_inline_keyboard())
+                text=languages[user_language]['length_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=length_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "pico_meter_length_conversion_destination":
             second_symbol = "pm"
@@ -1206,7 +1421,7 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             except:
                 pass
 
-        if message == "nautical_mile_length_conversion_starter":
+        if message == "nautical_mile_length_conversion_destination":
             second_symbol = "nmi"
             length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
@@ -1278,62 +1493,8 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             except:
                 pass
 
-        if message == "femara_length_conversion_destination":
-            second_symbol = "fur"
-            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
-                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
-                                                      "second_symbol": second_symbol,
-                                                      "message_id": call.message.message_id}})
-            try:
-                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
-
-                    length_status.pop(chat_id)
-            except:
-                pass
-
         if message == "fathom_length_conversion_destination":
             second_symbol = "ftm"
-            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
-                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
-                                                      "second_symbol": second_symbol,
-                                                      "message_id": call.message.message_id}})
-            try:
-                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
-
-                    length_status.pop(chat_id)
-            except:
-                pass
-
-        if message == "chi_length_conversion_destination":
-            second_symbol = "chi"
-            length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
-                                                      "first_symbol": length_status[call.from_user.id]["first_symbol"],
-                                                      "second_symbol": second_symbol,
-                                                      "message_id": call.message.message_id}})
-            try:
-                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
-
-                    length_status.pop(chat_id)
-            except:
-                pass
-
-        if message == "gongli_length_conversion_destination":
-            second_symbol = "gongli"
             length_status.update({call.from_user.id: {"number": length_status[call.from_user.id]["number"],
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
@@ -1371,7 +1532,7 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
     if message in mass_conversion_callback_data_list:
         text = call.message.text
 
-        if "mass" in text:
+        if "mass" in text or "جرم" in text:
             text = ""
 
         if message == "0_mass_converter":
@@ -1431,23 +1592,32 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                                             reply_markup=mass_conversion_numbers_inline_keyboard())
 
         if message == "clear_mass_converter":
-            text = "Please enter your mass-number : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['mass_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=mass_conversion_numbers_inline_keyboard())
 
         if message == "backward_mass_converter":
             text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if text == "":
-                text = "Please enter your mass-number : "
+                text = languages[user_language]['mass_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=mass_conversion_numbers_inline_keyboard())
 
         if message == "done_mass_converter":
             number = text
             mass_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please enter the mass-unit that you want to start the conversion with : "
-                                        , reply_markup=mass_conversion_starter_inline_keyboard())
+                                        text=languages[user_language]['mass_converter_start'],
+                                        reply_markup=mass_conversion_starter_inline_keyboard(
+                                            user_language=user_language))
 
         if message == "nano_gram_mass_conversion_starter":
             first_symbol = "ng"
@@ -1455,190 +1625,251 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "micro_gram_mass_conversion_starter":
             first_symbol = "μg"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "quintal_mass_conversion_starter":
             first_symbol = "q"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
-        if message == "mili_gram_mass_conversion_starter":
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
+        if message == "milli_gram_mass_conversion_starter":
             first_symbol = "mg"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
         if message == "centi_gram_mass_conversion_starter":
             first_symbol = "cg"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "desi_gram_mass_conversion_starter":
             first_symbol = "dg"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "gram_mass_conversion_starter":
             first_symbol = "g"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "kilo_gram_mass_conversion_starter":
             first_symbol = "Kg"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "tone_mass_conversion_starter":
             first_symbol = "t"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "pound_mass_conversion_starter":
             first_symbol = "lb"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "ounce_mass_conversion_starter":
             first_symbol = "oz"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "carat_mass_conversion_starter":
             first_symbol = "ct"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "grain_mass_conversion_starter":
             first_symbol = "gr"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "long_ton_mass_conversion_starter":
             first_symbol = "l.t"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "short_ton_mass_conversion_starter":
             first_symbol = "sh.t"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "stone_mass_conversion_starter":
             first_symbol = "st"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "dram_mass_conversion_starter":
             first_symbol = "dr"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
-            await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
-                chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
-        if message == "dan_mass_conversion_starter":
-            first_symbol = "dan"
-            mass_status.update(
-                {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
-                                     "message_id": mass_status[call.from_user.id]["message_id"]}})
+            user_language = get_user_current_language(user_id=call.from_user.id)
 
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "sir_mass_conversion_starter":
             first_symbol = "sir"
             mass_status.update(
                 {call.from_user.id: {"number": mass_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": mass_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the mass-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['mass_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=mass_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=mass_conversion_destination_inline_keyboard(user_language=user_language))
+
         if message == "nano_gram_mass_conversion_destination":
             second_symbol = "ng"
             mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
@@ -1693,7 +1924,7 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             except:
                 pass
 
-        if message == "mili_gram_mass_conversion_destination":
+        if message == "milli_gram_mass_conversion_destination":
             second_symbol = "mg"
             mass_status.update({call.from_user.id: {"number": mass_status[call.from_user.id]["number"],
                                                     "first_symbol": mass_status[call.from_user.id]["first_symbol"],
@@ -1984,7 +2215,7 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
     if message in numeral_conversion_callback_data_list:
         phrase = call.message.text
 
-        if "numeral" in phrase:
+        if "numeral" in phrase or "مبنا" in phrase:
             phrase = ""
 
         if message == "0_numeral_converter":
@@ -2044,14 +2275,20 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                                         reply_markup=numeral_conversion_numbers_inline_keyboard())
 
         if message == "clear_numeral_converter":
-            phrase = "Please enter your numeral-number : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            phrase = languages[user_language]['numeral_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=phrase,
                                         reply_markup=numeral_conversion_numbers_inline_keyboard())
 
         if message == "backward_numeral_converter":
             phrase = phrase[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if phrase == "":
-                phrase = "Please enter your numeral-number : "
+                phrase = languages[user_language]['numeral_converter_enter_number']
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=phrase,
                                         reply_markup=numeral_conversion_numbers_inline_keyboard())
 
@@ -2188,8 +2425,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
         if message == "done_numeral_converter":
             numeral_data = phrase
             numeral_status.update({call.from_user.id: {"data": numeral_data, "message_id": call.message.message_id}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select starting base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_from_base'],
                                         reply_markup=numeral_conversion_from_base_inline_keyboard())
 
         if message == "2_from_base":
@@ -2197,8 +2437,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "3_from_base":
@@ -2206,8 +2449,10 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "4_from_base":
@@ -2215,8 +2460,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "5_from_base":
@@ -2224,8 +2472,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "6_from_base":
@@ -2233,8 +2484,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "7_from_base":
@@ -2242,8 +2496,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "8_from_base":
@@ -2251,8 +2508,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "9_from_base":
@@ -2260,8 +2520,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "10_from_base":
@@ -2269,8 +2532,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "11_from_base":
@@ -2278,8 +2544,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "12_from_base":
@@ -2287,8 +2556,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "13_from_base":
@@ -2296,8 +2568,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "14_from_base":
@@ -2305,8 +2580,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "15_from_base":
@@ -2314,8 +2592,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "16_from_base":
@@ -2323,8 +2604,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "17_from_base":
@@ -2332,8 +2616,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "18_from_base":
@@ -2341,8 +2628,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "19_from_base":
@@ -2350,8 +2640,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "20_from_base":
@@ -2359,8 +2652,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "21_from_base":
@@ -2368,8 +2664,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "22_from_base":
@@ -2377,8 +2676,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "23_from_base":
@@ -2386,8 +2688,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "24_from_base":
@@ -2395,8 +2700,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "25_from_base":
@@ -2404,8 +2712,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "26_from_base":
@@ -2413,8 +2724,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "27_from_base":
@@ -2423,7 +2737,7 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "28_from_base":
@@ -2431,8 +2745,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "29_from_base":
@@ -2440,8 +2757,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "30_from_base":
@@ -2450,7 +2770,7 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "31_from_base":
@@ -2458,8 +2778,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "32_from_base":
@@ -2467,8 +2790,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "33_from_base":
@@ -2477,7 +2803,7 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "34_from_base":
@@ -2485,8 +2811,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "35_from_base":
@@ -2494,8 +2823,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "36_from_base":
@@ -2503,8 +2835,11 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please select ending base from the list below.👇🏻",
+                                        text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
 
         if message == "2_to_base":
@@ -2516,12 +2851,13 @@ BMI Status : {bmi_calculator(weight=float(weight_and_height_and_message_id["weig
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2538,12 +2874,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2560,12 +2897,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2582,12 +2920,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2604,12 +2943,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2626,12 +2966,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2648,12 +2989,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2670,12 +3012,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2692,12 +3035,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2714,12 +3058,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2736,12 +3081,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2758,12 +3104,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2780,12 +3127,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2802,12 +3150,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2824,12 +3173,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2846,12 +3196,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2868,12 +3219,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2890,12 +3242,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2912,12 +3265,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2934,12 +3288,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2956,12 +3311,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -2978,12 +3334,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3000,12 +3357,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3022,12 +3380,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3044,12 +3403,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3066,12 +3426,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3088,12 +3449,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3110,12 +3472,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3132,12 +3495,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3154,12 +3518,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3176,12 +3541,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3198,12 +3564,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3220,12 +3587,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3242,12 +3610,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3264,12 +3633,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
+                    user_language = get_user_current_language(user_id=chat_id)
                     await bot.edit_message_text(
-                        text=f"""Phrase : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-From base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-To base : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                         chat_id=chat_id,
                         message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
 
@@ -3280,7 +3650,7 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
     if message in temperature_conversion_callback_data_list:
         text = call.message.text
 
-        if "temperature" in text:
+        if "temperature" in text or "دما" in text:
             text = ""
 
         if message == "0_temperature_converter":
@@ -3334,12 +3704,26 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                                         reply_markup=temperature_conversion_numbers_inline_keyboard())
 
         if message == "neg_or_pos_maker_temperature_converter":
-            if text[0] == "-":
-                text = text[1:]
-            elif text[0].isnumeric():
-                text = f"-{text}"
-            elif text[0] == "+":
-                text = f"-{text}"
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+            text = call.message.text
+
+            if text != "":
+                temp_flag = False
+                if text[0].isdigit():
+                    text = f"-{text}"
+                elif text[0] == "-":
+                    text = text[1:]
+
+                    if text == "":
+                        text = languages[user_language]['temperature_converter_enter_number']
+                        await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                                    reply_markup=temperature_conversion_numbers_inline_keyboard())
+                        temp_flag = True
+
+            if text == languages[user_language]['temperature_converter_enter_number']:
+                if temp_flag != True:
+                    text = "-"
 
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=temperature_conversion_numbers_inline_keyboard())
@@ -3351,23 +3735,33 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                                             reply_markup=temperature_conversion_numbers_inline_keyboard())
 
         if message == "clear_temperature_converter":
-            text = "Please enter your temperature-number : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['temperature_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=temperature_conversion_numbers_inline_keyboard())
 
         if message == "backward_temperature_converter":
             text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if text == "":
-                text = "Please enter your temperature-number : "
+                text = languages[user_language]['temperature_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=temperature_conversion_numbers_inline_keyboard())
 
         if message == "done_temperature_converter":
             number = text
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             temperature_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please enter the temperature-unit that you want to start the conversion with : ",
-                                        reply_markup=temperature_conversion_starter_inline_keyboard())
+                                        text=languages[user_language]['temperature_converter_start'],
+                                        reply_markup=temperature_conversion_starter_inline_keyboard(
+                                            user_language=user_language))
 
         if message == "celsius_temperature_conversion_starter":
             first_symbol = "C°"
@@ -3376,10 +3770,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                                      "first_symbol": first_symbol,
                                      "message_id": temperature_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the temperature-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['temperature_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=temperature_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=temperature_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "fahrenheit_temperature_conversion_starter":
             first_symbol = "F°"
@@ -3388,10 +3785,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                                      "first_symbol": first_symbol,
                                      "message_id": temperature_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the temperature-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['temperature_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=temperature_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=temperature_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "kelvin_temperature_conversion_starter":
             first_symbol = "K"
@@ -3400,10 +3800,13 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                                      "first_symbol": first_symbol,
                                      "message_id": temperature_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the temperature-unit that you want to finish the conversion with : ",
+                text=languages[user_language]['temperature_converter_destination'],
                 chat_id=chat_id,
-                message_id=message_id, reply_markup=temperature_conversion_destination_inline_keyboard())
+                message_id=message_id,
+                reply_markup=temperature_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "celsius_temperature_conversion_destination":
             second_symbol = "C°"
@@ -3465,7 +3868,7 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
     if message in time_conversion_callback_data_list:
         text = call.message.text
 
-        if "time" in text:
+        if "time" in text or "زمان" in text:
             text = ""
 
         if message == "0_time_converter":
@@ -3525,23 +3928,32 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                                             reply_markup=time_conversion_numbers_inline_keyboard())
 
         if message == "clear_time_converter":
-            text = "Please enter your time-number : "
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['time_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=time_conversion_numbers_inline_keyboard())
 
         if message == "backward_time_converter":
             text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             if text == "":
-                text = "Please enter your time-number : "
+                text = languages[user_language]['time_converter_enter_number']
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
                                         reply_markup=time_conversion_numbers_inline_keyboard())
 
         if message == "done_time_converter":
             number = text
             time_status.update({call.from_user.id: {"number": number, "message_id": call.message.message_id}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
-                                        text="Please enter the time-unit that you want to start the conversion with : "
-                                        , reply_markup=time_conversion_starter_inline_keyboard())
+                                        text=languages[user_language]['time_converter_start'],
+                                        reply_markup=time_conversion_starter_inline_keyboard(
+                                            user_language=user_language))
 
         if message == "pico_second_time_conversion_starter":
             first_symbol = "ps"
@@ -3549,9 +3961,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "nano_second_time_conversion_starter":
             first_symbol = "ns"
@@ -3559,9 +3974,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "micro_second_time_conversion_starter":
             first_symbol = "μs"
@@ -3569,9 +3987,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "milli_second_time_conversion_starter":
             first_symbol = "ms"
@@ -3579,9 +4000,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "second_time_conversion_starter":
             first_symbol = "s"
@@ -3589,9 +4013,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "min_time_conversion_starter":
             first_symbol = "min"
@@ -3599,9 +4026,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "hour_time_conversion_starter":
             first_symbol = "h"
@@ -3609,9 +4039,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "day_time_conversion_starter":
             first_symbol = "d"
@@ -3619,9 +4052,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "month_time_conversion_starter":
             first_symbol = "mo"
@@ -3629,9 +4065,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "year_time_conversion_starter":
             first_symbol = "y"
@@ -3639,9 +4078,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "decade_time_conversion_starter":
             first_symbol = "dec"
@@ -3649,9 +4091,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "century_time_conversion_starter":
             first_symbol = "cent"
@@ -3659,9 +4104,12 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                 {call.from_user.id: {"number": time_status[call.from_user.id]["number"], "first_symbol": first_symbol,
                                      "message_id": time_status[call.from_user.id]["message_id"]}})
 
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(
-                text="Please enter the time-unit that you want to finish the conversion with : ", chat_id=chat_id,
-                message_id=message_id, reply_markup=time_conversion_destination_inline_keyboard())
+                text=languages[user_language]['time_converter_destination'], chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=time_conversion_destination_inline_keyboard(user_language=user_language))
 
         if message == "pico_second_time_conversion_destination":
             second_symbol = "ps"
@@ -3878,6 +4326,17 @@ Answer : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_m
                     time_status.pop(chat_id)
             except:
                 pass
+
+    if message in languages_callback_data_list:
+        user_language_update(user_id=call.from_user.id, language=call.data)
+        text = languages[message]["successful_language_change"]
+
+        user_language = get_user_current_language(user_id=call.from_user.id)
+
+        await bot.send_message(text=text,
+                               chat_id=chat_id, reply_markup=settings__options_keyboard(user_language=user_language))
+
+        await bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
 
 
 executor.start_polling(dp)

@@ -1,20 +1,24 @@
 from aiogram import types
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
+from Settings.languages.languages_dictionary import languages
 
-def bot_options_keyboard():
-    bot__unit_conversion_option_button = KeyboardButton("Unit Conversion")
-    bot__calculation_option_button = KeyboardButton("Calculation")
-    bot_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    bot_options_keyboard.add(bot__unit_conversion_option_button, bot__calculation_option_button)
+
+def bot_options_keyboard(user_language):
+    bot__unit_conversion_option_button = KeyboardButton(languages[user_language]["unit_conversion"])
+    bot__calculation_option_button = KeyboardButton(languages[user_language]["calculation"])
+    bot__settings_option_button = KeyboardButton(languages[user_language]["settings_option_selection"])
+    bot_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
+    bot_options_keyboard.add(bot__unit_conversion_option_button, bot__calculation_option_button).add(
+        bot__settings_option_button)
 
     return bot_options_keyboard
 
 
-def calculation__options_keyboard():
-    calculation__calculator_option_button = KeyboardButton("Calculator")
-    calculation__bmi_option_button = KeyboardButton("BMI")
-    calculation__back_option_button = KeyboardButton("⬅️ Back ⬅️")
+def calculation__options_keyboard(user_language):
+    calculation__calculator_option_button = KeyboardButton(languages[user_language]["calculator"])
+    calculation__bmi_option_button = KeyboardButton(languages[user_language]["BMI"])
+    calculation__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
     calculation_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
     calculation_options_keyboard.add(calculation__bmi_option_button, calculation__calculator_option_button).add(
         calculation__back_option_button)
@@ -72,8 +76,9 @@ def bmi__conversion_height_inline_keyboard():
     return bmi__conversion_height_inline_keyboard
 
 
-def bmi__conversion_see_bmi_chart_inline_keyboard():
-    bmi__see_chart_button = types.InlineKeyboardButton(text="📈 See the BMI chart 📈", callback_data="see_chart_bmi")
+def bmi__conversion_see_bmi_chart_inline_keyboard(user_language):
+    bmi__see_chart_button = types.InlineKeyboardButton(text=languages[user_language]["see_bmi_chart"],
+                                                       callback_data="see_chart_bmi")
     bmi__conversion_see_bmi_chart_inline_keyboard = types.InlineKeyboardMarkup(row_width=1)
     bmi__conversion_see_bmi_chart_inline_keyboard.add(bmi__see_chart_button)
 
@@ -145,14 +150,14 @@ def calculator__inline_keyboard():
     return calculator_inline_keyboard
 
 
-def unit_conversion_options_keyboard():
-    conversion__numeral_system_option_button = KeyboardButton("Numeral")
-    conversion__length_option_button = KeyboardButton("Length")
-    conversion__mass_option_button = KeyboardButton("Mass")
-    conversion__temperature_option_button = KeyboardButton("Temperature")
-    conversion__time_option_button = KeyboardButton("Time")
-    conversion__data_option_button = KeyboardButton("Data")
-    conversion__back_option_button = KeyboardButton("⬅️ Back ⬅️")
+def unit_conversion_options_keyboard(user_language):
+    conversion__numeral_system_option_button = KeyboardButton(languages[user_language]["numeral"])
+    conversion__length_option_button = KeyboardButton(languages[user_language]["length"])
+    conversion__mass_option_button = KeyboardButton(languages[user_language]["mass"])
+    conversion__temperature_option_button = KeyboardButton(languages[user_language]["temperature"])
+    conversion__time_option_button = KeyboardButton(languages[user_language]["time"])
+    conversion__data_option_button = KeyboardButton(languages[user_language]["data"])
+    conversion__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
     conversion_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
     conversion_options_keyboard.add(conversion__numeral_system_option_button, conversion__length_option_button,
                                     conversion__mass_option_button, conversion__temperature_option_button,
@@ -193,23 +198,36 @@ def data_conversion_numbers_inline_keyboard():
     return data_conversion_numbers_inline_keyboard
 
 
-def data_conversion_starter_inline_keyboard():
-    bit_symbol_button = types.InlineKeyboardButton(text="b Bit",
+def data_conversion_starter_inline_keyboard(user_language):
+    bit_symbol_button = types.InlineKeyboardButton(text=f"b {languages[user_language]['bit_data_converter']}",
                                                    callback_data="bit_data_conversion_starter")
-    byte_symbol_button = types.InlineKeyboardButton(text="B Byte",
+
+    byte_symbol_button = types.InlineKeyboardButton(text=f"B {languages[user_language]['byte_data_converter']}",
                                                     callback_data="byte_data_conversion_starter")
-    kilo_byte_symbol_button = types.InlineKeyboardButton(text="KB KiloByte",
-                                                         callback_data="kilo_byte_data_conversion_starter")
-    mega_byte_symbol_button = types.InlineKeyboardButton(text="MB MegaByte",
-                                                         callback_data="mega_byte_data_conversion_starter")
-    giga_byte_symbol_button = types.InlineKeyboardButton(text="GB GigaByte",
-                                                         callback_data="giga_byte_data_conversion_starter")
-    tera_byte_symbol_button = types.InlineKeyboardButton(text="TB TeraByte",
-                                                         callback_data="tera_byte_data_conversion_starter")
-    peta_byte_symbol_button = types.InlineKeyboardButton(text="PB PetaByte",
-                                                         callback_data="peta_byte_data_conversion_starter")
-    exa_byte_symbol_button = types.InlineKeyboardButton(text="EB ExaByte",
-                                                        callback_data="exa_byte_data_conversion_starter")
+
+    kilo_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"KB {languages[user_language]['kilo_byte_data_converter']}",
+        callback_data="kilo_byte_data_conversion_starter")
+
+    mega_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"MB {languages[user_language]['mega_byte_data_converter']}",
+        callback_data="mega_byte_data_conversion_starter")
+
+    giga_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"GB {languages[user_language]['giga_byte_data_converter']}",
+        callback_data="giga_byte_data_conversion_starter")
+
+    tera_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"TB {languages[user_language]['tera_byte_data_converter']}",
+        callback_data="tera_byte_data_conversion_starter")
+
+    peta_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"PB {languages[user_language]['peta_byte_data_converter']}",
+        callback_data="peta_byte_data_conversion_starter")
+
+    exa_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"EB {languages[user_language]['exa_byte_data_converter']}",
+        callback_data="exa_byte_data_conversion_starter")
 
     data_conversion_starter_inline_keyboard = types.InlineKeyboardMarkup(row_width=2).add(bit_symbol_button,
                                                                                           byte_symbol_button,
@@ -223,23 +241,36 @@ def data_conversion_starter_inline_keyboard():
     return data_conversion_starter_inline_keyboard
 
 
-def data_conversion_destination_inline_keyboard():
-    bit_symbol_button = types.InlineKeyboardButton(text="b Bit",
+def data_conversion_destination_inline_keyboard(user_language):
+    bit_symbol_button = types.InlineKeyboardButton(text=f"b {languages[user_language]['bit_data_converter']}",
                                                    callback_data="bit_data_conversion_destination")
-    byte_symbol_button = types.InlineKeyboardButton(text="B Byte",
+
+    byte_symbol_button = types.InlineKeyboardButton(text=f"B {languages[user_language]['byte_data_converter']}",
                                                     callback_data="byte_data_conversion_destination")
-    kilo_byte_symbol_button = types.InlineKeyboardButton(text="KB KiloByte",
-                                                         callback_data="kilo_byte_data_conversion_destination")
-    mega_byte_symbol_button = types.InlineKeyboardButton(text="MB MegaByte",
-                                                         callback_data="mega_byte_data_conversion_destination")
-    giga_byte_symbol_button = types.InlineKeyboardButton(text="GB GigaByte",
-                                                         callback_data="giga_byte_data_conversion_destination")
-    tera_byte_symbol_button = types.InlineKeyboardButton(text="TB TeraByte",
-                                                         callback_data="tera_byte_data_conversion_destination")
-    peta_byte_symbol_button = types.InlineKeyboardButton(text="PB PetaByte",
-                                                         callback_data="peta_byte_data_conversion_destination")
-    exa_byte_symbol_button = types.InlineKeyboardButton(text="EB ExaByte",
-                                                        callback_data="exa_byte_data_conversion_destination")
+
+    kilo_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"KB {languages[user_language]['kilo_byte_data_converter']}",
+        callback_data="kilo_byte_data_conversion_destination")
+
+    mega_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"MB {languages[user_language]['mega_byte_data_converter']}",
+        callback_data="mega_byte_data_conversion_destination")
+
+    giga_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"GB {languages[user_language]['giga_byte_data_converter']}",
+        callback_data="giga_byte_data_conversion_destination")
+
+    tera_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"TB {languages[user_language]['tera_byte_data_converter']}",
+        callback_data="tera_byte_data_conversion_destination")
+
+    peta_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"PB {languages[user_language]['peta_byte_data_converter']}",
+        callback_data="peta_byte_data_conversion_destination")
+
+    exa_byte_symbol_button = types.InlineKeyboardButton(
+        text=f"EB {languages[user_language]['exa_byte_data_converter']}",
+        callback_data="exa_byte_data_conversion_destination")
 
     data_conversion_destination_inline_keyboard = types.InlineKeyboardMarkup(row_width=2).add(bit_symbol_button,
                                                                                               byte_symbol_button,
@@ -284,96 +315,130 @@ def length_conversion_numbers_inline_keyboard():
     return length_conversion_numbers_inline_keyboard
 
 
-def length_conversion_starter_inline_keyboard():
-    pico_meter_symbol_button = types.InlineKeyboardButton(text="pm PicoMeter",
-                                                          callback_data="pico_meter_length_conversion_starter")
-    nano_meter_symbol_button = types.InlineKeyboardButton(text="nm NanoMeter",
-                                                          callback_data="nano_meter_length_conversion_starter")
-    micro_meter_symbol_button = types.InlineKeyboardButton(text="μm MicroMeter",
-                                                           callback_data="micro_meter_length_conversion_starter")
-    milli_meter_symbol_button = types.InlineKeyboardButton(text="mm MilliMeter",
-                                                           callback_data="milli_meter_length_conversion_starter")
-    centi_meter_symbol_button = types.InlineKeyboardButton(text="cm CentiMeter",
-                                                           callback_data="centi_meter_length_conversion_starter")
-    desi_meter_symbol_button = types.InlineKeyboardButton(text="dm DesiMeter",
-                                                          callback_data="desi_meter_length_conversion_starter")
-    meter_symbol_button = types.InlineKeyboardButton(text="m Meter",
+def length_conversion_starter_inline_keyboard(user_language):
+    pico_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"pm {languages[user_language]['pico_meter_length_converter']}",
+        callback_data="pico_meter_length_conversion_starter")
+
+    nano_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"nm {languages[user_language]['nano_meter_length_converter']}",
+        callback_data="nano_meter_length_conversion_starter")
+
+    micro_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"μm {languages[user_language]['micro_meter_length_converter']}",
+        callback_data="micro_meter_length_conversion_starter")
+
+    milli_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"mm {languages[user_language]['milli_meter_length_converter']}",
+        callback_data="milli_meter_length_conversion_starter")
+
+    centi_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"cm {languages[user_language]['centi_meter_length_converter']}",
+        callback_data="centi_meter_length_conversion_starter")
+
+    desi_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"dm {languages[user_language]['desi_meter_length_converter']}",
+        callback_data="desi_meter_length_conversion_starter")
+
+    meter_symbol_button = types.InlineKeyboardButton(text=f"m {languages[user_language]['meter_length_converter']}",
                                                      callback_data="meter_length_conversion_starter")
-    kilo_meter_symbol_button = types.InlineKeyboardButton(text="Km KiloMeter",
-                                                          callback_data="kilo_meter_length_conversion_starter")
-    mile_symbol_button = types.InlineKeyboardButton(text="mi Mile",
+
+    kilo_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"Km {languages[user_language]['kilo_meter_length_converter']}",
+        callback_data="kilo_meter_length_conversion_starter")
+
+    mile_symbol_button = types.InlineKeyboardButton(text=f"mi {languages[user_language]['mile_length_converter']}",
                                                     callback_data="mile_length_conversion_starter")
-    nautical_mile_symbol_button = types.InlineKeyboardButton(text="nmi NauticalMile",
-                                                             callback_data="nautical_mile_length_conversion_starter")
-    foot_symbol_button = types.InlineKeyboardButton(text="ft Foot",
+
+    nautical_mile_symbol_button = types.InlineKeyboardButton(
+        text=f"nmi {languages[user_language]['nautical_mile_length_converter']}",
+        callback_data="nautical_mile_length_conversion_starter")
+
+    foot_symbol_button = types.InlineKeyboardButton(text=f"ft {languages[user_language]['foot_length_converter']}",
                                                     callback_data="foot_length_conversion_starter")
-    inch_symbol_button = types.InlineKeyboardButton(text="in Inch",
+
+    inch_symbol_button = types.InlineKeyboardButton(text=f"in {languages[user_language]['inch_length_converter']}",
                                                     callback_data="inch_length_conversion_starter")
-    yard_symbol_button = types.InlineKeyboardButton(text="yd Yard",
+
+    yard_symbol_button = types.InlineKeyboardButton(text=f"yd {languages[user_language]['yard_length_converter']}",
                                                     callback_data="yard_length_conversion_starter")
-    femara_symbol_button = types.InlineKeyboardButton(text="fur Femara",
-                                                      callback_data="femara_length_conversion_starter")
-    fathom_symbol_button = types.InlineKeyboardButton(text="ftm Fathom",
+
+    fathom_symbol_button = types.InlineKeyboardButton(text=f"ftm {languages[user_language]['fathom_length_converter']}",
                                                       callback_data="fathom_length_conversion_starter")
-    chi_symbol_button = types.InlineKeyboardButton(text="chi Chi",
-                                                   callback_data="chi_length_conversion_starter")
-    gongli_symbol_button = types.InlineKeyboardButton(text="gongli Gongli",
-                                                      callback_data="gongli_length_conversion_starter")
-    light_year_symbol_button = types.InlineKeyboardButton(text="ly Light year",
-                                                          callback_data="light_year_length_conversion_starter")
+
+    light_year_symbol_button = types.InlineKeyboardButton(
+        text=f"ly {languages[user_language]['light_year_length_converter']}",
+        callback_data="light_year_length_conversion_starter")
 
     length_conversion_starter_inline_keyboard = types.InlineKeyboardMarkup(row_width=2).add(
         pico_meter_symbol_button, nano_meter_symbol_button, micro_meter_symbol_button, milli_meter_symbol_button,
         centi_meter_symbol_button, desi_meter_symbol_button, meter_symbol_button, kilo_meter_symbol_button,
         mile_symbol_button, nautical_mile_symbol_button, foot_symbol_button, inch_symbol_button, yard_symbol_button,
-        femara_symbol_button, fathom_symbol_button, chi_symbol_button, gongli_symbol_button, light_year_symbol_button)
+        fathom_symbol_button, light_year_symbol_button)
 
     return length_conversion_starter_inline_keyboard
 
 
-def length_conversion_destination_inline_keyboard():
-    pico_meter_symbol_button = types.InlineKeyboardButton(text="pm PicoMeter",
-                                                          callback_data="pico_meter_length_conversion_destination")
-    nano_meter_symbol_button = types.InlineKeyboardButton(text="nm NanoMeter",
-                                                          callback_data="nano_meter_length_conversion_destination")
-    micro_meter_symbol_button = types.InlineKeyboardButton(text="μm MicroMeter",
-                                                           callback_data="micro_meter_length_conversion_destination")
-    milli_meter_symbol_button = types.InlineKeyboardButton(text="mm MilliMeter",
-                                                           callback_data="milli_meter_length_conversion_destination")
-    centi_meter_symbol_button = types.InlineKeyboardButton(text="cm CentiMeter",
-                                                           callback_data="centi_meter_length_conversion_destination")
-    desi_meter_symbol_button = types.InlineKeyboardButton(text="dm DesiMeter",
-                                                          callback_data="desi_meter_length_conversion_destination")
-    meter_symbol_button = types.InlineKeyboardButton(text="m Meter",
+def length_conversion_destination_inline_keyboard(user_language):
+    pico_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"pm {languages[user_language]['pico_meter_length_converter']}",
+        callback_data="pico_meter_length_conversion_destination")
+
+    nano_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"nm {languages[user_language]['nano_meter_length_converter']}",
+        callback_data="nano_meter_length_conversion_destination")
+
+    micro_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"μm {languages[user_language]['micro_meter_length_converter']}",
+        callback_data="micro_meter_length_conversion_destination")
+
+    milli_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"mm {languages[user_language]['milli_meter_length_converter']}",
+        callback_data="milli_meter_length_conversion_destination")
+
+    centi_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"cm {languages[user_language]['centi_meter_length_converter']}",
+        callback_data="centi_meter_length_conversion_destination")
+
+    desi_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"dm {languages[user_language]['desi_meter_length_converter']}",
+        callback_data="desi_meter_length_conversion_destination")
+
+    meter_symbol_button = types.InlineKeyboardButton(text=f"m {languages[user_language]['meter_length_converter']}",
                                                      callback_data="meter_length_conversion_destination")
-    kilo_meter_symbol_button = types.InlineKeyboardButton(text="Km KiloMeter",
-                                                          callback_data="kilo_meter_length_conversion_destination")
-    mile_symbol_button = types.InlineKeyboardButton(text="mi Mile",
+
+    kilo_meter_symbol_button = types.InlineKeyboardButton(
+        text=f"Km {languages[user_language]['kilo_meter_length_converter']}",
+        callback_data="kilo_meter_length_conversion_destination")
+
+    mile_symbol_button = types.InlineKeyboardButton(text=f"mi {languages[user_language]['mile_length_converter']}",
                                                     callback_data="mile_length_conversion_destination")
-    nautical_mile_symbol_button = types.InlineKeyboardButton(text="nmi NauticalMile",
-                                                             callback_data="nautical_mile_length_conversion_destination")
-    foot_symbol_button = types.InlineKeyboardButton(text="ft Foot",
+
+    nautical_mile_symbol_button = types.InlineKeyboardButton(
+        text=f"nmi {languages[user_language]['nautical_mile_length_converter']}",
+        callback_data="nautical_mile_length_conversion_destination")
+
+    foot_symbol_button = types.InlineKeyboardButton(text=f"ft {languages[user_language]['foot_length_converter']}",
                                                     callback_data="foot_length_conversion_destination")
-    inch_symbol_button = types.InlineKeyboardButton(text="in Inch",
+
+    inch_symbol_button = types.InlineKeyboardButton(text=f"in {languages[user_language]['inch_length_converter']}",
                                                     callback_data="inch_length_conversion_destination")
-    yard_symbol_button = types.InlineKeyboardButton(text="yd Yard",
+
+    yard_symbol_button = types.InlineKeyboardButton(text=f"yd {languages[user_language]['yard_length_converter']}",
                                                     callback_data="yard_length_conversion_destination")
-    femara_symbol_button = types.InlineKeyboardButton(text="fur Femara",
-                                                      callback_data="femara_length_conversion_destination")
-    fathom_symbol_button = types.InlineKeyboardButton(text="ftm Fathom",
+
+    fathom_symbol_button = types.InlineKeyboardButton(text=f"ftm {languages[user_language]['fathom_length_converter']}",
                                                       callback_data="fathom_length_conversion_destination")
-    chi_symbol_button = types.InlineKeyboardButton(text="chi Chi",
-                                                   callback_data="chi_length_conversion_destination")
-    gongli_symbol_button = types.InlineKeyboardButton(text="gongli Gongli",
-                                                      callback_data="gongli_length_conversion_destination")
-    light_year_symbol_button = types.InlineKeyboardButton(text="ly Light year",
-                                                          callback_data="light_year_length_conversion_destination")
+
+    light_year_symbol_button = types.InlineKeyboardButton(
+        text=f"ly {languages[user_language]['light_year_length_converter']}",
+        callback_data="light_year_length_conversion_destination")
 
     length_conversion_destination_inline_keyboard = types.InlineKeyboardMarkup(row_width=2).add(
         pico_meter_symbol_button, nano_meter_symbol_button, micro_meter_symbol_button, milli_meter_symbol_button,
         centi_meter_symbol_button, desi_meter_symbol_button, meter_symbol_button, kilo_meter_symbol_button,
         mile_symbol_button, nautical_mile_symbol_button, foot_symbol_button, inch_symbol_button, yard_symbol_button,
-        femara_symbol_button, fathom_symbol_button, chi_symbol_button, gongli_symbol_button, light_year_symbol_button)
+        fathom_symbol_button, light_year_symbol_button)
 
     return length_conversion_destination_inline_keyboard
 
@@ -409,44 +474,67 @@ def mass_conversion_numbers_inline_keyboard():
     return mass_conversion_numbers_inline_keyboard
 
 
-def mass_conversion_starter_inline_keyboard():
-    nano_gram_symbol_button = types.InlineKeyboardButton(text="ng NanoGram",
-                                                         callback_data="nano_gram_mass_conversion_starter")
-    micro_gram_symbol_button = types.InlineKeyboardButton(text="μg MicroGram",
-                                                          callback_data="micro_gram_mass_conversion_starter")
-    quintal_symbol_button = types.InlineKeyboardButton(text="q Quintal",
+def mass_conversion_starter_inline_keyboard(user_language):
+    nano_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"ng {languages[user_language]['nano_gram_mass_converter']}",
+        callback_data="nano_gram_mass_conversion_starter")
+
+    micro_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"μg {languages[user_language]['micro_gram_mass_converter']}",
+        callback_data="micro_gram_mass_conversion_starter")
+
+    quintal_symbol_button = types.InlineKeyboardButton(text=f"q {languages[user_language]['quintal_mass_converter']}",
                                                        callback_data="quintal_mass_conversion_starter")
-    milli_gram_symbol_button = types.InlineKeyboardButton(text="mg MilliGram",
-                                                          callback_data="milli_gram_mass_conversion_starter")
-    centi_gram_symbol_button = types.InlineKeyboardButton(text="cg CentiGram",
-                                                          callback_data="centi_gram_mass_conversion_starter")
-    desi_gram_symbol_button = types.InlineKeyboardButton(text="dg DesiGram",
-                                                         callback_data="desi_gram_mass_conversion_starter")
-    gram_symbol_button = types.InlineKeyboardButton(text="g Gram",
+
+    milli_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"mg {languages[user_language]['milli_gram_mass_converter']}",
+        callback_data="milli_gram_mass_conversion_starter")
+
+    centi_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"cg {languages[user_language]['centi_gram_mass_converter']}",
+        callback_data="centi_gram_mass_conversion_starter")
+
+    desi_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"dg {languages[user_language]['desi_gram_mass_converter']}",
+        callback_data="desi_gram_mass_conversion_starter")
+
+    gram_symbol_button = types.InlineKeyboardButton(text=f"g {languages[user_language]['gram_mass_converter']}",
                                                     callback_data="gram_mass_conversion_starter")
-    kilo_gram_symbol_button = types.InlineKeyboardButton(text="Kg KiloGram",
-                                                         callback_data="kilo_gram_mass_conversion_starter")
-    tone_symbol_button = types.InlineKeyboardButton(text="t Tone",
+
+    kilo_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"Kg {languages[user_language]['kilo_gram_mass_converter']}",
+        callback_data="kilo_gram_mass_conversion_starter")
+
+    tone_symbol_button = types.InlineKeyboardButton(text=f"t {languages[user_language]['tone_mass_converter']}",
                                                     callback_data="tone_mass_conversion_starter")
-    pound_symbol_button = types.InlineKeyboardButton(text="lb Pound",
+
+    pound_symbol_button = types.InlineKeyboardButton(text=f"lb {languages[user_language]['pound_mass_converter']}",
                                                      callback_data="pound_mass_conversion_starter")
-    ounce_symbol_button = types.InlineKeyboardButton(text="oz Ounce",
+
+    ounce_symbol_button = types.InlineKeyboardButton(text=f"oz {languages[user_language]['ounce_mass_converter']}",
                                                      callback_data="ounce_mass_conversion_starter")
-    carat_symbol_button = types.InlineKeyboardButton(text="ct Carat",
+
+    carat_symbol_button = types.InlineKeyboardButton(text=f"ct {languages[user_language]['carat_mass_converter']}",
                                                      callback_data="carat_mass_conversion_starter")
-    grain_symbol_button = types.InlineKeyboardButton(text="gr Grain",
+
+    grain_symbol_button = types.InlineKeyboardButton(text=f"gr {languages[user_language]['grain_mass_converter']}",
                                                      callback_data="grain_mass_conversion_starter")
-    long_ton_symbol_button = types.InlineKeyboardButton(text="l.t LongTon",
-                                                        callback_data="long_ton_mass_conversion_starter")
-    short_ton_symbol_button = types.InlineKeyboardButton(text="sh.t ShortTon",
-                                                         callback_data="short_ton_mass_conversion_starter")
-    stone_symbol_button = types.InlineKeyboardButton(text="st Stone",
+
+    long_ton_symbol_button = types.InlineKeyboardButton(
+        text=f"l.t {languages[user_language]['long_ton_mass_converter']}",
+        callback_data="long_ton_mass_conversion_starter")
+
+    short_ton_symbol_button = types.InlineKeyboardButton(
+        text=f"sh.t {languages[user_language]['short_ton_mass_converter']}",
+        callback_data="short_ton_mass_conversion_starter")
+
+    stone_symbol_button = types.InlineKeyboardButton(text=f"st {languages[user_language]['stone_mass_converter']}",
                                                      callback_data="stone_mass_conversion_starter")
-    dram_symbol_button = types.InlineKeyboardButton(text="dr Dram",
+
+    dram_symbol_button = types.InlineKeyboardButton(text=f"dr {languages[user_language]['dram_mass_converter']}",
                                                     callback_data="dram_mass_conversion_starter")
-    dan_symbol_button = types.InlineKeyboardButton(text="dan Dan",
-                                                   callback_data="dan_mass_conversion_starter")
-    sir_symbol_button = types.InlineKeyboardButton(text="sir Sir",
+
+    sir_symbol_button = types.InlineKeyboardButton(text=f"sir {languages[user_language]['sir_mass_converter']}",
                                                    callback_data="sir_mass_conversion_starter")
 
     mass_conversion_starter_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(nano_gram_symbol_button,
@@ -466,50 +554,72 @@ def mass_conversion_starter_inline_keyboard():
                                                                                           short_ton_symbol_button,
                                                                                           stone_symbol_button,
                                                                                           dram_symbol_button,
-                                                                                          dan_symbol_button,
                                                                                           sir_symbol_button)
 
     return mass_conversion_starter_inline_keyboard
 
 
-def mass_conversion_destination_inline_keyboard():
-    nano_gram_symbol_button = types.InlineKeyboardButton(text="ng NanoGram",
-                                                         callback_data="nano_gram_mass_conversion_destination")
-    micro_gram_symbol_button = types.InlineKeyboardButton(text="μg MicroGram",
-                                                          callback_data="micro_gram_mass_conversion_destination")
-    quintal_symbol_button = types.InlineKeyboardButton(text="q Quintal",
+def mass_conversion_destination_inline_keyboard(user_language):
+    nano_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"ng {languages[user_language]['nano_gram_mass_converter']}",
+        callback_data="nano_gram_mass_conversion_destination")
+
+    micro_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"μg {languages[user_language]['micro_gram_mass_converter']}",
+        callback_data="micro_gram_mass_conversion_destination")
+
+    quintal_symbol_button = types.InlineKeyboardButton(text=f"q {languages[user_language]['quintal_mass_converter']}",
                                                        callback_data="quintal_mass_conversion_destination")
-    milli_gram_symbol_button = types.InlineKeyboardButton(text="mg MilliGram",
-                                                          callback_data="milli_gram_mass_conversion_destination")
-    centi_gram_symbol_button = types.InlineKeyboardButton(text="cg CentiGram",
-                                                          callback_data="centi_gram_mass_conversion_destination")
-    desi_gram_symbol_button = types.InlineKeyboardButton(text="dg DesiGram",
-                                                         callback_data="desi_gram_mass_conversion_destination")
-    gram_symbol_button = types.InlineKeyboardButton(text="g Gram",
+
+    milli_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"mg {languages[user_language]['milli_gram_mass_converter']}",
+        callback_data="milli_gram_mass_conversion_destination")
+
+    centi_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"cg {languages[user_language]['centi_gram_mass_converter']}",
+        callback_data="centi_gram_mass_conversion_destination")
+
+    desi_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"dg {languages[user_language]['desi_gram_mass_converter']}",
+        callback_data="desi_gram_mass_conversion_destination")
+
+    gram_symbol_button = types.InlineKeyboardButton(text=f"g {languages[user_language]['gram_mass_converter']}",
                                                     callback_data="gram_mass_conversion_destination")
-    kilo_gram_symbol_button = types.InlineKeyboardButton(text="Kg KiloGram",
-                                                         callback_data="kilo_gram_mass_conversion_destination")
-    tone_symbol_button = types.InlineKeyboardButton(text="t Tone",
+
+    kilo_gram_symbol_button = types.InlineKeyboardButton(
+        text=f"Kg {languages[user_language]['kilo_gram_mass_converter']}",
+        callback_data="kilo_gram_mass_conversion_destination")
+
+    tone_symbol_button = types.InlineKeyboardButton(text=f"t {languages[user_language]['tone_mass_converter']}",
                                                     callback_data="tone_mass_conversion_destination")
-    pound_symbol_button = types.InlineKeyboardButton(text="lb Pound",
+
+    pound_symbol_button = types.InlineKeyboardButton(text=f"lb {languages[user_language]['pound_mass_converter']}",
                                                      callback_data="pound_mass_conversion_destination")
-    ounce_symbol_button = types.InlineKeyboardButton(text="oz Ounce",
+
+    ounce_symbol_button = types.InlineKeyboardButton(text=f"oz {languages[user_language]['ounce_mass_converter']}",
                                                      callback_data="ounce_mass_conversion_destination")
-    carat_symbol_button = types.InlineKeyboardButton(text="ct Carat",
+
+    carat_symbol_button = types.InlineKeyboardButton(text=f"ct {languages[user_language]['carat_mass_converter']}",
                                                      callback_data="carat_mass_conversion_destination")
-    grain_symbol_button = types.InlineKeyboardButton(text="gr Grain",
+
+    grain_symbol_button = types.InlineKeyboardButton(text=f"gr {languages[user_language]['grain_mass_converter']}",
                                                      callback_data="grain_mass_conversion_destination")
-    long_ton_symbol_button = types.InlineKeyboardButton(text="l.t LongTon",
-                                                        callback_data="long_ton_mass_conversion_destination")
-    short_ton_symbol_button = types.InlineKeyboardButton(text="sh.t ShortTon",
-                                                         callback_data="short_ton_mass_conversion_destination")
-    stone_symbol_button = types.InlineKeyboardButton(text="st Stone",
+
+    long_ton_symbol_button = types.InlineKeyboardButton(
+        text=f"l.t {languages[user_language]['long_ton_mass_converter']}",
+        callback_data="long_ton_mass_conversion_destination")
+
+    short_ton_symbol_button = types.InlineKeyboardButton(
+        text=f"sh.t {languages[user_language]['short_ton_mass_converter']}",
+        callback_data="short_ton_mass_conversion_destination")
+
+    stone_symbol_button = types.InlineKeyboardButton(text=f"st {languages[user_language]['stone_mass_converter']}",
                                                      callback_data="stone_mass_conversion_destination")
-    dram_symbol_button = types.InlineKeyboardButton(text="dr Dram",
+
+    dram_symbol_button = types.InlineKeyboardButton(text=f"dr {languages[user_language]['dram_mass_converter']}",
                                                     callback_data="dram_mass_conversion_destination")
-    dan_symbol_button = types.InlineKeyboardButton(text="dan Dan",
-                                                   callback_data="dan_mass_conversion_destination")
-    sir_symbol_button = types.InlineKeyboardButton(text="sir Sir",
+
+    sir_symbol_button = types.InlineKeyboardButton(text=f"sir {languages[user_language]['sir_mass_converter']}",
                                                    callback_data="sir_mass_conversion_destination")
 
     mass_conversion_destination_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(nano_gram_symbol_button,
@@ -529,7 +639,6 @@ def mass_conversion_destination_inline_keyboard():
                                                                                               short_ton_symbol_button,
                                                                                               stone_symbol_button,
                                                                                               dram_symbol_button,
-                                                                                              dan_symbol_button,
                                                                                               sir_symbol_button)
 
     return mass_conversion_destination_inline_keyboard
@@ -573,13 +682,18 @@ def temperature_conversion_numbers_inline_keyboard():
     return temperature_conversion_numbers_inline_keyboard
 
 
-def temperature_conversion_starter_inline_keyboard():
-    celsius_symbol_button = types.InlineKeyboardButton(text="C° Celsius",
-                                                       callback_data="celsius_temperature_conversion_starter")
-    fahrenheit_symbol_button = types.InlineKeyboardButton(text="F° Fahrenheit",
-                                                          callback_data="fahrenheit_temperature_conversion_starter")
-    kelvin_symbol_button = types.InlineKeyboardButton(text="K Kelvin",
-                                                      callback_data="kelvin_temperature_conversion_starter")
+def temperature_conversion_starter_inline_keyboard(user_language):
+    celsius_symbol_button = types.InlineKeyboardButton(
+        text=f"C° {languages[user_language]['celsius_temperature_converter']}",
+        callback_data="celsius_temperature_conversion_starter")
+
+    fahrenheit_symbol_button = types.InlineKeyboardButton(
+        text=f"F° {languages[user_language]['fahrenheit_temperature_converter']}",
+        callback_data="fahrenheit_temperature_conversion_starter")
+
+    kelvin_symbol_button = types.InlineKeyboardButton(
+        text=f"K {languages[user_language]['kelvin_temperature_converter']}",
+        callback_data="kelvin_temperature_conversion_starter")
 
     temperature_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(celsius_symbol_button,
                                                                                                  fahrenheit_symbol_button,
@@ -588,13 +702,18 @@ def temperature_conversion_starter_inline_keyboard():
     return temperature_conversion_numbers_inline_keyboard
 
 
-def temperature_conversion_destination_inline_keyboard():
-    celsius_symbol_button = types.InlineKeyboardButton(text="C° Celsius",
-                                                       callback_data="celsius_temperature_conversion_destination")
-    fahrenheit_symbol_button = types.InlineKeyboardButton(text="F° Fahrenheit",
-                                                          callback_data="fahrenheit_temperature_conversion_destination")
-    kelvin_symbol_button = types.InlineKeyboardButton(text="K Kelvin",
-                                                      callback_data="kelvin_temperature_conversion_destination")
+def temperature_conversion_destination_inline_keyboard(user_language):
+    celsius_symbol_button = types.InlineKeyboardButton(
+        text=f"C° {languages[user_language]['celsius_temperature_converter']}",
+        callback_data="celsius_temperature_conversion_destination")
+
+    fahrenheit_symbol_button = types.InlineKeyboardButton(
+        text=f"F° {languages[user_language]['fahrenheit_temperature_converter']}",
+        callback_data="fahrenheit_temperature_conversion_destination")
+
+    kelvin_symbol_button = types.InlineKeyboardButton(
+        text=f"K {languages[user_language]['kelvin_temperature_converter']}",
+        callback_data="kelvin_temperature_conversion_destination")
 
     temperature_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(celsius_symbol_button,
                                                                                                  fahrenheit_symbol_button,
@@ -638,31 +757,47 @@ def time_conversion_numbers_inline_keyboard():
     return time_conversion_numbers_inline_keyboard
 
 
-def time_conversion_starter_inline_keyboard():
-    pico_second_symbol_button = types.InlineKeyboardButton(text="ps PicoSecond",
-                                                           callback_data="pico_second_time_conversion_starter")
-    nano_second_symbol_button = types.InlineKeyboardButton(text="ns NanoSecond",
-                                                           callback_data="nano_second_time_conversion_starter")
-    micro_second_symbol_button = types.InlineKeyboardButton(text="μs MicroSecond",
-                                                            callback_data="micro_second_time_conversion_starter")
-    milli_second_symbol_button = types.InlineKeyboardButton(text="ms MilliSecond",
-                                                            callback_data="milli_second_time_conversion_starter")
-    second_symbol_button = types.InlineKeyboardButton(text="s Second",
+def time_conversion_starter_inline_keyboard(user_language):
+    pico_second_symbol_button = types.InlineKeyboardButton(
+        text=f"ps {languages[user_language]['pico_second_time_converter']}",
+        callback_data="pico_second_time_conversion_starter")
+
+    nano_second_symbol_button = types.InlineKeyboardButton(
+        text=f"ns {languages[user_language]['nano_second_time_converter']}",
+        callback_data="nano_second_time_conversion_starter")
+
+    micro_second_symbol_button = types.InlineKeyboardButton(
+        text=f"μs {languages[user_language]['micro_second_time_converter']}",
+        callback_data="micro_second_time_conversion_starter")
+
+    milli_second_symbol_button = types.InlineKeyboardButton(
+        text=f"ms {languages[user_language]['milli_second_time_converter']}",
+        callback_data="milli_second_time_conversion_starter")
+
+    second_symbol_button = types.InlineKeyboardButton(text=f"s {languages[user_language]['second_time_converter']}",
                                                       callback_data="second_time_conversion_starter")
-    min_symbol_button = types.InlineKeyboardButton(text="min Minute",
+
+    min_symbol_button = types.InlineKeyboardButton(text=f"min {languages[user_language]['min_time_converter']}",
                                                    callback_data="min_time_conversion_starter")
-    hour_symbol_button = types.InlineKeyboardButton(text="h Hour",
+
+    hour_symbol_button = types.InlineKeyboardButton(text=f"h {languages[user_language]['hour_time_converter']}",
                                                     callback_data="hour_time_conversion_starter")
-    day_symbol_button = types.InlineKeyboardButton(text="d Day",
+
+    day_symbol_button = types.InlineKeyboardButton(text=f"d {languages[user_language]['day_time_converter']}",
                                                    callback_data="day_time_conversion_starter")
-    month_symbol_button = types.InlineKeyboardButton(text="mo Month",
+
+    month_symbol_button = types.InlineKeyboardButton(text=f"mo {languages[user_language]['month_time_converter']}",
                                                      callback_data="month_time_conversion_starter")
-    year_symbol_button = types.InlineKeyboardButton(text="y Year",
+
+    year_symbol_button = types.InlineKeyboardButton(text=f"y {languages[user_language]['year_time_converter']}",
                                                     callback_data="year_time_conversion_starter")
-    decade_symbol_button = types.InlineKeyboardButton(text="dec Decade",
+
+    decade_symbol_button = types.InlineKeyboardButton(text=f"dec {languages[user_language]['decade_time_converter']}",
                                                       callback_data="decade_time_conversion_starter")
-    century_symbol_button = types.InlineKeyboardButton(text="cent Century",
-                                                       callback_data="century_time_conversion_starter")
+
+    century_symbol_button = types.InlineKeyboardButton(
+        text=f"cent {languages[user_language]['century_time_converter']}",
+        callback_data="century_time_conversion_starter")
 
     time_conversion_starter_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(pico_second_symbol_button,
                                                                                           nano_second_symbol_button,
@@ -680,31 +815,47 @@ def time_conversion_starter_inline_keyboard():
     return time_conversion_starter_inline_keyboard
 
 
-def time_conversion_destination_inline_keyboard():
-    pico_second_symbol_button = types.InlineKeyboardButton(text="ps PicoSecond",
-                                                           callback_data="pico_second_time_conversion_destination")
-    nano_second_symbol_button = types.InlineKeyboardButton(text="ns NanoSecond",
-                                                           callback_data="nano_second_time_conversion_destination")
-    micro_second_symbol_button = types.InlineKeyboardButton(text="μs MicroSecond",
-                                                            callback_data="micro_second_time_conversion_destination")
-    milli_second_symbol_button = types.InlineKeyboardButton(text="ms MilliSecond",
-                                                            callback_data="milli_second_time_conversion_destination")
-    second_symbol_button = types.InlineKeyboardButton(text="s Second",
+def time_conversion_destination_inline_keyboard(user_language):
+    pico_second_symbol_button = types.InlineKeyboardButton(
+        text=f"ps {languages[user_language]['pico_second_time_converter']}",
+        callback_data="pico_second_time_conversion_destination")
+
+    nano_second_symbol_button = types.InlineKeyboardButton(
+        text=f"ns {languages[user_language]['nano_second_time_converter']}",
+        callback_data="nano_second_time_conversion_destination")
+
+    micro_second_symbol_button = types.InlineKeyboardButton(
+        text=f"μs {languages[user_language]['micro_second_time_converter']}",
+        callback_data="micro_second_time_conversion_destination")
+
+    milli_second_symbol_button = types.InlineKeyboardButton(
+        text=f"ms {languages[user_language]['milli_second_time_converter']}",
+        callback_data="milli_second_time_conversion_destination")
+
+    second_symbol_button = types.InlineKeyboardButton(text=f"s {languages[user_language]['second_time_converter']}",
                                                       callback_data="second_time_conversion_destination")
-    min_symbol_button = types.InlineKeyboardButton(text="min Minute",
+
+    min_symbol_button = types.InlineKeyboardButton(text=f"min {languages[user_language]['min_time_converter']}",
                                                    callback_data="min_time_conversion_destination")
-    hour_symbol_button = types.InlineKeyboardButton(text="h Hour",
+
+    hour_symbol_button = types.InlineKeyboardButton(text=f"h {languages[user_language]['hour_time_converter']}",
                                                     callback_data="hour_time_conversion_destination")
-    day_symbol_button = types.InlineKeyboardButton(text="d Day",
+
+    day_symbol_button = types.InlineKeyboardButton(text=f"d {languages[user_language]['day_time_converter']}",
                                                    callback_data="day_time_conversion_destination")
-    month_symbol_button = types.InlineKeyboardButton(text="mo Month",
+
+    month_symbol_button = types.InlineKeyboardButton(text=f"mo {languages[user_language]['month_time_converter']}",
                                                      callback_data="month_time_conversion_destination")
-    year_symbol_button = types.InlineKeyboardButton(text="y Year",
+
+    year_symbol_button = types.InlineKeyboardButton(text=f"y {languages[user_language]['year_time_converter']}",
                                                     callback_data="year_time_conversion_destination")
-    decade_symbol_button = types.InlineKeyboardButton(text="dec Decade",
+
+    decade_symbol_button = types.InlineKeyboardButton(text=f"dec {languages[user_language]['decade_time_converter']}",
                                                       callback_data="decade_time_conversion_destination")
-    century_symbol_button = types.InlineKeyboardButton(text="cent Century",
-                                                       callback_data="century_time_conversion_destination")
+
+    century_symbol_button = types.InlineKeyboardButton(
+        text=f"cent {languages[user_language]['century_time_converter']}",
+        callback_data="century_time_conversion_destination")
 
     time_conversion_destination_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(pico_second_symbol_button,
                                                                                               nano_second_symbol_button,
@@ -912,8 +1063,26 @@ def numeral_conversion_to_base_inline_keyboard():
     return to_base_inline_keyboard
 
 
-all_keyboards_list = ["Calculation", "BMI", "⬅️ Back ⬅️", "Calculator", "Unit Conversion", "Data", "Length", "Mass",
-                      "Numeral", "Temperature", "Time"]
+def settings__options_keyboard(user_language):
+    settings__language_option_button = languages[user_language]['language_option_selection']
+    settings__back_option_button = languages[user_language]['back_option_selection']
+    settings__options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
+    settings__options_keyboard.add(settings__language_option_button).add(settings__back_option_button)
+
+    return settings__options_keyboard
+
+
+def languages_inline_keyboard():
+    english_button = types.InlineKeyboardButton(text="English", callback_data="language_english")
+    persian_button = types.InlineKeyboardButton(text="Persian", callback_data="language_persian")
+
+    languages_inline_keyboard = types.InlineKeyboardMarkup(row_width=2).add(english_button, persian_button)
+
+    return languages_inline_keyboard
+
+
+all_keyboards_list = ["Calculation", "BMI", "Settings", "⬅️ Back ⬅️", "Calculator", "Unit Conversion", "Data", "Length",
+                      "Mass", "Numeral", "Temperature", "Time"]
 
 bmi_conversion_weight_callback_data_list = ["0_weight_bmi", "1_weight_bmi", "2_weight_bmi", "3_weight_bmi",
                                             "4_weight_bmi", "5_weight_bmi", "6_weight_bmi", "7_weight_bmi",
@@ -938,6 +1107,8 @@ calculator_callback_data_list = ["0_calculator", "1_calculator", "2_calculator",
                                  "sqrt_calculator", "log_calculator", "backward_calculator", "clear_calculator",
                                  "neg_or_pos_maker_calculator", "done_calculator"]
 
+languages_callback_data_list = ["language_english", "language_persian"]
+
 data_conversion_callback_data_list = ["0_data_converter", "1_data_converter", "2_data_converter", "3_data_converter",
                                       "4_data_converter", "5_data_converter", "6_data_converter", "7_data_converter",
                                       "8_data_converter", "9_data_converter", "dot_data_converter",
@@ -961,10 +1132,9 @@ length_conversion_callback_data_list = ["0_length_converter", "1_length_converte
                                         "milli_meter_length_conversion_starter",
                                         "centi_meter_length_conversion_starter", "desi_meter_length_conversion_starter",
                                         "meter_length_conversion_starter", "kilo_meter_length_conversion_starter",
-                                        "mile_length_conversion_starter", "foot_length_conversion_starter",
-                                        "inch_length_conversion_starter", "yard_length_conversion_starter",
-                                        "femara_length_conversion_starter", "fathom_length_conversion_starter",
-                                        "chi_length_conversion_starter", "gongli_length_conversion_starter",
+                                        "mile_length_conversion_starter", "nautical_mile_length_conversion_starter",
+                                        "foot_length_conversion_starter", "inch_length_conversion_starter",
+                                        "yard_length_conversion_starter", "fathom_length_conversion_starter",
                                         "light_year_length_conversion_starter",
                                         "pico_meter_length_conversion_destination",
                                         "nano_meter_length_conversion_destination",
@@ -974,10 +1144,10 @@ length_conversion_callback_data_list = ["0_length_converter", "1_length_converte
                                         "desi_meter_length_conversion_destination",
                                         "meter_length_conversion_destination",
                                         "kilo_meter_length_conversion_destination",
-                                        "mile_length_conversion_destination", "foot_length_conversion_destination",
-                                        "inch_length_conversion_destination", "yard_length_conversion_destination",
-                                        "femara_length_conversion_destination", "fathom_length_conversion_destination",
-                                        "chi_length_conversion_destination", "gongli_length_conversion_destination",
+                                        "mile_length_conversion_destination",
+                                        "nautical_mile_length_conversion_destination",
+                                        "foot_length_conversion_destination", "inch_length_conversion_destination",
+                                        "yard_length_conversion_destination", "fathom_length_conversion_destination",
                                         "light_year_length_conversion_destination"]
 
 mass_conversion_callback_data_list = ["0_mass_converter", "1_mass_converter", "2_mass_converter", "3_mass_converter",
@@ -992,18 +1162,16 @@ mass_conversion_callback_data_list = ["0_mass_converter", "1_mass_converter", "2
                                       "ounce_mass_conversion_starter", "carat_mass_conversion_starter",
                                       "grain_mass_conversion_starter", "long_ton_mass_conversion_starter",
                                       "short_ton_mass_conversion_starter", "stone_mass_conversion_starter",
-                                      "dram_mass_conversion_starter", "dan_mass_conversion_starter",
-                                      "sir_mass_conversion_starter", "nano_gram_mass_conversion_destination",
-                                      "micro_gram_mass_conversion_destination", "quintal_mass_conversion_destination",
-                                      "milli_gram_mass_conversion_destination",
+                                      "dram_mass_conversion_starter", "sir_mass_conversion_starter",
+                                      "nano_gram_mass_conversion_destination", "micro_gram_mass_conversion_destination",
+                                      "quintal_mass_conversion_destination", "milli_gram_mass_conversion_destination",
                                       "centi_gram_mass_conversion_destination", "desi_gram_mass_conversion_destination",
                                       "gram_mass_conversion_destination", "kilo_gram_mass_conversion_destination",
                                       "tone_mass_conversion_destination", "pound_mass_conversion_destination",
                                       "ounce_mass_conversion_destination", "carat_mass_conversion_destination",
                                       "grain_mass_conversion_destination", "long_ton_mass_conversion_destination",
                                       "short_ton_mass_conversion_destination", "stone_mass_conversion_destination",
-                                      "dram_mass_conversion_destination", "dan_mass_conversion_destination",
-                                      "sir_mass_conversion_destination"]
+                                      "dram_mass_conversion_destination", "sir_mass_conversion_destination"]
 
 numeral_conversion_callback_data_list = ["0_numeral_converter", "1_numeral_converter", "2_numeral_converter",
                                          "3_numeral_converter", "4_numeral_converter", "5_numeral_converter",

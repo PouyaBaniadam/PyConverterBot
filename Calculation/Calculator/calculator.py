@@ -1,8 +1,11 @@
 from decimal import Decimal
 from math import sin, cos, tan, log10, sqrt, factorial
 
+from Settings.languages.languages_dictionary import languages
+from Settings.languages.users_languages import get_user_current_language
 
-def calculator(phrase):
+
+def calculator(phrase, user_id):
     global calculation_answer
     data = phrase
 
@@ -2264,6 +2267,8 @@ def calculator(phrase):
         pass
 
     if calculation_answer == "":
-        calculation_answer = "Invalid input!"
+        user_language = get_user_current_language(user_id=user_id)
+
+        calculation_answer = languages[user_language]['invalid_input']
 
     return calculation_answer
