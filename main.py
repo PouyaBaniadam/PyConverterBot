@@ -1068,8 +1068,6 @@ Gregorian date : <code> {gregorian_date} </code>""", chat_id=chat_id,
                                 message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
                                 parse_mode="HTML")
 
-                            data_status.pop(chat_id)
-
                         if date_conversion_type_and_day_and_month_and_year_and_message_id[
                             "date_conversion_type"] == "gregorian_to_jalali":
                             gregorian_date = f'{date_conversion_type_and_day_and_month_and_year_and_message_id["year"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["month"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["day"]}'
@@ -1081,7 +1079,7 @@ Jalali date : <code> {jalali_date} </code>""", chat_id=chat_id,
                                 message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
                                 parse_mode="HTML")
 
-                            data_status.pop(chat_id)
+                        date_status.pop(chat_id)
 
                 except:
                     pass

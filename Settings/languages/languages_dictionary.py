@@ -549,7 +549,7 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
              """Gregorian date""",
 
          "date_convert":
-             """Date convert""",
+             """Date conversion""",
 
          "choose_date_convert_option":
              """Please choose one of the following date conversions.""",
