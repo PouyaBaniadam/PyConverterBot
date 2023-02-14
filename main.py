@@ -13,7 +13,7 @@ from UnitConversion.Temperature.temperature_converter import temperature_convert
 from UnitConversion.Time.time_converter import time_converter
 from keyboards_and_callbacks_data_list import *
 
-TOKEN = "YOUR_BOT_TOKEN"
+TOKEN = "5739625562:AAGWTyhXLjHbuycOx17AnFpLA4pae-gKfBM"
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
@@ -1057,29 +1057,30 @@ async def query_handler(call: types.CallbackQuery):
 
                 try:
                     for chat_id, date_conversion_type_and_day_and_month_and_year_and_message_id in date_status.items():
-                        if date_conversion_type_and_day_and_month_and_year_and_message_id[
-                            "date_conversion_type"] == "jalali_to_gregorian":
-                            jalali_date = f'{date_conversion_type_and_day_and_month_and_year_and_message_id["year"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["month"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["day"]}'
-                            gregorian_date = jalali_to_gregorian(jalali_date)
+                        if len(date_status[chat_id]) == 5:
+                            if date_conversion_type_and_day_and_month_and_year_and_message_id[
+                                "date_conversion_type"] == "jalali_to_gregorian":
+                                jalali_date = f'{date_conversion_type_and_day_and_month_and_year_and_message_id["year"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["month"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["day"]}'
+                                gregorian_date = jalali_to_gregorian(jalali_date)
 
-                            await bot.edit_message_text(
-                                text=f"""Jalali date : <code> {jalali_date} </code>
+                                await bot.edit_message_text(
+                                    text=f"""Jalali date : <code> {jalali_date} </code>
 Gregorian date : <code> {gregorian_date} </code>""", chat_id=chat_id,
-                                message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
-                                parse_mode="HTML")
+                                    message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
+                                    parse_mode="HTML")
 
-                        if date_conversion_type_and_day_and_month_and_year_and_message_id[
-                            "date_conversion_type"] == "gregorian_to_jalali":
-                            gregorian_date = f'{date_conversion_type_and_day_and_month_and_year_and_message_id["year"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["month"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["day"]}'
-                            jalali_date = gregorian_to_jalali(gregorian_date)
+                            if date_conversion_type_and_day_and_month_and_year_and_message_id[
+                                "date_conversion_type"] == "gregorian_to_jalali":
+                                gregorian_date = f'{date_conversion_type_and_day_and_month_and_year_and_message_id["year"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["month"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["day"]}'
+                                jalali_date = gregorian_to_jalali(gregorian_date)
 
-                            await bot.edit_message_text(
-                                text=f"""Gregorian date : <code> {gregorian_date} </code>
+                                await bot.edit_message_text(
+                                    text=f"""Gregorian date : <code> {gregorian_date} </code>
 Jalali date : <code> {jalali_date} </code>""", chat_id=chat_id,
-                                message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
-                                parse_mode="HTML")
+                                    message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
+                                    parse_mode="HTML")
 
-                        date_status.pop(chat_id)
+                            date_status.pop(chat_id)
 
                 except:
                     pass
