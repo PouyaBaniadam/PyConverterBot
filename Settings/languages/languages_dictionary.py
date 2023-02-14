@@ -47,10 +47,10 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
         "something_went_wrong_bmi":
             """یک مشکلی پیش آمده!""",
 
-        "invalid_height_input!":
+        "invalid_height_input":
             """قد وارد شده نامعتبر است!""",
 
-        "invalid_weight_input!":
+        "invalid_weight_input":
             """وزن وارد شده نامعتبر است!""",
 
         "extremely_obese":
@@ -61,7 +61,7 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
             """شما چاق هستید.
 لطفا هر چه زود تر به یک دکتر مراجعه کنید!🧑🏻‍⚕️""",
 
-        "little_overweight!":
+        "little_overweight":
             """شما یک مقدار چاق هستید.
 لطفا به یک دکتر مراجعه کنید!🧑🏻‍⚕️""",
 
@@ -95,8 +95,65 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
         "invalid_input":
             """ورودی نامعتبر""",
 
+        "date":
+            """تاریخ""",
+
+        "date_option":
+            """لطفا یکی از گزینه های مربوط به تاریخ را از بین موارد زیر انتخاب کنید.""",
+
+        "today":
+            """امروز""",
+
+        "current_time":
+            """زمان""",
+
+        "jalali_date":
+            """تاریخ شمسی""",
+
+        "gregorian_date":
+            """تاریخ میلادی""",
+
         "unit_conversion":
             """تبدیلات""",
+
+        "date_convert":
+            """تبدیل تاریخ""",
+
+        "choose_date_convert_option":
+            """لطفا یکی از تبدیلات تاریخ زیر را انتخاب کنید.""",
+
+        "jalali_to_gregorian":
+            """شمسی به میلادی""",
+
+        "gregorian_to_jalali":
+            """میلادی به شمسی""",
+
+        "enter_day":
+            """لطفا روز را وارد کنید. (حداکثر 2 عدد)""",
+
+        "enter_month":
+            """لطفا ماه را وارد کنید. (حداکثر 2 عدد)""",
+
+        "enter_year":
+            """لطفا سال را وارد کنید. (حداکثر 4 عدد)""",
+
+        "date_conversion_year_max_4_error":
+            """سال وارد شده نمیتواند بیشتر از 4 رقم داشته باشد.""",
+
+        "date_conversion_day_max_31_error":
+            """حداکثر مقدار عددی روز ، میتواند 31 باشد.""",
+
+        "date_conversion_day_max_2_error":
+            """روز وارد شده نمیتواند بیشتر از 2 رقم داشته باشد.""",
+
+        "date_conversion_month_max_12_error":
+            """حداکثر مقدار عددی ماه ، میتواند 12 باشد.""",
+
+        "date_conversion_month_max_2_error":
+            """ماه وارد شده نمیتواند بیشتر از 2 رقم داشته باشد.""",
+
+        "date_conversion_year_min_622_error":
+            """حداقل مقدار سال میلادی ، 622 می باشد.""",
 
         "unit_conversion_option_selection":
             """لطفا یکی از تبدیلات زیر را انتخاب کنید.""",
@@ -425,10 +482,10 @@ I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love 
          "something_went_wrong_bmi":
              """Something went wrong!""",
 
-         "invalid_height_input!":
+         "invalid_height_input":
              """Invalid height!""",
 
-         "invalid_weight_input!":
+         "invalid_weight_input":
              """Invalid weight""",
 
          "extremely_obese":
@@ -439,7 +496,7 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
              """You are obese!
 You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
-         "little_overweight!":
+         "little_overweight":
              """You are a little overweight!
 You should see a doctor!🧑🏻‍⚕️""",
 
@@ -472,6 +529,63 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "invalid_input":
              """Invalid input!""",
+
+         "date":
+             """Date""",
+
+         "date_option":
+             """Please select a date option from the list below.""",
+
+         "today":
+             """Today""",
+
+         "current_time":
+             """Time""",
+
+         "jalali_date":
+             """Jalali date""",
+
+         "gregorian_date":
+             """Gregorian date""",
+
+         "date_convert":
+             """Date convert""",
+
+         "choose_date_convert_option":
+             """Please choose one of the following date conversions.""",
+
+         "jalali_to_gregorian":
+             """Jalali to Gregorian""",
+
+         "gregorian_to_jalali":
+             """Gregorian to Jalali""",
+
+         "enter_day":
+             """Please enter the day. (2 digits maximum)""",
+
+         "enter_month":
+             """Please enter the month. (2 digits maximum)""",
+
+         "enter_year":
+             """Please enter the year. (4 digits maximum)""",
+
+         "date_conversion_year_max_4_error":
+             """Maximum year-length can be 4.""",
+
+         "date_conversion_day_max_31_error":
+             """Maximum day-number can be 31.""",
+
+         "date_conversion_day_max_2_error":
+             """Maximum day-length can be 2 digits.""",
+
+         "date_conversion_month_max_12_error":
+             """Maximum month-number can be 12.""",
+
+         "date_conversion_month_max_2_error":
+             """Maximum month-length can be 2 digits.""",
+
+         "date_conversion_year_min_622_error":
+             """Minimum year-number can be 622.""",
 
          "unit_conversion":
              """Unit conversion""",
@@ -543,10 +657,10 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
              """Tera byte""",
 
          "peta_byte_data_converter":
-             """پتا بایت""",
+             """Peta byte""",
 
          "exa_byte_data_converter":
-             """Peta byte""",
+             """Exa byte""",
 
          "length_converter_enter_number":
              """Please enter the length-number :""",

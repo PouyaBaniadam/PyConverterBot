@@ -2,6 +2,8 @@ from math import pi
 from aiogram import Bot, Dispatcher, executor
 from Calculation.BMI.bmi import bmi_calculator
 from Calculation.Calculator.calculator import calculator
+from DataBase.Users.users_info import add_id_to_sql, fetch_id_from_sql
+from Date.date import jalali_getter, gregorian_getter, current_time_getter, jalali_to_gregorian, gregorian_to_jalali
 from Settings.languages.users_languages import users_first_language, user_language_update, get_user_current_language
 from UnitConversion.Data.data_converter import data_converter
 from UnitConversion.Length.length_converter import length_converter
@@ -11,7 +13,7 @@ from UnitConversion.Temperature.temperature_converter import temperature_convert
 from UnitConversion.Time.time_converter import time_converter
 from keyboards_and_callbacks_data_list import *
 
-TOKEN = "YOUR_VOT_TOKEN"
+TOKEN = "YOUR_BOT_TOKEN"
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
@@ -28,15 +30,18 @@ mass_status = {}
 numeral_status = {}
 temperature_status = {}
 time_status = {}
+date_status = {}
 
 
 @dp.message_handler(commands="start")
 async def welcome(message: types.Message):
     user_ids.append(message.chat.id)
+    user_exists = fetch_id_from_sql(user_id=message.from_user.id)
 
-    # user_id_to_sql_adder(user_id=message.chat.id)
+    if user_exists is None:
+        users_first_language(user_id=message.chat.id)
 
-    users_first_language(user_id=message.chat.id)
+    add_id_to_sql(user_id=message.from_user.id)
 
     states.update({message.chat.id: "start"})
 
@@ -48,7 +53,12 @@ async def welcome(message: types.Message):
 
 @dp.message_handler(commands="help")
 async def welcome(message: types.Message):
-    user_language = get_user_current_language(user_id=message.chat.id)
+    try:
+        user_language = get_user_current_language(user_id=message.chat.id)
+    except:
+        users_first_language(user_id=message.from_user.id)
+        user_language = get_user_current_language(user_id=message.chat.id)
+
     await message.reply(text=languages[user_language]["help_command"])
 
     await bot.send_video(video=open('Assets/Videos/Tutorial/MainTutorial.mp4', 'rb'), chat_id=message.chat.id)
@@ -56,7 +66,12 @@ async def welcome(message: types.Message):
 
 @dp.message_handler(commands="about")
 async def welcome(message: types.Message):
-    user_language = get_user_current_language(user_id=message.chat.id)
+    try:
+        user_language = get_user_current_language(user_id=message.chat.id)
+    except:
+        users_first_language(user_id=message.from_user.id)
+        user_language = get_user_current_language(user_id=message.chat.id)
+
     await message.reply(text=languages[user_language]["about_command"])
 
 
@@ -64,12 +79,49 @@ async def welcome(message: types.Message):
 async def options_keyboard_answer(message: types.Message):
     global calculator_mode
 
-    user_language = get_user_current_language(user_id=message.chat.id)
+    try:
+        user_language = get_user_current_language(user_id=message.chat.id)
+    except:
+        users_first_language(user_id=message.from_user.id)
+        user_language = get_user_current_language(user_id=message.chat.id)
 
     if message.text == languages[user_language]['BMI']:
+
+        try:
+            user_language = get_user_current_language(user_id=message.chat.id)
+        except:
+            users_first_language(user_id=message.from_user.id)
+            user_language = get_user_current_language(user_id=message.chat.id)
+
         await bot.send_message(chat_id=message.chat.id, text=languages[user_language]['enter_weight_bmi'],
                                reply_markup=bmi__conversion_weight_inline_keyboard())
         states.update({message.chat.id: "bmi"})
+
+    if message.text == languages[user_language]["date"]:
+
+        try:
+            user_language = get_user_current_language(user_id=message.chat.id)
+        except:
+            users_first_language(user_id=message.from_user.id)
+            user_language = get_user_current_language(user_id=message.chat.id)
+
+        await bot.send_message(chat_id=message.chat.id, text=languages[user_language]['date_option'],
+                               reply_markup=date__options_keyboard(user_language=user_language))
+        states.update({message.chat.id: "date"})
+
+    if message.text == languages[user_language]['today']:
+        current_time = current_time_getter()
+        today_in_gregorian = gregorian_getter()
+        today_in_jalali = jalali_getter()
+
+        await bot.send_message(text=f"""{languages[user_language]['current_time']} : <code> {current_time} </code>
+{languages[user_language]['jalali_date']} : <code> {today_in_jalali} </code>
+{languages[user_language]['gregorian_date']} : <code> {today_in_gregorian} </code>""", chat_id=message.chat.id,
+                               parse_mode="HTML")
+
+    if message.text == languages[user_language]["date_convert"]:
+        await bot.send_message(text=languages[user_language]['choose_date_convert_option'], chat_id=message.chat.id,
+                               reply_markup=date__date_conversion_options_inline_keyboard(user_language=user_language))
 
     if message.text == languages[user_language]['calculation']:
         await bot.send_message(chat_id=message.chat.id,
@@ -133,10 +185,20 @@ async def options_keyboard_answer(message: types.Message):
         states.update({message.chat.id: "select_language"})
 
     if message.text == languages[user_language]['back_option_selection']:
-
-        user_state = states[message.from_user.id]
+        try:
+            user_state = states[message.from_user.id]
+        except:
+            states.update({message.from_user.id: "start"})
+            user_state = states[message.from_user.id]
 
         if user_state == "start":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=f"{languages[user_language]['start_command_choose_button']}",
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+        if user_state == "date":
             user_language = get_user_current_language(user_id=message.from_user.id)
 
             await bot.send_message(chat_id=message.chat.id,
@@ -633,6 +695,396 @@ async def query_handler(call: types.CallbackQuery):
             await bot.edit_message_text(
                 text=f"""{data_to_be_calculate} = <code>{calculator(data_to_be_calculate, user_id=call.from_user.id)}</code>""",
                 chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+
+    if message in date_conversion_callback_date_list:
+        text = call.message.text
+
+        if "day" in text or "روز" in text:
+            text = ""
+
+        if "month" in text or "ماه" in text:
+            text = ""
+
+        if "year" in text or "سال" in text:
+            text = ""
+
+        if message == "jalali_to_gregorian":
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]["enter_day"]
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+            date_status.update({call.from_user.id: {"date_conversion_type": "jalali_to_gregorian",
+                                                    "message_id": call.message.message_id}})
+
+        if message == "gregorian_to_jalali":
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]["enter_day"]
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+            date_status.update({call.from_user.id: {"date_conversion_type": "gregorian_to_jalali",
+                                                    "message_id": call.message.message_id}})
+
+        if message == "0_date_conversion_day":
+            text += "0"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "1_date_conversion_day":
+            text += "1"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "2_date_conversion_day":
+            text += "2"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "3_date_conversion_day":
+            text += "3"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "4_date_conversion_day":
+            text += "4"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "5_date_conversion_day":
+            text += "5"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "6_date_conversion_day":
+            text += "6"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "7_date_conversion_day":
+            text += "7"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "8_date_conversion_day":
+            text += "8"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "9_date_conversion_day":
+            text += "9"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "backward_date_conversion_day":
+            text = text[:-1]
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            if text == "":
+                text = languages[user_language]["enter_day"]
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "clear_date_conversion_day":
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]["enter_day"]
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+        if message == "done_date_conversion_day":
+            day = call.message.text
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            if len(day) > 2:
+                await bot.edit_message_text(text=languages[user_language]["date_conversion_day_max_2_error"],
+                                            chat_id=chat_id, message_id=call.message.message_id,
+                                            reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+            elif int(day) > 31:
+                await bot.edit_message_text(text=languages[user_language]["date_conversion_day_max_31_error"],
+                                            chat_id=chat_id, message_id=call.message.message_id,
+                                            reply_markup=date__date_conversion_day_numbers_inline_keyboard())
+
+            else:
+                if len(day) == 1:
+                    day = f"0{day}"
+
+                date_status.update(
+                    {call.from_user.id: {"date_conversion_type": date_status[call.from_user.id]["date_conversion_type"],
+                                         "day": day, "message_id": call.message.message_id}})
+
+                user_language = get_user_current_language(user_id=call.from_user.id)
+
+                await bot.edit_message_text(text=languages[user_language]["enter_month"], chat_id=chat_id,
+                                            message_id=call.message.message_id,
+                                            reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "0_date_conversion_month":
+            text += "0"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "1_date_conversion_month":
+            text += "1"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "2_date_conversion_month":
+            text += "2"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "3_date_conversion_month":
+            text += "3"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "4_date_conversion_month":
+            text += "4"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "5_date_conversion_month":
+            text += "5"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "6_date_conversion_month":
+            text += "6"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "7_date_conversion_month":
+            text += "7"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "8_date_conversion_month":
+            text += "8"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "9_date_conversion_month":
+            text += "9"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "backward_date_conversion_month":
+            text = text[:-1]
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            if text == "":
+                text = languages[user_language]["enter_month"]
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "clear_date_conversion_month":
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]["enter_month"]
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+        if message == "done_date_conversion_month":
+            month = call.message.text
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            if len(month) > 2:
+                await bot.edit_message_text(text=languages[user_language]["date_conversion_month_max_2_error"],
+                                            chat_id=chat_id, message_id=call.message.message_id,
+                                            reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+            elif int(month) > 12:
+                await bot.edit_message_text(text=languages[user_language]["date_conversion_month_max_12_error"],
+                                            chat_id=chat_id,
+                                            message_id=call.message.message_id,
+                                            reply_markup=date__date_conversion_month_numbers_inline_keyboard())
+
+            else:
+                if len(month) == 1:
+                    month = f"0{month}"
+
+                date_status.update(
+                    {call.from_user.id: {"date_conversion_type": date_status[call.from_user.id]["date_conversion_type"],
+                                         "day": date_status[call.from_user.id]["day"], "month": month,
+                                         "message_id": call.message.message_id}})
+
+                user_language = get_user_current_language(user_id=call.from_user.id)
+
+                await bot.edit_message_text(text=languages[user_language]["enter_year"], chat_id=chat_id,
+                                            message_id=call.message.message_id,
+                                            reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "0_date_conversion_year":
+            text += "0"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "1_date_conversion_year":
+            text += "1"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "2_date_conversion_year":
+            text += "2"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "3_date_conversion_year":
+            text += "3"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "4_date_conversion_year":
+            text += "4"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "5_date_conversion_year":
+            text += "5"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "6_date_conversion_year":
+            text += "6"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "7_date_conversion_year":
+            text += "7"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "8_date_conversion_year":
+            text += "8"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "9_date_conversion_year":
+            text += "9"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "backward_date_conversion_year":
+            text = text[:-1]
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            if text == "":
+                text = languages[user_language]["enter_year"]
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "clear_date_conversion_year":
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]["enter_year"]
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+        if message == "done_date_conversion_year":
+            year = call.message.text
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            if len(year) == 1:
+                year = f"000{year}"
+
+            if len(year) == 2:
+                year = f"00{year}"
+
+            if len(year) == 3:
+                year = f"0{year}"
+
+            if len(year) > 4:
+                await bot.edit_message_text(text=languages[user_language]["date_conversion_year_max_4_error"],
+                                            chat_id=chat_id, message_id=call.message.message_id,
+                                            reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+            if int(year) < 622 and date_status[call.from_user.id]["date_conversion_type"] == "gregorian_to_jalali":
+                await bot.edit_message_text(text=languages[user_language]["date_conversion_year_min_622_error"],
+                                            chat_id=chat_id, message_id=call.message.message_id,
+                                            reply_markup=date__date_conversion_year_numbers_inline_keyboard())
+
+            else:
+                date_status.update(
+                    {call.from_user.id: {"date_conversion_type": date_status[call.from_user.id]["date_conversion_type"],
+                                         "day": date_status[call.from_user.id]["day"],
+                                         "month": date_status[call.from_user.id]["month"], "year": year,
+                                         "message_id": call.message.message_id}})
+
+                user_language = get_user_current_language(user_id=call.from_user.id)
+
+                try:
+                    for chat_id, date_conversion_type_and_day_and_month_and_year_and_message_id in date_status.items():
+                        if date_conversion_type_and_day_and_month_and_year_and_message_id[
+                            "date_conversion_type"] == "jalali_to_gregorian":
+                            jalali_date = f'{date_conversion_type_and_day_and_month_and_year_and_message_id["year"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["month"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["day"]}'
+                            gregorian_date = jalali_to_gregorian(jalali_date)
+
+                            await bot.edit_message_text(
+                                text=f"""Jalali date : <code> {jalali_date} </code>
+Gregorian date : <code> {gregorian_date} </code>""", chat_id=chat_id,
+                                message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
+                                parse_mode="HTML")
+
+                            data_status.pop(chat_id)
+
+                        if date_conversion_type_and_day_and_month_and_year_and_message_id[
+                            "date_conversion_type"] == "gregorian_to_jalali":
+                            gregorian_date = f'{date_conversion_type_and_day_and_month_and_year_and_message_id["year"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["month"]}/{date_conversion_type_and_day_and_month_and_year_and_message_id["day"]}'
+                            jalali_date = gregorian_to_jalali(gregorian_date)
+
+                            await bot.edit_message_text(
+                                text=f"""Gregorian date : <code> {gregorian_date} </code>
+Jalali date : <code> {jalali_date} </code>""", chat_id=chat_id,
+                                message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
+                                parse_mode="HTML")
+
+                            data_status.pop(chat_id)
+
+                except:
+                    pass
 
     if message in data_conversion_callback_data_list:
         text = call.message.text

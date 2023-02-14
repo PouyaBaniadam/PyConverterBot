@@ -7,12 +7,129 @@ from Settings.languages.languages_dictionary import languages
 def bot_options_keyboard(user_language):
     bot__unit_conversion_option_button = KeyboardButton(languages[user_language]["unit_conversion"])
     bot__calculation_option_button = KeyboardButton(languages[user_language]["calculation"])
+    bot__date_option_button = KeyboardButton(languages[user_language]["date"])
     bot__settings_option_button = KeyboardButton(languages[user_language]["settings_option_selection"])
     bot_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
-    bot_options_keyboard.add(bot__unit_conversion_option_button, bot__calculation_option_button).add(
+    bot_options_keyboard.add(bot__unit_conversion_option_button, bot__calculation_option_button,
+                             bot__date_option_button).add(
         bot__settings_option_button)
 
     return bot_options_keyboard
+
+
+def date__options_keyboard(user_language):
+    date__today_option_button = KeyboardButton(languages[user_language]["today"])
+    date__date_convert_option_button = KeyboardButton(languages[user_language]["date_convert"])
+    date__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
+
+    date__options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
+    date__options_keyboard.add(date__today_option_button, date__date_convert_option_button).add(
+        date__back_option_button)
+
+    return date__options_keyboard
+
+
+def date__date_conversion_options_inline_keyboard(user_language):
+    jalali_to_gregorian = types.InlineKeyboardButton(text=languages[user_language]['jalali_to_gregorian'],
+                                                     callback_data="jalali_to_gregorian")
+
+    gregorian_to_jalali = types.InlineKeyboardButton(text=languages[user_language]['gregorian_to_jalali'],
+                                                     callback_data="gregorian_to_jalali")
+
+    date__date_conversion_options_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
+    date__date_conversion_options_inline_keyboard.add(jalali_to_gregorian, gregorian_to_jalali)
+
+    return date__date_conversion_options_inline_keyboard
+
+
+def date__date_conversion_day_numbers_inline_keyboard():
+    date_conversion__0_button = types.InlineKeyboardButton(text="0", callback_data="0_date_conversion_day")
+    date_conversion__1_button = types.InlineKeyboardButton(text="1", callback_data="1_date_conversion_day")
+    date_conversion__2_button = types.InlineKeyboardButton(text="2", callback_data="2_date_conversion_day")
+    date_conversion__3_button = types.InlineKeyboardButton(text="3", callback_data="3_date_conversion_day")
+    date_conversion__4_button = types.InlineKeyboardButton(text="4", callback_data="4_date_conversion_day")
+    date_conversion__5_button = types.InlineKeyboardButton(text="5", callback_data="5_date_conversion_day")
+    date_conversion__6_button = types.InlineKeyboardButton(text="6", callback_data="6_date_conversion_day")
+    date_conversion__7_button = types.InlineKeyboardButton(text="7", callback_data="7_date_conversion_day")
+    date_conversion__8_button = types.InlineKeyboardButton(text="8", callback_data="8_date_conversion_day")
+    date_conversion__9_button = types.InlineKeyboardButton(text="9", callback_data="9_date_conversion_day")
+    date_conversion__backward_button = types.InlineKeyboardButton(text="«",
+                                                                  callback_data="backward_date_conversion_day")
+    date_conversion__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_date_conversion_day")
+    date_conversion__done_weight_button = types.InlineKeyboardButton(text="✅",
+                                                                     callback_data="done_date_conversion_day")
+    date__date_conversion_day_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
+
+    date__date_conversion_day_numbers_inline_keyboard.add(date_conversion__1_button, date_conversion__2_button,
+                                                          date_conversion__3_button, date_conversion__4_button,
+                                                          date_conversion__5_button, date_conversion__6_button,
+                                                          date_conversion__7_button, date_conversion__8_button,
+                                                          date_conversion__9_button, date_conversion__backward_button,
+                                                          date_conversion__0_button,
+                                                          date_conversion__clear_button).add(
+        date_conversion__done_weight_button)
+
+    return date__date_conversion_day_numbers_inline_keyboard
+
+
+def date__date_conversion_month_numbers_inline_keyboard():
+    date_conversion__0_button = types.InlineKeyboardButton(text="0", callback_data="0_date_conversion_month")
+    date_conversion__1_button = types.InlineKeyboardButton(text="1", callback_data="1_date_conversion_month")
+    date_conversion__2_button = types.InlineKeyboardButton(text="2", callback_data="2_date_conversion_month")
+    date_conversion__3_button = types.InlineKeyboardButton(text="3", callback_data="3_date_conversion_month")
+    date_conversion__4_button = types.InlineKeyboardButton(text="4", callback_data="4_date_conversion_month")
+    date_conversion__5_button = types.InlineKeyboardButton(text="5", callback_data="5_date_conversion_month")
+    date_conversion__6_button = types.InlineKeyboardButton(text="6", callback_data="6_date_conversion_month")
+    date_conversion__7_button = types.InlineKeyboardButton(text="7", callback_data="7_date_conversion_month")
+    date_conversion__8_button = types.InlineKeyboardButton(text="8", callback_data="8_date_conversion_month")
+    date_conversion__9_button = types.InlineKeyboardButton(text="9", callback_data="9_date_conversion_month")
+    date_conversion__backward_button = types.InlineKeyboardButton(text="«",
+                                                                  callback_data="backward_date_conversion_month")
+    date_conversion__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_date_conversion_month")
+    date_conversion__done_weight_button = types.InlineKeyboardButton(text="✅",
+                                                                     callback_data="done_date_conversion_month")
+    date__date_conversion_month_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
+
+    date__date_conversion_month_numbers_inline_keyboard.add(date_conversion__1_button, date_conversion__2_button,
+                                                            date_conversion__3_button, date_conversion__4_button,
+                                                            date_conversion__5_button, date_conversion__6_button,
+                                                            date_conversion__7_button, date_conversion__8_button,
+                                                            date_conversion__9_button, date_conversion__backward_button,
+                                                            date_conversion__0_button,
+                                                            date_conversion__clear_button).add(
+        date_conversion__done_weight_button)
+
+    return date__date_conversion_month_numbers_inline_keyboard
+
+
+def date__date_conversion_year_numbers_inline_keyboard():
+    date_conversion__0_button = types.InlineKeyboardButton(text="0", callback_data="0_date_conversion_year")
+    date_conversion__1_button = types.InlineKeyboardButton(text="1", callback_data="1_date_conversion_year")
+    date_conversion__2_button = types.InlineKeyboardButton(text="2", callback_data="2_date_conversion_year")
+    date_conversion__3_button = types.InlineKeyboardButton(text="3", callback_data="3_date_conversion_year")
+    date_conversion__4_button = types.InlineKeyboardButton(text="4", callback_data="4_date_conversion_year")
+    date_conversion__5_button = types.InlineKeyboardButton(text="5", callback_data="5_date_conversion_year")
+    date_conversion__6_button = types.InlineKeyboardButton(text="6", callback_data="6_date_conversion_year")
+    date_conversion__7_button = types.InlineKeyboardButton(text="7", callback_data="7_date_conversion_year")
+    date_conversion__8_button = types.InlineKeyboardButton(text="8", callback_data="8_date_conversion_year")
+    date_conversion__9_button = types.InlineKeyboardButton(text="9", callback_data="9_date_conversion_year")
+    date_conversion__backward_button = types.InlineKeyboardButton(text="«",
+                                                                  callback_data="backward_date_conversion_year")
+    date_conversion__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_date_conversion_year")
+    date_conversion__done_weight_button = types.InlineKeyboardButton(text="✅",
+                                                                     callback_data="done_date_conversion_year")
+    date__date_conversion_year_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
+
+    date__date_conversion_year_numbers_inline_keyboard.add(date_conversion__1_button, date_conversion__2_button,
+                                                           date_conversion__3_button, date_conversion__4_button,
+                                                           date_conversion__5_button, date_conversion__6_button,
+                                                           date_conversion__7_button, date_conversion__8_button,
+                                                           date_conversion__9_button, date_conversion__backward_button,
+                                                           date_conversion__0_button,
+                                                           date_conversion__clear_button).add(
+        date_conversion__done_weight_button)
+
+    return date__date_conversion_year_numbers_inline_keyboard
 
 
 def calculation__options_keyboard(user_language):
@@ -1097,6 +1214,23 @@ bmi_conversion_height_callback_data_list = ["0_height_bmi", "1_height_bmi", "2_h
                                             "done_height_bmi"]
 
 bmi__conversion_see_bmi_chart_callback_data_list = ["see_chart_bmi"]
+
+date_conversion_callback_date_list = ["jalali_to_gregorian", "gregorian_to_jalali", "0_date_conversion_day",
+                                      "1_date_conversion_day", "2_date_conversion_day",
+                                      "3_date_conversion_day", "4_date_conversion_day", "5_date_conversion_day",
+                                      "6_date_conversion_day", "7_date_conversion_day", "8_date_conversion_day",
+                                      "9_date_conversion_day", "backward_date_conversion_day",
+                                      "clear_date_conversion_day", "done_date_conversion_day",
+                                      "0_date_conversion_month", "1_date_conversion_month", "2_date_conversion_month",
+                                      "3_date_conversion_month", "4_date_conversion_month", "5_date_conversion_month",
+                                      "6_date_conversion_month", "7_date_conversion_month", "8_date_conversion_month",
+                                      "9_date_conversion_month", "backward_date_conversion_month",
+                                      "clear_date_conversion_month", "done_date_conversion_month",
+                                      "0_date_conversion_year", "1_date_conversion_year", "2_date_conversion_year",
+                                      "3_date_conversion_year", "4_date_conversion_year", "5_date_conversion_year",
+                                      "6_date_conversion_year", "7_date_conversion_year", "8_date_conversion_year",
+                                      "9_date_conversion_year", "backward_date_conversion_year",
+                                      "clear_date_conversion_year", "done_date_conversion_year"]
 
 calculator_callback_data_list = ["0_calculator", "1_calculator", "2_calculator", "3_calculator", "4_calculator",
                                  "5_calculator", "6_calculator", "7_calculator", "8_calculator", "9_calculator",
