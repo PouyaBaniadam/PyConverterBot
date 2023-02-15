@@ -1064,8 +1064,8 @@ async def query_handler(call: types.CallbackQuery):
                                 gregorian_date = jalali_to_gregorian(jalali_date)
 
                                 await bot.edit_message_text(
-                                    text=f"""Jalali date : <code> {jalali_date} </code>
-Gregorian date : <code> {gregorian_date} </code>""", chat_id=chat_id,
+                                    text=f"""{languages[user_language]['jalali_date']} : <code> {jalali_date} </code>
+{languages[user_language]['gregorian_date']} : <code> {gregorian_date} </code>""", chat_id=chat_id,
                                     message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
                                     parse_mode="HTML")
 
@@ -1075,8 +1075,8 @@ Gregorian date : <code> {gregorian_date} </code>""", chat_id=chat_id,
                                 jalali_date = gregorian_to_jalali(gregorian_date)
 
                                 await bot.edit_message_text(
-                                    text=f"""Gregorian date : <code> {gregorian_date} </code>
-Jalali date : <code> {jalali_date} </code>""", chat_id=chat_id,
+                                    text=f"""{languages[user_language]['gregorian_date']} : <code> {gregorian_date} </code>
+{languages[user_language]['jalali_date']} : <code> {jalali_date} </code>""", chat_id=chat_id,
                                     message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
                                     parse_mode="HTML")
 
