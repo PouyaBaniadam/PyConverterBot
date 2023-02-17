@@ -155,6 +155,12 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
         "date_conversion_year_min_622_error":
             """حداقل مقدار سال میلادی ، 622 می باشد.""",
 
+        "jalali_calender":
+            """تقویم شمسی""",
+
+        "gregorian_calender":
+            """تقویم میلادی""",
+
         "unit_conversion_option_selection":
             """لطفا یکی از تبدیلات زیر را انتخاب کنید.""",
 
@@ -431,6 +437,48 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
         "century_time_converter":
             """قرن""",
 
+        "currency":
+            """پول""",
+
+        "currency_converter_select":
+            """لطفا یکی از گزینه های مربوط به پول زیر را انتخاب کنید""",
+
+        "now_currency":
+            """قیمت لحظه ای""",
+
+        "currency_conversion":
+            """تبدیل پول""",
+
+        "currency_converter_enter_currency_amount":
+            """لطفا مقدار عددی پول مورد نظر خود را برای شروع تبدیل وارد کنید :""",
+
+        "currency_converter_start":
+            """لطفا واحد پول مورد نظر خود را برای شروع تبدیل انتخاب کنید.""",
+
+        "currency_converter_destination":
+            """لطفا پول دمای مورد نظر خود را برای پایان تبدیل انتخاب کنید.""",
+
+        "dollar_currency_converter":
+            """دلار""",
+
+        "tooman_currency_converter":
+            """تومان""",
+
+        "euro_currency_converter":
+            """یورو""",
+
+        "pound_currency_converter":
+            """پوند""",
+
+        "dirham_currency_converter":
+            """درهم عمارات عربی""",
+
+        "swiss_franc_currency_converter":
+            """فرانک سوئیس""",
+
+        "lir_currency_converter":
+            """لیر ترکیه""",
+
     },
 
     "language_english":
@@ -587,6 +635,12 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
          "date_conversion_year_min_622_error":
              """Minimum year-number can be 622.""",
 
+         "jalali_calender":
+             """Jalali calender""",
+
+         "gregorian_calender":
+             """Gregorian calender""",
+
          "unit_conversion":
              """Unit conversion""",
 
@@ -717,7 +771,7 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
              """Light year""",
 
          "mass_converter_enter_number":
-             """Please enter the data-number :""",
+             """Please enter the mass-number :""",
 
          "mass_converter_start":
              """Please choose a mass-unit to start the conversion.""",
@@ -865,6 +919,48 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "century_time_converter":
              """Century""",
+
+         "currency":
+             """Currency""",
+
+         "now_currency":
+             """Momentarily rate""",
+
+         "currency_conversion":
+             """Currency conversion""",
+
+         "currency_converter_select":
+             """Please choose one of the following currency-options below.""",
+
+         "currency_converter_enter_currency_amount":
+             """Please enter the currency-amount :""",
+
+         "currency_converter_start":
+             """Please choose a currency-unit to start the conversion""",
+
+         "currency_converter_destination":
+             """Please choose a currency-unit to finish the conversion""",
+
+         "dollar_currency_converter":
+             """Dollar""",
+
+         "tooman_currency_converter":
+             """tooman""",
+
+         "euro_currency_converter":
+             """EURO""",
+
+         "pound_currency_converter":
+             """British pound sterling""",
+
+         "dirham_currency_converter":
+             """Arab Emirates Dirham""",
+
+         "swiss_franc_currency_converter":
+             """Swiss franc""",
+
+         "lir_currency_converter":
+             """Turkey lir""",
 
          }
 }

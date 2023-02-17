@@ -8,13 +8,140 @@ def bot_options_keyboard(user_language):
     bot__unit_conversion_option_button = KeyboardButton(languages[user_language]["unit_conversion"])
     bot__calculation_option_button = KeyboardButton(languages[user_language]["calculation"])
     bot__date_option_button = KeyboardButton(languages[user_language]["date"])
+    bot__currency_option_button = KeyboardButton(languages[user_language]["currency"])
     bot__settings_option_button = KeyboardButton(languages[user_language]["settings_option_selection"])
-    bot_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
+    bot_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
     bot_options_keyboard.add(bot__unit_conversion_option_button, bot__calculation_option_button,
-                             bot__date_option_button).add(
+                             bot__date_option_button, bot__currency_option_button).add(
         bot__settings_option_button)
 
     return bot_options_keyboard
+
+
+def currency_options_keyboard(user_language):
+    now_currency_option_button = KeyboardButton(languages[user_language]["now_currency"])
+    currency_conversion_option_button = KeyboardButton(languages[user_language]["currency_conversion"])
+    currency__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
+
+    currency_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+    currency_options_keyboard.add(now_currency_option_button, currency_conversion_option_button).add(
+        currency__back_option_button)
+
+    return currency_options_keyboard
+
+
+def currency_conversion_numbers_inline_keyboard():
+    currency_converter__0_button = types.InlineKeyboardButton(text="0", callback_data="0_currency_converter")
+    currency_converter__1_button = types.InlineKeyboardButton(text="1", callback_data="1_currency_converter")
+    currency_converter__2_button = types.InlineKeyboardButton(text="2", callback_data="2_currency_converter")
+    currency_converter__3_button = types.InlineKeyboardButton(text="3", callback_data="3_currency_converter")
+    currency_converter__4_button = types.InlineKeyboardButton(text="4", callback_data="4_currency_converter")
+    currency_converter__5_button = types.InlineKeyboardButton(text="5", callback_data="5_currency_converter")
+    currency_converter__6_button = types.InlineKeyboardButton(text="6", callback_data="6_currency_converter")
+    currency_converter__7_button = types.InlineKeyboardButton(text="7", callback_data="7_currency_converter")
+    currency_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_currency_converter")
+    currency_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_currency_converter")
+    currency_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_currency_converter")
+    currency_converter__clear_button = types.InlineKeyboardButton(text="C",
+                                                                  callback_data="clear_currency_converter")
+    currency_converter__backward_button = types.InlineKeyboardButton(text="«",
+                                                                     callback_data="backward_currency_converter")
+    currency_converter__done_button = types.InlineKeyboardButton(text="✅", callback_data="done_currency_converter")
+    currency_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(
+        currency_converter__1_button,
+        currency_converter__2_button,
+        currency_converter__3_button,
+        currency_converter__4_button,
+        currency_converter__5_button,
+        currency_converter__6_button,
+        currency_converter__7_button,
+        currency_converter__8_button,
+        currency_converter__9_button,
+        currency_converter__dot_button,
+        currency_converter__0_button).add(
+        currency_converter__clear_button, currency_converter__backward_button, currency_converter__done_button)
+
+    return currency_conversion_numbers_inline_keyboard
+
+
+def currency_conversion_starter_inline_keyboard(user_language):
+    dollar_symbol_button = types.InlineKeyboardButton(
+        text=f"$ {languages[user_language]['dollar_currency_converter']} $",
+        callback_data="dollar_currency_conversion_starter")
+
+    tooman_symbol_button = types.InlineKeyboardButton(
+        text=f"T {languages[user_language]['tooman_currency_converter']} T",
+        callback_data="tooman_currency_conversion_starter")
+
+    euro_symbol_button = types.InlineKeyboardButton(
+        text=f"€ {languages[user_language]['euro_currency_converter']} €",
+        callback_data="euro_currency_conversion_starter")
+
+    pound_symbol_button = types.InlineKeyboardButton(
+        text=f"£ {languages[user_language]['pound_currency_converter']} £",
+        callback_data="pound_currency_conversion_starter")
+
+    swiss_franc_symbol_button = types.InlineKeyboardButton(
+        text=f"₣ {languages[user_language]['swiss_franc_currency_converter']} ₣",
+        callback_data="swiss_franc_currency_conversion_starter")
+
+    lir_symbol_button = types.InlineKeyboardButton(
+        text=f"₺ {languages[user_language]['lir_currency_converter']} ₺",
+        callback_data="lir_currency_conversion_starter")
+
+    arab_emirates_dirham_symbol_button = types.InlineKeyboardButton(
+        text=f"dh {languages[user_language]['dirham_currency_converter']} dh",
+        callback_data="dirham_currency_conversion_starter")
+
+    currency_conversion_starter_inline_keyboard = types.InlineKeyboardMarkup(row_width=2).add(dollar_symbol_button,
+                                                                                              tooman_symbol_button,
+                                                                                              euro_symbol_button,
+                                                                                              pound_symbol_button,
+                                                                                              lir_symbol_button,
+                                                                                              swiss_franc_symbol_button,
+                                                                                              arab_emirates_dirham_symbol_button)
+
+    return currency_conversion_starter_inline_keyboard
+
+
+def currency_conversion_destination_inline_keyboard(user_language):
+    dollar_symbol_button = types.InlineKeyboardButton(
+        text=f"$ {languages[user_language]['dollar_currency_converter']} $",
+        callback_data="dollar_currency_conversion_destination")
+
+    tooman_symbol_button = types.InlineKeyboardButton(
+        text=f"T {languages[user_language]['tooman_currency_converter']} T",
+        callback_data="tooman_currency_conversion_destination")
+
+    euro_symbol_button = types.InlineKeyboardButton(
+        text=f"€ {languages[user_language]['euro_currency_converter']} €",
+        callback_data="euro_currency_conversion_destination")
+
+    pound_symbol_button = types.InlineKeyboardButton(
+        text=f"£ {languages[user_language]['pound_currency_converter']} £",
+        callback_data="pound_currency_conversion_destination")
+
+    swiss_franc_symbol_button = types.InlineKeyboardButton(
+        text=f"₣ {languages[user_language]['swiss_franc_currency_converter']} ₣",
+        callback_data="swiss_franc_currency_conversion_destination")
+
+    lir_symbol_button = types.InlineKeyboardButton(
+        text=f"₺ {languages[user_language]['lir_currency_converter']} ₺",
+        callback_data="lir_currency_conversion_destination")
+
+    arab_emirates_dirham_symbol_button = types.InlineKeyboardButton(
+        text=f"dh {languages[user_language]['dirham_currency_converter']} dh",
+        callback_data="dirham_currency_conversion_destination")
+
+    currency_conversion_destination_inline_keyboard = types.InlineKeyboardMarkup(row_width=2).add(dollar_symbol_button,
+                                                                                                  tooman_symbol_button,
+                                                                                                  euro_symbol_button,
+                                                                                                  pound_symbol_button,
+                                                                                                  lir_symbol_button,
+                                                                                                  swiss_franc_symbol_button,
+                                                                                                  arab_emirates_dirham_symbol_button)
+
+    return currency_conversion_destination_inline_keyboard
 
 
 def date__options_keyboard(user_language):
@@ -130,6 +257,17 @@ def date__date_conversion_year_numbers_inline_keyboard():
         date_conversion__done_weight_button)
 
     return date__date_conversion_year_numbers_inline_keyboard
+
+
+def date_calender_inline_keyboard(user_language):
+    gregorian_calender = types.InlineKeyboardButton(text=languages[user_language]["gregorian_calender"],
+                                                    callback_data="gregorian_calender")
+    jalali_calender = types.InlineKeyboardButton(text=languages[user_language]["jalali_calender"],
+                                                 callback_data="jalali_calender")
+    date_calender_inline_keyboard = types.InlineKeyboardMarkup(row_width=2)
+    date_calender_inline_keyboard.add(gregorian_calender, jalali_calender)
+
+    return date_calender_inline_keyboard
 
 
 def calculation__options_keyboard(user_language):
@@ -1198,8 +1336,8 @@ def languages_inline_keyboard():
     return languages_inline_keyboard
 
 
-all_keyboards_list = ["Calculation", "BMI", "Settings", "⬅️ Back ⬅️", "Calculator", "Unit Conversion", "Data", "Length",
-                      "Mass", "Numeral", "Temperature", "Time"]
+all_keyboards_list = ["Calculation", "BMI", "Settings", "⬅️ Back ⬅️", "Calculator", "Unit Conversion", "Data",
+                      "currency", "Length", "Mass", "Numeral", "Temperature", "Time"]
 
 bmi_conversion_weight_callback_data_list = ["0_weight_bmi", "1_weight_bmi", "2_weight_bmi", "3_weight_bmi",
                                             "4_weight_bmi", "5_weight_bmi", "6_weight_bmi", "7_weight_bmi",
@@ -1214,6 +1352,8 @@ bmi_conversion_height_callback_data_list = ["0_height_bmi", "1_height_bmi", "2_h
                                             "done_height_bmi"]
 
 bmi__conversion_see_bmi_chart_callback_data_list = ["see_chart_bmi"]
+
+date__calender_callback_data_list = ["gregorian_calender", "jalali_calender"]
 
 date_conversion_callback_date_list = ["jalali_to_gregorian", "gregorian_to_jalali", "0_date_conversion_day",
                                       "1_date_conversion_day", "2_date_conversion_day",
@@ -1231,6 +1371,19 @@ date_conversion_callback_date_list = ["jalali_to_gregorian", "gregorian_to_jalal
                                       "6_date_conversion_year", "7_date_conversion_year", "8_date_conversion_year",
                                       "9_date_conversion_year", "backward_date_conversion_year",
                                       "clear_date_conversion_year", "done_date_conversion_year"]
+
+currency_callback_date_list = ["0_currency_converter", "1_currency_converter", "2_currency_converter",
+                               "3_currency_converter", "4_currency_converter", "5_currency_converter",
+                               "6_currency_converter", "7_currency_converter", "8_currency_converter",
+                               "9_currency_converter", "dot_currency_converter", "clear_currency_converter",
+                               "backward_currency_converter", "done_currency_converter",
+                               "dollar_currency_conversion_starter", "tooman_currency_conversion_starter",
+                               "euro_currency_conversion_starter", "pound_currency_conversion_starter",
+                               "swiss_franc_currency_conversion_starter", "lir_currency_conversion_starter",
+                               "dirham_currency_conversion_starter", "dollar_currency_conversion_destination",
+                               "tooman_currency_conversion_destination", "euro_currency_conversion_destination",
+                               "pound_currency_conversion_destination", "swiss_franc_currency_conversion_destination",
+                               "lir_currency_conversion_destination", "dirham_currency_conversion_destination"]
 
 calculator_callback_data_list = ["0_calculator", "1_calculator", "2_calculator", "3_calculator", "4_calculator",
                                  "5_calculator", "6_calculator", "7_calculator", "8_calculator", "9_calculator",

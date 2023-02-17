@@ -2,6 +2,7 @@ from math import pi
 from aiogram import Bot, Dispatcher, executor
 from Calculation.BMI.bmi import bmi_calculator
 from Calculation.Calculator.calculator import calculator
+from Currency.currency import currency_converter, momentarily_currency_rate
 from DataBase.Users.users_info import add_id_to_sql, fetch_id_from_sql
 from Date.date import jalali_getter, gregorian_getter, current_time_getter, jalali_to_gregorian, gregorian_to_jalali
 from Settings.languages.users_languages import users_first_language, user_language_update, get_user_current_language
@@ -13,7 +14,7 @@ from UnitConversion.Temperature.temperature_converter import temperature_convert
 from UnitConversion.Time.time_converter import time_converter
 from keyboards_and_callbacks_data_list import *
 
-TOKEN = "5739625562:AAGWTyhXLjHbuycOx17AnFpLA4pae-gKfBM"
+TOKEN = "YOUR_BOT_TOKEN"
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
@@ -31,6 +32,7 @@ numeral_status = {}
 temperature_status = {}
 time_status = {}
 date_status = {}
+currency_status = {}
 
 
 @dp.message_handler(commands="start")
@@ -114,14 +116,38 @@ async def options_keyboard_answer(message: types.Message):
         today_in_gregorian = gregorian_getter()
         today_in_jalali = jalali_getter()
 
+        user_language = get_user_current_language(user_id=message.chat.id)
+
         await bot.send_message(text=f"""{languages[user_language]['current_time']} : <code> {current_time} </code>
 {languages[user_language]['jalali_date']} : <code> {today_in_jalali} </code>
 {languages[user_language]['gregorian_date']} : <code> {today_in_gregorian} </code>""", chat_id=message.chat.id,
-                               parse_mode="HTML")
+                               parse_mode="HTML",
+                               reply_markup=date_calender_inline_keyboard(user_language=user_language))
 
     if message.text == languages[user_language]["date_convert"]:
         await bot.send_message(text=languages[user_language]['choose_date_convert_option'], chat_id=message.chat.id,
                                reply_markup=date__date_conversion_options_inline_keyboard(user_language=user_language))
+
+    if message.text == languages[user_language]['currency']:
+        await bot.send_message(chat_id=message.chat.id,
+                               text=f"""{languages[user_language]['currency_converter_select']}""",
+                               reply_markup=currency_options_keyboard(user_language=user_language))
+        states.update({message.chat.id: "currency"})
+
+    if message.text == languages[user_language]['currency_conversion']:
+        await bot.send_message(chat_id=message.chat.id,
+                               text=f"""{languages[user_language]['currency_converter_enter_currency_amount']}""",
+                               reply_markup=currency_conversion_numbers_inline_keyboard())
+
+    if message.text == languages[user_language]["now_currency"]:
+        user_language = get_user_current_language(user_id=message.chat.id)
+
+        await bot.send_document(document=open('Assets/AnimatedStickers/Currency/CurrencyDollars.tgs', 'rb'),
+                                chat_id=message.from_user.id)
+
+        answer = momentarily_currency_rate(user_language=user_language)
+
+        await bot.send_message(chat_id=message.chat.id, text=f"""{answer}""", parse_mode="HTML")
 
     if message.text == languages[user_language]['calculation']:
         await bot.send_message(chat_id=message.chat.id,
@@ -199,6 +225,13 @@ async def options_keyboard_answer(message: types.Message):
                                    reply_markup=bot_options_keyboard(user_language=user_language))
 
         if user_state == "date":
+            user_language = get_user_current_language(user_id=message.from_user.id)
+
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=f"{languages[user_language]['start_command_choose_button']}",
+                                   reply_markup=bot_options_keyboard(user_language=user_language))
+
+        if user_state == "currency":
             user_language = get_user_current_language(user_id=message.from_user.id)
 
             await bot.send_message(chat_id=message.chat.id,
@@ -514,6 +547,9 @@ async def query_handler(call: types.CallbackQuery):
         if message == "see_chart_bmi":
             user_language = get_user_current_language(user_id=call.from_user.id)
 
+            await bot.send_document(document=open('Assets/AnimatedStickers/BMI/Chart.tgs', 'rb'),
+                                    chat_id=chat_id)
+
             await bot.send_photo(photo=open('Assets/Images/BMI/BMIChart.jpg', 'rb'), chat_id=chat_id,
                                  caption=languages[user_language]['bmi_chart'])
 
@@ -695,6 +731,379 @@ async def query_handler(call: types.CallbackQuery):
             await bot.edit_message_text(
                 text=f"""{data_to_be_calculate} = <code>{calculator(data_to_be_calculate, user_id=call.from_user.id)}</code>""",
                 chat_id=chat_id, message_id=message_id, parse_mode="HTML")
+
+    if message in currency_callback_date_list:
+        text = call.message.text
+
+        if "currency" in text or "پول" in text:
+            text = ""
+
+        if message == "0_currency_converter":
+            text += "0"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "1_currency_converter":
+            text += "1"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "2_currency_converter":
+            text += "2"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "3_currency_converter":
+            text += "3"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "4_currency_converter":
+            text += "4"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "5_currency_converter":
+            text += "5"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "6_currency_converter":
+            text += "6"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "7_currency_converter":
+            text += "7"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "8_currency_converter":
+            text += "8"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "9_currency_converter":
+            text += "9"
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "dot_currency_converter":
+            if "." not in text:
+                text += "."
+                await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                            reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "clear_currency_converter":
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            text = languages[user_language]['currency_converter_enter_currency_amount']
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "backward_currency_converter":
+            text = text[:-1]
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            if text == "":
+                text = languages[user_language]['currency_converter_enter_currency_amount']
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
+                                        reply_markup=currency_conversion_numbers_inline_keyboard())
+
+        if message == "done_currency_converter":
+            amount = text
+            currency_status.update({call.from_user.id: {"amount": amount, "message_id": call.message.message_id}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
+                                        text=languages[user_language]['currency_converter_start'],
+                                        reply_markup=currency_conversion_starter_inline_keyboard(
+                                            user_language=user_language))
+
+        if message == "dollar_currency_conversion_starter":
+            source_currency = "USD"
+            currency_status.update(
+                {call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                     "source_currency": source_currency,
+                                     "message_id": currency_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            await bot.edit_message_text(text=languages[user_language]['currency_converter_destination'],
+                                        chat_id=chat_id, message_id=message_id,
+                                        reply_markup=currency_conversion_destination_inline_keyboard(
+                                            user_language=user_language))
+
+        if message == "tooman_currency_conversion_starter":
+            source_currency = "IRR"
+            currency_status.update(
+                {call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                     "source_currency": source_currency,
+                                     "message_id": currency_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            await bot.edit_message_text(text=languages[user_language]['currency_converter_destination'],
+                                        chat_id=chat_id, message_id=message_id,
+                                        reply_markup=currency_conversion_destination_inline_keyboard(
+                                            user_language=user_language))
+
+        if message == "euro_currency_conversion_starter":
+            source_currency = "EUR"
+            currency_status.update(
+                {call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                     "source_currency": source_currency,
+                                     "message_id": currency_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            await bot.edit_message_text(text=languages[user_language]['currency_converter_destination'],
+                                        chat_id=chat_id, message_id=message_id,
+                                        reply_markup=currency_conversion_destination_inline_keyboard(
+                                            user_language=user_language))
+
+        if message == "pound_currency_conversion_starter":
+            source_currency = "GBP"
+            currency_status.update(
+                {call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                     "source_currency": source_currency,
+                                     "message_id": currency_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            await bot.edit_message_text(text=languages[user_language]['currency_converter_destination'],
+                                        chat_id=chat_id, message_id=message_id,
+                                        reply_markup=currency_conversion_destination_inline_keyboard(
+                                            user_language=user_language))
+
+        if message == "swiss_franc_currency_conversion_starter":
+            source_currency = "CHF"
+            currency_status.update(
+                {call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                     "source_currency": source_currency,
+                                     "message_id": currency_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            await bot.edit_message_text(text=languages[user_language]['currency_converter_destination'],
+                                        chat_id=chat_id, message_id=message_id,
+                                        reply_markup=currency_conversion_destination_inline_keyboard(
+                                            user_language=user_language))
+
+        if message == "lir_currency_conversion_starter":
+            source_currency = "LIR"
+            currency_status.update(
+                {call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                     "source_currency": source_currency,
+                                     "message_id": currency_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            await bot.edit_message_text(text=languages[user_language]['currency_converter_destination'],
+                                        chat_id=chat_id, message_id=message_id,
+                                        reply_markup=currency_conversion_destination_inline_keyboard(
+                                            user_language=user_language))
+
+        if message == "dirham_currency_conversion_starter":
+            source_currency = "AED"
+            currency_status.update(
+                {call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                     "source_currency": source_currency,
+                                     "message_id": currency_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
+            await bot.edit_message_text(text=languages[user_language]['currency_converter_destination'],
+                                        chat_id=chat_id, message_id=message_id,
+                                        reply_markup=currency_conversion_destination_inline_keyboard(
+                                            user_language=user_language))
+
+        if message == "dollar_currency_conversion_destination":
+            target_currency = "USD"
+            currency_status.update({call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                                        "source_currency": currency_status[call.from_user.id][
+                                                            "source_currency"],
+                                                        "target_currency": target_currency,
+                                                        "message_id": call.message.message_id}})
+            try:
+                for chat_id, amount_and_source_currency_and_target_currency_and_message_id in currency_status.items():
+                    amount = amount_and_source_currency_and_target_currency_and_message_id['amount']
+                    source_currency = amount_and_source_currency_and_target_currency_and_message_id['source_currency']
+                    target_currency = amount_and_source_currency_and_target_currency_and_message_id['target_currency']
+
+                    answer = currency_converter(amount=amount, source_currency=source_currency,
+                                                target_currency=target_currency)
+                    await bot.edit_message_text(
+                        text=answer,
+                        chat_id=chat_id,
+                        message_id=amount_and_source_currency_and_target_currency_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    currency_status.pop(chat_id)
+            except:
+                pass
+
+        if message == "tooman_currency_conversion_destination":
+            target_currency = "IRR"
+            currency_status.update({call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                                        "source_currency": currency_status[call.from_user.id][
+                                                            "source_currency"],
+                                                        "target_currency": target_currency,
+                                                        "message_id": call.message.message_id}})
+            try:
+                for chat_id, amount_and_source_currency_and_target_currency_and_message_id in currency_status.items():
+                    amount = amount_and_source_currency_and_target_currency_and_message_id['amount']
+                    source_currency = amount_and_source_currency_and_target_currency_and_message_id['source_currency']
+                    target_currency = amount_and_source_currency_and_target_currency_and_message_id['target_currency']
+
+                    answer = currency_converter(amount=amount, source_currency=source_currency,
+                                                target_currency=target_currency)
+                    await bot.edit_message_text(
+                        text=answer,
+                        chat_id=chat_id,
+                        message_id=amount_and_source_currency_and_target_currency_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    currency_status.pop(chat_id)
+            except:
+                pass
+
+        if message == "euro_currency_conversion_destination":
+            target_currency = "EUR"
+            currency_status.update({call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                                        "source_currency": currency_status[call.from_user.id][
+                                                            "source_currency"],
+                                                        "target_currency": target_currency,
+                                                        "message_id": call.message.message_id}})
+            try:
+                for chat_id, amount_and_source_currency_and_target_currency_and_message_id in currency_status.items():
+                    amount = amount_and_source_currency_and_target_currency_and_message_id['amount']
+                    source_currency = amount_and_source_currency_and_target_currency_and_message_id['source_currency']
+                    target_currency = amount_and_source_currency_and_target_currency_and_message_id['target_currency']
+
+                    answer = currency_converter(amount=amount, source_currency=source_currency,
+                                                target_currency=target_currency)
+                    await bot.edit_message_text(
+                        text=answer,
+                        chat_id=chat_id,
+                        message_id=amount_and_source_currency_and_target_currency_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    currency_status.pop(chat_id)
+            except:
+                pass
+
+        if message == "pound_currency_conversion_destination":
+            target_currency = "GBP"
+            currency_status.update({call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                                        "source_currency": currency_status[call.from_user.id][
+                                                            "source_currency"],
+                                                        "target_currency": target_currency,
+                                                        "message_id": call.message.message_id}})
+            try:
+                for chat_id, amount_and_source_currency_and_target_currency_and_message_id in currency_status.items():
+                    amount = amount_and_source_currency_and_target_currency_and_message_id['amount']
+                    source_currency = amount_and_source_currency_and_target_currency_and_message_id['source_currency']
+                    target_currency = amount_and_source_currency_and_target_currency_and_message_id['target_currency']
+
+                    answer = currency_converter(amount=amount, source_currency=source_currency,
+                                                target_currency=target_currency)
+                    await bot.edit_message_text(
+                        text=answer,
+                        chat_id=chat_id,
+                        message_id=amount_and_source_currency_and_target_currency_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    currency_status.pop(chat_id)
+            except:
+                pass
+
+        if message == "swiss_franc_currency_conversion_destination":
+            target_currency = "CHF"
+            currency_status.update({call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                                        "source_currency": currency_status[call.from_user.id][
+                                                            "source_currency"],
+                                                        "target_currency": target_currency,
+                                                        "message_id": call.message.message_id}})
+            try:
+                for chat_id, amount_and_source_currency_and_target_currency_and_message_id in currency_status.items():
+                    amount = amount_and_source_currency_and_target_currency_and_message_id['amount']
+                    source_currency = amount_and_source_currency_and_target_currency_and_message_id['source_currency']
+                    target_currency = amount_and_source_currency_and_target_currency_and_message_id['target_currency']
+
+                    answer = currency_converter(amount=amount, source_currency=source_currency,
+                                                target_currency=target_currency)
+                    await bot.edit_message_text(
+                        text=answer,
+                        chat_id=chat_id,
+                        message_id=amount_and_source_currency_and_target_currency_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    currency_status.pop(chat_id)
+            except:
+                pass
+
+        if message == "lir_currency_conversion_destination":
+            target_currency = "LIR"
+            currency_status.update({call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                                        "source_currency": currency_status[call.from_user.id][
+                                                            "source_currency"],
+                                                        "target_currency": target_currency,
+                                                        "message_id": call.message.message_id}})
+            try:
+                for chat_id, amount_and_source_currency_and_target_currency_and_message_id in currency_status.items():
+                    amount = amount_and_source_currency_and_target_currency_and_message_id['amount']
+                    source_currency = amount_and_source_currency_and_target_currency_and_message_id['source_currency']
+                    target_currency = amount_and_source_currency_and_target_currency_and_message_id['target_currency']
+
+                    answer = currency_converter(amount=amount, source_currency=source_currency,
+                                                target_currency=target_currency)
+                    await bot.edit_message_text(
+                        text=answer,
+                        chat_id=chat_id,
+                        message_id=amount_and_source_currency_and_target_currency_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    currency_status.pop(chat_id)
+            except:
+                pass
+
+        if message == "dirham_currency_conversion_destination":
+            target_currency = "AED"
+            currency_status.update({call.from_user.id: {"amount": currency_status[call.from_user.id]["amount"],
+                                                        "source_currency": currency_status[call.from_user.id][
+                                                            "source_currency"],
+                                                        "target_currency": target_currency,
+                                                        "message_id": call.message.message_id}})
+            try:
+                for chat_id, amount_and_source_currency_and_target_currency_and_message_id in currency_status.items():
+                    amount = amount_and_source_currency_and_target_currency_and_message_id['amount']
+                    source_currency = amount_and_source_currency_and_target_currency_and_message_id['source_currency']
+                    target_currency = amount_and_source_currency_and_target_currency_and_message_id['target_currency']
+
+                    answer = currency_converter(amount=amount, source_currency=source_currency,
+                                                target_currency=target_currency)
+                    await bot.edit_message_text(
+                        text=answer,
+                        chat_id=chat_id,
+                        message_id=amount_and_source_currency_and_target_currency_and_message_id["message_id"],
+                        parse_mode="HTML")
+
+                    currency_status.pop(chat_id)
+            except:
+                pass
 
     if message in date_conversion_callback_date_list:
         text = call.message.text
@@ -1066,7 +1475,8 @@ async def query_handler(call: types.CallbackQuery):
                                 await bot.edit_message_text(
                                     text=f"""{languages[user_language]['jalali_date']} : <code> {jalali_date} </code>
 {languages[user_language]['gregorian_date']} : <code> {gregorian_date} </code>""", chat_id=chat_id,
-                                    message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
+                                    message_id=date_conversion_type_and_day_and_month_and_year_and_message_id[
+                                        "message_id"],
                                     parse_mode="HTML")
 
                             if date_conversion_type_and_day_and_month_and_year_and_message_id[
@@ -1077,13 +1487,28 @@ async def query_handler(call: types.CallbackQuery):
                                 await bot.edit_message_text(
                                     text=f"""{languages[user_language]['gregorian_date']} : <code> {gregorian_date} </code>
 {languages[user_language]['jalali_date']} : <code> {jalali_date} </code>""", chat_id=chat_id,
-                                    message_id=date_conversion_type_and_day_and_month_and_year_and_message_id["message_id"],
+                                    message_id=date_conversion_type_and_day_and_month_and_year_and_message_id[
+                                        "message_id"],
                                     parse_mode="HTML")
 
                             date_status.pop(chat_id)
 
                 except:
                     pass
+
+    if message in date__calender_callback_data_list:
+        user_language = get_user_current_language(user_id=call.from_user.id)
+
+        await bot.send_document(document=open('Assets/AnimatedStickers/Date/Calender.tgs', 'rb'), chat_id=chat_id,
+                                caption=languages[user_language]['jalali_calender'])
+
+        if message == "jalali_calender":
+            await bot.send_document(document=open('Assets/Documents/Date/JalaliCalender.pdf', 'rb'), chat_id=chat_id,
+                                    caption=languages[user_language]['jalali_calender'])
+
+        if message == "gregorian_calender":
+            await bot.send_document(document=open('Assets/Documents/Date/GregorianCalender.pdf', 'rb'), chat_id=chat_id,
+                                    caption=languages[user_language]['gregorian_calender'])
 
     if message in data_conversion_callback_data_list:
         text = call.message.text
