@@ -1,7 +1,6 @@
 from math import pi
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import ChatActions
-
 from Calculation.BMI.bmi import bmi_calculator
 from Calculation.Calculator.calculator import calculator
 from Currency.currency import currency_converter, momentarily_currency_rate
@@ -14,6 +13,7 @@ from UnitConversion.Mass.mass_converter import mass_converter
 from UnitConversion.Numeral.numeral_converter import numeral_converter
 from UnitConversion.Temperature.temperature_converter import temperature_converter
 from UnitConversion.Time.time_converter import time_converter
+from Broadcast.broadcast import fetch_data_for_update_broadcast
 from keyboards_and_callbacks_data_list import *
 import tracemalloc
 
@@ -56,6 +56,17 @@ async def welcome(message: types.Message):
     await message.reply(text=f"""{languages[user_language]['start_command']} {message.from_user.full_name}.😀
 {languages[user_language]['start_command_choose_button']}""",
                         reply_markup=bot_options_keyboard(user_language=user_language))
+
+
+@dp.message_handler(commands="broadcast", user_id="ADMIN_ID")
+async def send_to_all_users(message: types.Message):
+    users_ids = fetch_data_for_update_broadcast()[0]
+    text = fetch_data_for_update_broadcast()[1]
+
+    for user_id in users_ids:
+        await bot.send_message(chat_id=user_id[0], text=text, parse_mode='HTML')
+
+    await message.answer("Message sent to all users.")
 
 
 @dp.message_handler(commands="help")
@@ -556,6 +567,8 @@ async def query_handler(call: types.CallbackQuery):
 
             await bot.send_document(document=open('Assets/AnimatedStickers/BMI/Chart.tgs', 'rb'),
                                     chat_id=chat_id)
+
+            await bot.send_chat_action(chat_id=chat_id, action=ChatActions.UPLOAD_PHOTO)
 
             await bot.send_photo(photo=open('Assets/Images/BMI/BMIChart.jpg', 'rb'), chat_id=chat_id,
                                  caption=languages[user_language]['bmi_chart'])
@@ -1508,6 +1521,8 @@ async def query_handler(call: types.CallbackQuery):
 
         await bot.send_document(document=open('Assets/AnimatedStickers/Date/Calender.tgs', 'rb'), chat_id=chat_id,
                                 caption=languages[user_language]['jalali_calender'])
+
+        await bot.send_chat_action(chat_id=chat_id, action=ChatActions.UPLOAD_DOCUMENT)
 
         if message == "jalali_calender":
             await bot.send_document(document=open('Assets/Documents/Date/JalaliCalender.pdf', 'rb'), chat_id=chat_id,
