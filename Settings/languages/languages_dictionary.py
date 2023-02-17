@@ -479,6 +479,12 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
         "lir_currency_converter":
             """لیر ترکیه""",
 
+        "cant_fetch_data":
+            """عدم توانایی دریافت اطلاعات!""",
+
+        "derham_symbol":
+            """د.إ"""
+
     },
 
     "language_english":
@@ -961,6 +967,12 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "lir_currency_converter":
              """Turkey lir""",
+
+         "cant_fetch_data":
+             """Can't fetch data""",
+
+         "derham_symbol":
+             """DH"""
 
          }
 }

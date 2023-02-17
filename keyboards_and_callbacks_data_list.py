@@ -20,11 +20,11 @@ def bot_options_keyboard(user_language):
 
 def currency_options_keyboard(user_language):
     now_currency_option_button = KeyboardButton(languages[user_language]["now_currency"])
-    currency_conversion_option_button = KeyboardButton(languages[user_language]["currency_conversion"])
+    # currency_conversion_option_button = KeyboardButton(languages[user_language]["currency_conversion"])
     currency__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
 
     currency_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
-    currency_options_keyboard.add(now_currency_option_button, currency_conversion_option_button).add(
+    currency_options_keyboard.add(now_currency_option_button).add(
         currency__back_option_button)
 
     return currency_options_keyboard

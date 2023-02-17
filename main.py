@@ -1,5 +1,7 @@
 from math import pi
 from aiogram import Bot, Dispatcher, executor
+from aiogram.types import ChatActions
+
 from Calculation.BMI.bmi import bmi_calculator
 from Calculation.Calculator.calculator import calculator
 from Currency.currency import currency_converter, momentarily_currency_rate
@@ -13,6 +15,9 @@ from UnitConversion.Numeral.numeral_converter import numeral_converter
 from UnitConversion.Temperature.temperature_converter import temperature_converter
 from UnitConversion.Time.time_converter import time_converter
 from keyboards_and_callbacks_data_list import *
+import tracemalloc
+
+tracemalloc.start()
 
 TOKEN = "YOUR_BOT_TOKEN"
 bot = Bot(token=TOKEN)
@@ -144,6 +149,8 @@ async def options_keyboard_answer(message: types.Message):
 
         await bot.send_document(document=open('Assets/AnimatedStickers/Currency/CurrencyDollars.tgs', 'rb'),
                                 chat_id=message.from_user.id)
+
+        await bot.send_chat_action(chat_id=message.from_user.id, action=ChatActions.TYPING)
 
         answer = momentarily_currency_rate(user_language=user_language)
 
