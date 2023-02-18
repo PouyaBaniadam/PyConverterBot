@@ -1,6 +1,9 @@
+from random import randint
+import tracemalloc
 from math import pi
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import ChatActions
+from Assets.AnimatedStickers.animated import animated_dictionary
 from Calculation.BMI.bmi import bmi_calculator
 from Calculation.Calculator.calculator import calculator
 from Currency.currency import currency_converter, momentarily_currency_rate
@@ -13,9 +16,7 @@ from UnitConversion.Mass.mass_converter import mass_converter
 from UnitConversion.Numeral.numeral_converter import numeral_converter
 from UnitConversion.Temperature.temperature_converter import temperature_converter
 from UnitConversion.Time.time_converter import time_converter
-from Broadcast.broadcast import fetch_data_for_update_broadcast
 from keyboards_and_callbacks_data_list import *
-import tracemalloc
 
 tracemalloc.start()
 
@@ -47,26 +48,33 @@ async def welcome(message: types.Message):
 
     if user_exists is None:
         users_first_language(user_id=message.chat.id)
-
     add_id_to_sql(user_id=message.from_user.id)
 
     states.update({message.chat.id: "start"})
 
     user_language = get_user_current_language(user_id=message.chat.id)
+
+    random_greet_sticker = randint(1, 2)
+
+    if random_greet_sticker == 1:
+        await bot.send_animation(chat_id=message.chat.id, animation=animated_dictionary['UtyaDuck']['Greeting'])
+    else:
+        await bot.send_animation(chat_id=message.chat.id, animation=animated_dictionary['CherryBlack']['Greeting'])
+
     await message.reply(text=f"""{languages[user_language]['start_command']} {message.from_user.full_name}.😀
 {languages[user_language]['start_command_choose_button']}""",
                         reply_markup=bot_options_keyboard(user_language=user_language))
 
 
-@dp.message_handler(commands="broadcast", user_id="ADMIN_ID")
-async def send_to_all_users(message: types.Message):
-    users_ids = fetch_data_for_update_broadcast()[0]
-    text = fetch_data_for_update_broadcast()[1]
-
-    for user_id in users_ids:
-        await bot.send_message(chat_id=user_id[0], text=text, parse_mode='HTML')
-
-    await message.answer("Message sent to all users.")
+# @dp.message_handler(commands="broadcast", user_id="ADMIN_ID")
+# async def send_to_all_users(message: types.Message):
+#     users_ids = fetch_data_for_update_broadcast()[0]
+#     text = fetch_data_for_update_broadcast()[1]
+#
+#     for user_id in users_ids:
+#         await bot.send_message(chat_id=user_id[0], text=text, parse_mode='HTML')
+#
+#     await message.answer("Message sent to all users.")
 
 
 @dp.message_handler(commands="help")
@@ -91,6 +99,14 @@ async def welcome(message: types.Message):
         user_language = get_user_current_language(user_id=message.chat.id)
 
     await message.reply(text=languages[user_language]["about_command"])
+
+
+# To know the sticker info that the user sends to you.
+@dp.message_handler(content_types=types.ContentType.STICKER)
+async def handle_sticker(message: types.Message):
+    if message.sticker.is_animated:
+        sticker = message.sticker
+        print(f"Sticker: {sticker}")
 
 
 @dp.message_handler()
@@ -158,8 +174,7 @@ async def options_keyboard_answer(message: types.Message):
     if message.text == languages[user_language]["now_currency"]:
         user_language = get_user_current_language(user_id=message.chat.id)
 
-        await bot.send_document(document=open('Assets/AnimatedStickers/Currency/CurrencyDollars.tgs', 'rb'),
-                                chat_id=message.from_user.id)
+        await bot.send_animation(chat_id=message.chat.id, animation=animated_dictionary['AnimatedEmojies']['Currency'])
 
         await bot.send_chat_action(chat_id=message.from_user.id, action=ChatActions.TYPING)
 
@@ -458,7 +473,7 @@ async def query_handler(call: types.CallbackQuery):
 
             if "weight" not in weight or "قد" not in height:
                 bmi_status.update(
-                    {call.from_user.id: {"weight": weight, "height": None, "message_id": call.message.message_id}})
+                    {call.from_user.id: {"weight": weight, "message_id": call.message.message_id}})
 
                 user_language = get_user_current_language(user_id=call.from_user.id)
 
@@ -543,30 +558,36 @@ async def query_handler(call: types.CallbackQuery):
                 bmi_status.update(
                     {call.from_user.id: {"weight": bmi_status[call.from_user.id]["weight"], "height": height,
                                          "message_id": bmi_status[call.from_user.id]["message_id"]}})
-                try:
-                    for chat_id, weight_and_height_and_message_id in bmi_status.items():
-                        user_language = get_user_current_language(user_id=chat_id)
-                        await bot.edit_message_text(
-                            text=f"""{languages[user_language]['weight']} : {weight_and_height_and_message_id["weight"]} kg
+
+            try:
+                for chat_id, weight_and_height_and_message_id in bmi_status.items():
+                    try:
+                        if len(bmi_status[call.from_user.id]) == 3:
+                            user_language = get_user_current_language(user_id=chat_id)
+
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['weight']} : {weight_and_height_and_message_id["weight"]} kg
 {languages[user_language]['height']} : {weight_and_height_and_message_id["height"]} cm
-
+        
 {languages[user_language]['BMI']} : <code>{bmi_calculator(weight=float(weight_and_height_and_message_id["weight"]), height=float(weight_and_height_and_message_id["height"]), user_id=chat_id)[0]}</code>
-
+        
 {languages[user_language]['BMI_status']} : {bmi_calculator(weight=float(weight_and_height_and_message_id["weight"]), height=float(weight_and_height_and_message_id["height"]), user_id=chat_id)[1]}""",
-                            chat_id=chat_id, message_id=weight_and_height_and_message_id["message_id"],
-                            reply_markup=bmi__conversion_see_bmi_chart_inline_keyboard(user_language=user_language),
-                            parse_mode="HTML")
+                                chat_id=chat_id, message_id=weight_and_height_and_message_id["message_id"],
+                                reply_markup=bmi__conversion_see_bmi_chart_inline_keyboard(user_language=user_language),
+                                parse_mode="HTML")
 
-                        bmi_status.pop(chat_id)
-                except:
-                    pass
+                            bmi_status.pop(chat_id)
+                    except KeyError:
+                        pass
+            except RuntimeError:
+                pass
 
     if message in bmi__conversion_see_bmi_chart_callback_data_list:
         if message == "see_chart_bmi":
             user_language = get_user_current_language(user_id=call.from_user.id)
 
-            await bot.send_document(document=open('Assets/AnimatedStickers/BMI/Chart.tgs', 'rb'),
-                                    chat_id=chat_id)
+            await bot.send_animation(chat_id=call.from_user.id,
+                                     animation=animated_dictionary['AnimatedEmojies']['Chart'])
 
             await bot.send_chat_action(chat_id=chat_id, action=ChatActions.UPLOAD_PHOTO)
 
@@ -747,6 +768,9 @@ async def query_handler(call: types.CallbackQuery):
 
         if message == "done_calculator":
             data_to_be_calculate = call.message.text
+
+            await bot.send_animation(chat_id=call.from_user.id,
+                                     animation=animated_dictionary['AnimatedEmojies']['Calculate'])
 
             await bot.edit_message_text(
                 text=f"""{data_to_be_calculate} = <code>{calculator(data_to_be_calculate, user_id=call.from_user.id)}</code>""",
@@ -972,7 +996,7 @@ async def query_handler(call: types.CallbackQuery):
                         parse_mode="HTML")
 
                     currency_status.pop(chat_id)
-            except:
+            except RuntimeError:
                 pass
 
         if message == "tooman_currency_conversion_destination":
@@ -997,7 +1021,7 @@ async def query_handler(call: types.CallbackQuery):
                         parse_mode="HTML")
 
                     currency_status.pop(chat_id)
-            except:
+            except RuntimeError:
                 pass
 
         if message == "euro_currency_conversion_destination":
@@ -1022,7 +1046,7 @@ async def query_handler(call: types.CallbackQuery):
                         parse_mode="HTML")
 
                     currency_status.pop(chat_id)
-            except:
+            except RuntimeError:
                 pass
 
         if message == "pound_currency_conversion_destination":
@@ -1047,7 +1071,7 @@ async def query_handler(call: types.CallbackQuery):
                         parse_mode="HTML")
 
                     currency_status.pop(chat_id)
-            except:
+            except RuntimeError:
                 pass
 
         if message == "swiss_franc_currency_conversion_destination":
@@ -1072,7 +1096,7 @@ async def query_handler(call: types.CallbackQuery):
                         parse_mode="HTML")
 
                     currency_status.pop(chat_id)
-            except:
+            except RuntimeError:
                 pass
 
         if message == "lir_currency_conversion_destination":
@@ -1097,7 +1121,7 @@ async def query_handler(call: types.CallbackQuery):
                         parse_mode="HTML")
 
                     currency_status.pop(chat_id)
-            except:
+            except RuntimeError:
                 pass
 
         if message == "dirham_currency_conversion_destination":
@@ -1122,7 +1146,7 @@ async def query_handler(call: types.CallbackQuery):
                         parse_mode="HTML")
 
                     currency_status.pop(chat_id)
-            except:
+            except RuntimeError:
                 pass
 
     if message in date_conversion_callback_date_list:
@@ -1513,14 +1537,14 @@ async def query_handler(call: types.CallbackQuery):
 
                             date_status.pop(chat_id)
 
-                except:
+                except RuntimeError:
                     pass
 
     if message in date__calender_callback_data_list:
         user_language = get_user_current_language(user_id=call.from_user.id)
 
-        await bot.send_document(document=open('Assets/AnimatedStickers/Date/Calender.tgs', 'rb'), chat_id=chat_id,
-                                caption=languages[user_language]['jalali_calender'])
+        await bot.send_animation(chat_id=call.from_user.id,
+                                 animation=animated_dictionary['AnimatedEmojies']['Calender'])
 
         await bot.send_chat_action(chat_id=chat_id, action=ChatActions.UPLOAD_DOCUMENT)
 
@@ -1735,14 +1759,19 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(data_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            data_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "byte_data_conversion_destination":
@@ -1751,16 +1780,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": data_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(data_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            data_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "kilo_byte_data_conversion_destination":
@@ -1769,16 +1804,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": data_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(data_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            data_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "mega_byte_data_conversion_destination":
@@ -1787,16 +1828,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": data_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(data_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            data_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "giga_byte_data_conversion_destination":
@@ -1805,16 +1852,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": data_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(data_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            data_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "tera_byte_data_conversion_destination":
@@ -1823,16 +1876,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": data_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(data_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            data_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "peta_byte_data_conversion_destination":
@@ -1841,16 +1900,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": data_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(data_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            data_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "exa_byte_data_conversion_destination":
@@ -1859,16 +1924,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": data_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in data_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(data_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{data_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            data_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
     if message in length_conversion_callback_data_list:
@@ -2163,16 +2234,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "nano_meter_length_conversion_destination":
@@ -2181,16 +2258,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "micro_meter_length_conversion_destination":
@@ -2199,16 +2282,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "milli_meter_length_conversion_destination":
@@ -2217,16 +2306,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "centi_meter_length_conversion_destination":
@@ -2235,16 +2330,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "desi_meter_length_conversion_destination":
@@ -2253,16 +2354,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "meter_length_conversion_destination":
@@ -2271,16 +2378,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "kilo_meter_length_conversion_destination":
@@ -2289,16 +2402,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "mile_length_conversion_destination":
@@ -2307,16 +2426,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "nautical_mile_length_conversion_destination":
@@ -2325,16 +2450,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "foot_length_conversion_destination":
@@ -2343,16 +2474,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "inch_length_conversion_destination":
@@ -2361,16 +2498,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "yard_length_conversion_destination":
@@ -2379,16 +2522,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "fathom_length_conversion_destination":
@@ -2397,16 +2546,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "light_year_length_conversion_destination":
@@ -2415,16 +2570,22 @@ async def query_handler(call: types.CallbackQuery):
                                                       "first_symbol": length_status[call.from_user.id]["first_symbol"],
                                                       "second_symbol": second_symbol,
                                                       "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in length_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(length_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{length_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    length_status.pop(chat_id)
-            except:
+                            length_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
     if message in mass_conversion_callback_data_list:
@@ -2776,14 +2937,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "micro_gram_mass_conversion_destination":
@@ -2794,14 +2960,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "quintal_mass_conversion_destination":
@@ -2812,14 +2983,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "milli_gram_mass_conversion_destination":
@@ -2830,14 +3006,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "centi_gram_mass_conversion_destination":
@@ -2848,14 +3029,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "desi_gram_mass_conversion_destination":
@@ -2866,14 +3052,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "gram_mass_conversion_destination":
@@ -2884,14 +3075,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "kilo_gram_mass_conversion_destination":
@@ -2902,14 +3098,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "tone_mass_conversion_destination":
@@ -2920,14 +3121,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "pound_mass_conversion_destination":
@@ -2938,14 +3144,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "ounce_mass_conversion_destination":
@@ -2956,14 +3167,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "carat_mass_conversion_destination":
@@ -2974,14 +3190,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "grain_mass_conversion_destination":
@@ -2992,14 +3213,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "long_ton_mass_conversion_destination":
@@ -3010,14 +3236,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "short_ton_mass_conversion_destination":
@@ -3028,14 +3259,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "stone_mass_conversion_destination":
@@ -3046,14 +3282,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "dram_mass_conversion_destination":
@@ -3064,14 +3305,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "dan_mass_conversion_destination":
@@ -3082,14 +3328,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "sir_mass_conversion_destination":
@@ -3100,14 +3351,19 @@ async def query_handler(call: types.CallbackQuery):
                                                     "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in mass_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(mass_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{mass_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    mass_status.pop(chat_id)
-            except:
+                            mass_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
     if message in numeral_conversion_callback_data_list:
@@ -3758,18 +4014,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "3_to_base":
@@ -3781,18 +4042,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "4_to_base":
@@ -3804,18 +4070,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "5_to_base":
@@ -3827,18 +4098,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "6_to_base":
@@ -3850,18 +4126,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "7_to_base":
@@ -3873,18 +4154,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "8_to_base":
@@ -3896,18 +4182,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "9_to_base":
@@ -3919,18 +4210,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "10_to_base":
@@ -3942,18 +4238,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "11_to_base":
@@ -3965,18 +4266,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "12_to_base":
@@ -3988,18 +4294,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "13_to_base":
@@ -4011,18 +4322,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "14_to_base":
@@ -4034,18 +4350,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "15_to_base":
@@ -4057,18 +4378,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "16_to_base":
@@ -4080,18 +4406,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "17_to_base":
@@ -4103,18 +4434,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "18_to_base":
@@ -4126,18 +4462,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "19_to_base":
@@ -4149,18 +4490,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "20_to_base":
@@ -4172,18 +4518,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "21_to_base":
@@ -4195,18 +4546,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "22_to_base":
@@ -4218,18 +4574,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "23_to_base":
@@ -4241,18 +4602,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "24_to_base":
@@ -4264,18 +4630,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "25_to_base":
@@ -4287,18 +4658,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "26_to_base":
@@ -4310,18 +4686,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "27_to_base":
@@ -4333,18 +4714,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "28_to_base":
@@ -4356,18 +4742,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "29_to_base":
@@ -4379,18 +4770,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "30_to_base":
@@ -4402,18 +4798,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "31_to_base":
@@ -4425,18 +4826,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "32_to_base":
@@ -4448,18 +4854,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "33_to_base":
@@ -4471,18 +4882,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "34_to_base":
@@ -4494,18 +4910,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "35_to_base":
@@ -4517,18 +4938,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-
+        
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "36_to_base":
@@ -4540,18 +4966,23 @@ async def query_handler(call: types.CallbackQuery):
 
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
-                    user_language = get_user_current_language(user_id=chat_id)
-                    await bot.edit_message_text(
-                        text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                    try:
+                        if len(numeral_status[call.from_user.id]) == 4:
+                            user_language = get_user_current_language(user_id=chat_id)
+                            await bot.edit_message_text(
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
+            {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
+            {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
-                        chat_id=chat_id,
-                        message_id=data_and_from_base_and_to_base_and_message_id["message_id"], parse_mode="HTML")
+            {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                                chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    data_status.pop(chat_id)
-            except:
+                            numeral_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
     if message in temperature_conversion_callback_data_list:
@@ -4724,14 +5155,19 @@ async def query_handler(call: types.CallbackQuery):
                                                            "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in temperature_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(temperature_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    temperature_status.pop(chat_id)
-            except:
+                            temperature_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except KeyError:
                 pass
 
         if message == "fahrenheit_temperature_conversion_destination":
@@ -4743,14 +5179,19 @@ async def query_handler(call: types.CallbackQuery):
                                                            "message_id": call.message.message_id}})
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in temperature_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(temperature_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    temperature_status.pop(chat_id)
-            except:
+                            temperature_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except KeyError:
                 pass
 
         if message == "kelvin_temperature_conversion_destination":
@@ -4760,17 +5201,23 @@ async def query_handler(call: types.CallbackQuery):
                                                                "first_symbol"],
                                                            "second_symbol": second_symbol,
                                                            "message_id": call.message.message_id}})
-            try:
-                for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in temperature_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
 
-                    temperature_status.pop(chat_id)
-            except:
-                pass
+        try:
+            for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in temperature_status.items():
+                try:
+                    if len(temperature_status[call.from_user.id]) == 4:
+                        await bot.edit_message_text(
+                            text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{temperature_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                            chat_id=chat_id,
+                            message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                            parse_mode="HTML")
+
+                        temperature_status.pop(chat_id)
+
+                except KeyError:
+                    pass
+        except KeyError:
+            pass
 
     if message in time_conversion_callback_data_list:
         text = call.message.text
@@ -5024,16 +5471,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "nano_second_time_conversion_destination":
@@ -5042,16 +5495,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "micro_second_time_conversion_destination":
@@ -5060,16 +5519,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "milli_second_time_conversion_destination":
@@ -5078,16 +5543,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "second_time_conversion_destination":
@@ -5096,16 +5567,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "min_time_conversion_destination":
@@ -5114,16 +5591,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "hour_time_conversion_destination":
@@ -5132,16 +5615,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "day_time_conversion_destination":
@@ -5150,16 +5639,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "month_time_conversion_destination":
@@ -5168,16 +5663,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "year_time_conversion_destination":
@@ -5186,16 +5687,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "decade_time_conversion_destination":
@@ -5204,16 +5711,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
         if message == "century_time_conversion_destination":
@@ -5222,16 +5735,22 @@ async def query_handler(call: types.CallbackQuery):
                                                     "first_symbol": time_status[call.from_user.id]["first_symbol"],
                                                     "second_symbol": second_symbol,
                                                     "message_id": call.message.message_id}})
+
             try:
                 for chat_id, number_and_first_symbol_and_last_symbol_and_message_id in time_status.items():
-                    await bot.edit_message_text(
-                        text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
-                        chat_id=chat_id,
-                        message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
-                        parse_mode="HTML")
+                    try:
+                        if len(time_status[call.from_user.id]) == 4:
+                            await bot.edit_message_text(
+                                text=f"""{number_and_first_symbol_and_last_symbol_and_message_id["number"]} {number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"]} = <code>{time_converter(first_symbol=number_and_first_symbol_and_last_symbol_and_message_id["first_symbol"], second_symbol=number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"], number=number_and_first_symbol_and_last_symbol_and_message_id["number"])} {number_and_first_symbol_and_last_symbol_and_message_id["second_symbol"]}</code>""",
+                                chat_id=chat_id,
+                                message_id=number_and_first_symbol_and_last_symbol_and_message_id["message_id"],
+                                parse_mode="HTML")
 
-                    time_status.pop(chat_id)
-            except:
+                            time_status.pop(chat_id)
+
+                    except KeyError:
+                        pass
+            except RuntimeError:
                 pass
 
     if message in languages_callback_data_list:
