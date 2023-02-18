@@ -4629,7 +4629,7 @@ async def query_handler(call: types.CallbackQuery):
                         temp_flag = True
 
             if text == languages[user_language]['temperature_converter_enter_number']:
-                if temp_flag != True:
+                if not temp_flag:
                     text = "-"
 
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text,
