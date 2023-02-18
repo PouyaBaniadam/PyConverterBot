@@ -480,7 +480,7 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
             """لیر ترکیه""",
 
         "cant_fetch_data":
-            """عدم توانایی دریافت اطلاعات!""",
+            """?""",
 
         "derham_symbol":
             """د.إ"""
@@ -969,7 +969,7 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
              """Turkey lir""",
 
          "cant_fetch_data":
-             """Can't fetch data""",
+             """?""",
 
          "derham_symbol":
              """DH"""

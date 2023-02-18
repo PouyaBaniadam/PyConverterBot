@@ -364,7 +364,7 @@ async def options_keyboard_answer(message: types.Message):
 
 @dp.callback_query_handler()
 async def query_handler(call: types.CallbackQuery):
-    global from_base, to_base, weight_unit, height_unit, first_symbol, number, numeral_data, bmi_status, data_status
+    global from_base, to_base, weight_unit, height_unit, first_symbol, number, numeral_data, bmi_status, data_status, temp_flag
     global weight, height
     global phrase, numeral_system_flag
 
@@ -3634,6 +3634,9 @@ async def query_handler(call: types.CallbackQuery):
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
@@ -3667,6 +3670,9 @@ async def query_handler(call: types.CallbackQuery):
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
@@ -3700,6 +3706,9 @@ async def query_handler(call: types.CallbackQuery):
             numeral_status.update(
                 {call.from_user.id: {"data": numeral_status[call.from_user.id]["data"], "from_base": from_base,
                                      "message_id": numeral_status[call.from_user.id]["message_id"]}})
+
+            user_language = get_user_current_language(user_id=call.from_user.id)
+
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                         text=languages[user_language]['numeral_converter_to_base'],
                                         reply_markup=numeral_conversion_to_base_inline_keyboard())
