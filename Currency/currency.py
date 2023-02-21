@@ -72,7 +72,6 @@ async def momentarily_currency_rate(user_language):
     for currency_short_name, currency_rate_and_symbol in currencies_dictionary.items():
         output += f"""
 {currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} :\t {"🇮🇷"} <code> {'{:,}'.format(currencies_list[index])} {languages[user_language]['tooman_currency']} </code> {"🇮🇷"}
-
         """
         index += 1
 
