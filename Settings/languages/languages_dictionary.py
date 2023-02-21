@@ -474,10 +474,10 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
             """تومان""",
 
         "euro_currency":
-            """یورو""",
+            """یوروی اروپایی""",
 
         "pound_currency":
-            """پوند""",
+            """پوند انگلیسی""",
 
         "dirham_currency":
             """درهم عمارات عربی""",
@@ -498,8 +498,10 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
             """د.إ""",
 
         "question_mark_count_exceeded_error":
-            """با عرض پوزش ، در حال حاضر بیشتر سرویس ها در دسترس نمی باشند. لطفا کمی بعد دوباره امتحان کنید تا اطلاعات بهتری دستگیر شما شود."""
+            """با عرض پوزش ، در حال حاضر بیشتر سرویس ها در دسترس نمی باشند. لطفا کمی بعد دوباره امتحان کنید تا اطلاعات بهتری دستگیر شما شود.""",
 
+        "1_min_currency_limitation":
+            """لطفا حداقل یک دقیقه تا ارسال پیام بعدی صبر کنید.""",
     },
 
     "language_english":
@@ -978,10 +980,10 @@ I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love 
              """Tooman""",
 
          "euro_currency":
-             """Euro""",
+             """European Euro""",
 
          "pound_currency":
-             """Pound""",
+             """British Pound""",
 
          "dirham_currency":
              """Arab Emirates Dirham""",
@@ -1002,7 +1004,9 @@ I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love 
              """DH""",
 
          "question_mark_count_exceeded_error":
-             """Sorry. Right now most of the services are unavailabel! Please try again in a while to get better information."""
+             """Sorry. Right now most of the services are unavailabel! Please try again in a while to get better information.""",
 
+         "1_min_currency_limitation":
+             """Please wait at least 1 minute before sending another message.""",
          }
 }

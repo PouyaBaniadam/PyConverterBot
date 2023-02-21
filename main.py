@@ -1,3 +1,4 @@
+import time
 from random import randint
 import tracemalloc
 from math import pi
@@ -35,6 +36,7 @@ temperature_status = {}
 time_status = {}
 date_status = {}
 currency_status = {}
+last_current_currency_message_time = {}
 
 
 @dp.message_handler(commands="start")
@@ -109,6 +111,8 @@ async def handle_sticker(message: types.Message):
 
 @dp.message_handler()
 async def options_keyboard_answer(message: types.Message):
+    global last_current_currency_message_time
+
     try:
         user_language = get_user_current_language(user_id=message.chat.id)
     except:
@@ -170,21 +174,42 @@ async def options_keyboard_answer(message: types.Message):
     if message.text == languages[user_language]["now_currency"]:
         user_language = get_user_current_language(user_id=message.chat.id)
 
-        await bot.send_animation(chat_id=message.chat.id, animation=animated_dictionary['AnimatedEmojies']['Currency'])
+        def currency_is_allowed(user_id):
+            try:
+                if time.time() - last_current_currency_message_time[user_id] < 60:
+                    currency_is_allowed = False
+                    return currency_is_allowed
 
-        await bot.send_chat_action(chat_id=message.from_user.id, action=ChatActions.TYPING)
+            except KeyError:
+                last_current_currency_message_time.update({user_id: time.time() - 60})
+                currency_is_allowed = True
+                return currency_is_allowed
 
-        answer = await momentarily_currency_rate(user_language=user_language)
+            currency_is_allowed = True
+            return currency_is_allowed
 
-        if answer[1]:
-            await bot.send_message(chat_id=message.from_user.id, text=answer[0], parse_mode="HTML")
-            await bot.send_animation(chat_id=message.chat.id,
-                                     animation=animated_dictionary['HotCherry']['Shrugging'])
-            await bot.send_message(chat_id=message.from_user.id,
-                                   text=languages[user_language]['question_mark_count_exceeded_error'])
+        currency_is_allowed = currency_is_allowed(user_id=message.from_user.id)
+        if not currency_is_allowed:
+            await message.answer(languages[user_language]['1_min_currency_limitation'])
 
         else:
-            await bot.send_message(chat_id=message.from_user.id, text=answer[0], parse_mode="HTML")
+            await bot.send_animation(chat_id=message.chat.id,
+                                     animation=animated_dictionary['AnimatedEmojies']['Currency'])
+
+            await bot.send_chat_action(chat_id=message.from_user.id, action=ChatActions.TYPING)
+
+            answer = await momentarily_currency_rate(user_language=user_language)
+
+            if answer[1]:
+                await bot.send_message(chat_id=message.from_user.id, text=answer[0], parse_mode="HTML")
+                await bot.send_animation(chat_id=message.chat.id,
+                                         animation=animated_dictionary['HotCherry']['Shrugging'])
+                await bot.send_message(chat_id=message.from_user.id,
+                                       text=languages[user_language]['question_mark_count_exceeded_error'])
+
+            else:
+                await bot.send_message(chat_id=message.from_user.id, text=answer[0], parse_mode="HTML")
+            last_current_currency_message_time.update({message.chat.id: time.time()})
 
     if message.text == languages[user_language]['calculation']:
         await bot.send_message(chat_id=message.chat.id,
@@ -5786,4 +5811,4 @@ async def query_handler(call: types.CallbackQuery):
         await bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
 
 
-executor.start_polling(dp)
+executor.start_polling(dp, skip_updates=True)

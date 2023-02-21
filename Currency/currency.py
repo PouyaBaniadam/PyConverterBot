@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import re
 from Settings.languages.languages_dictionary import languages
 
-currency_flags = {"USD": "🇺🇸", "EUR": "🇪🇺", "GBP": "🇬🇧", "LIR": "🇹🇷", "CHF": "🇸🇪", "AED": "🇦🇪", "JPY": "🇯🇵",
+currency_flags = {"USD": "🇺🇸", "EUR": "🇪🇺", "GBP": "🇬🇧", "LIR": "🇹🇷", "CHF": "🇸🇪", "JPY": "🇯🇵", "AED": "🇦🇪",
                   "IRR": "🇮🇷"}
 key_value_list = list(currency_flags.items())
 key = key_value_list[0][1]
@@ -34,13 +34,13 @@ async def current_currency_rate(session, currency: str):
 
 
 async def momentarily_currency_rate(user_language):
-    currencies_list = ["USD", "EUR", "GBP", "TRY", "CHF", "AED", "JPY"]
+    currencies_list = ["USD", "EUR", "GBP", "TRY", "CHF", "JPY", "AED"]
     currencies_list_after_process = currencies_list.copy()
 
     currency_names = [languages[user_language]['dollar_currency'], languages[user_language]['euro_currency'],
                       languages[user_language]['pound_currency'], languages[user_language]['lir_currency'],
-                      languages[user_language]['swiss_franc_currency'], languages[user_language]['dirham_currency'],
-                      languages[user_language]['japan_yen']]
+                      languages[user_language]['swiss_franc_currency'], languages[user_language]['japan_yen'],
+                      languages[user_language]['dirham_currency']]
 
     currencies_dictionary = {}
     tasks = []
@@ -71,7 +71,7 @@ async def momentarily_currency_rate(user_language):
     index = 0
     for currency_short_name, currency_rate_and_symbol in currencies_dictionary.items():
         output += f"""
-{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} : {"🇮🇷"} <code> {'{:,}'.format(currencies_list[index])} {languages[user_language]['tooman_currency']} </code> {"🇮🇷"}
+{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} :\t {"🇮🇷"} <code> {'{:,}'.format(currencies_list[index])} {languages[user_language]['tooman_currency']} </code> {"🇮🇷"}
 
         """
         index += 1
