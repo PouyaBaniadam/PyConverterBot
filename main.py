@@ -102,6 +102,8 @@ async def welcome(message: types.Message):
 
     await message.reply(text=languages[user_language]["help_command"])
 
+    await bot.send_chat_action(chat_id=message.from_user.id, action=ChatActions.UPLOAD_VIDEO)
+
     await bot.send_video(video=open('Assets/Videos/Tutorial/MainTutorial.mp4', 'rb'), chat_id=message.chat.id)
 
 
@@ -166,8 +168,8 @@ async def options_keyboard_answer(message: types.Message):
         user_language = get_user_current_language(user_id=message.chat.id)
 
         await bot.send_message(text=f"""{languages[user_language]['current_time']} : <code> {current_time} </code>
-    {languages[user_language]['jalali_date']} : <code> {today_in_jalali} </code>
-    {languages[user_language]['gregorian_date']} : <code> {today_in_gregorian} </code>""", chat_id=message.chat.id,
+{languages[user_language]['jalali_date']} : <code> {today_in_jalali} </code>
+{languages[user_language]['gregorian_date']} : <code> {today_in_gregorian} </code>""", chat_id=message.chat.id,
                                parse_mode="HTML",
                                reply_markup=date_calender_inline_keyboard(user_language=user_language))
 
