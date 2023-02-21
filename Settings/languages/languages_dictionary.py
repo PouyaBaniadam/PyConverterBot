@@ -155,6 +155,15 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
         "date_conversion_year_min_622_error":
             """حداقل مقدار سال میلادی ، 622 می باشد.""",
 
+        "date_conversion_year_value_0_error":
+            """مقدار سال نمی تواند 0 مطلق باشد.""",
+
+        "date_conversion_month_value_0_error":
+            """مقدار ماه نمی تواند 0 مطلق باشد.""",
+
+        "date_conversion_day_value_0_error":
+            """مقدار روز نمی تواند 0 مطلق باشد.""",
+
         "jalali_calender":
             """تقویم شمسی""",
 
@@ -458,32 +467,38 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
         "currency_converter_destination":
             """لطفا پول دمای مورد نظر خود را برای پایان تبدیل انتخاب کنید.""",
 
-        "dollar_currency_converter":
-            """دلار""",
+        "dollar_currency":
+            """دلار آمریکا""",
 
-        "tooman_currency_converter":
+        "tooman_currency":
             """تومان""",
 
-        "euro_currency_converter":
+        "euro_currency":
             """یورو""",
 
-        "pound_currency_converter":
+        "pound_currency":
             """پوند""",
 
-        "dirham_currency_converter":
+        "dirham_currency":
             """درهم عمارات عربی""",
 
-        "swiss_franc_currency_converter":
+        "swiss_franc_currency":
             """فرانک سوئیس""",
 
-        "lir_currency_converter":
+        "lir_currency":
             """لیر ترکیه""",
+
+        "japan_yen":
+            """ین ژاپن""",
 
         "cant_fetch_data":
             """?""",
 
         "derham_symbol":
-            """د.إ"""
+            """د.إ""",
+
+        "question_mark_count_exceeded_error":
+            """با عرض پوزش ، در حال حاضر بیشتر سرویس ها در دسترس نمی باشند. لطفا کمی بعد دوباره امتحان کنید تا اطلاعات بهتری دستگیر شما شود."""
 
     },
 
@@ -544,27 +559,27 @@ I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love 
 
          "extremely_obese":
              """You are extremely obese!
-You should see a doctor as soon as possible!🧑🏻‍⚕️""",
+        You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "obese":
              """You are obese!
-You should see a doctor as soon as possible!🧑🏻‍⚕️""",
+        You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "little_overweight":
              """You are a little overweight!
-You should see a doctor!🧑🏻‍⚕️""",
+        You should see a doctor!🧑🏻‍⚕️""",
 
          "healthy":
              """You are at total health!
-Keep that body!⛹🏻‍♂️""",
+        Keep that body!⛹🏻‍♂️""",
 
          "little_underweight":
              """You are a little underweight!
-You should see a doctor!🧑🏻‍⚕️""",
+        You should see a doctor!🧑🏻‍⚕️""",
 
          "way_underweight":
              """You are way underweight!
-You should see a doctor as soon as possible!🧑🏻‍⚕️""",
+        You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "bmi_chart":
              """BMI chart""",
@@ -640,6 +655,15 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "date_conversion_year_min_622_error":
              """Minimum year-number can be 622.""",
+
+         "date_conversion_year_value_0_error":
+             """year-value can't be absolute 0.""",
+
+         "date_conversion_month_value_0_error":
+             """month-value can't be absolute 0.""",
+
+         "date_conversion_day_value_0_error":
+             """day-value can't be absolute 0.""",
 
          "jalali_calender":
              """Jalali calender""",
@@ -947,32 +971,38 @@ You should see a doctor as soon as possible!🧑🏻‍⚕️""",
          "currency_converter_destination":
              """Please choose a currency-unit to finish the conversion""",
 
-         "dollar_currency_converter":
-             """Dollar""",
+         "dollar_currency":
+             """USA Dollar""",
 
-         "tooman_currency_converter":
-             """tooman""",
+         "tooman_currency":
+             """Tooman""",
 
-         "euro_currency_converter":
-             """EURO""",
+         "euro_currency":
+             """Euro""",
 
-         "pound_currency_converter":
-             """British pound sterling""",
+         "pound_currency":
+             """Pound""",
 
-         "dirham_currency_converter":
+         "dirham_currency":
              """Arab Emirates Dirham""",
 
-         "swiss_franc_currency_converter":
-             """Swiss franc""",
+         "swiss_franc_currency":
+             """Swiss Franc""",
 
-         "lir_currency_converter":
-             """Turkey lir""",
+         "lir_currency":
+             """Turkey Lir""",
+
+         "japan_yen":
+             """Japan Yen""",
 
          "cant_fetch_data":
              """?""",
 
          "derham_symbol":
-             """DH"""
+             """DH""",
+
+         "question_mark_count_exceeded_error":
+             """Sorry. Right now most of the services are unavailabel! Please try again in a while to get better information."""
 
          }
 }

@@ -1,238 +1,90 @@
-import requests
+import asyncio
+import aiohttp
 from bs4 import BeautifulSoup
 import re
-
 from Settings.languages.languages_dictionary import languages
 
-currency_symbols = {"USD": "$", "IRR": "T", "EUR": "€", "GBP": "£", "CHF": "₣", "LIR": "₺", "AED": "DH"}
-
-def currency_converter(amount, source_currency, target_currency):
-    url = "https://www.tgju.org"
-
-    currency_symbols = {"USD": "$", "IRR": "T", "EUR": "€", "GBP": "£", "CHF": "₣", "LIR": "₺", "AED": "DH"}
-
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, "html.parser")
-
-    market_price_tags = soup.find_all("td", class_="market-price")
-
-    USD = float(market_price_tags[0].text.replace(",", ""))
-    EUR = float(market_price_tags[1].text.replace(",", ""))
-    AED = float(market_price_tags[2].text.replace(",", ""))
-    GBP = float(market_price_tags[3].text.replace(",", ""))
-    LIR = float(market_price_tags[4].text.replace(",", ""))
-    CHF = float(market_price_tags[5].text.replace(",", ""))
-    IRR = 10.0
-
-    if source_currency == "USD":
-        source_currency_amount = float(USD)
-
-    elif source_currency == "EUR":
-        source_currency_amount = float(EUR)
-
-    elif source_currency == "AED":
-        source_currency_amount = float(AED)
-
-    elif source_currency == "GBP":
-        source_currency_amount = float(GBP)
-
-    elif source_currency == "LIR":
-        source_currency_amount = float(LIR)
-
-    elif source_currency == "CHF":
-        source_currency_amount = float(CHF)
-
-    elif source_currency == "AED":
-        source_currency_amount = float(AED)
-
-    elif source_currency == "IRR":
-        source_currency_amount = float(IRR)
-
-    if target_currency == "USD":
-        target_currency_amount = float(USD)
-
-    elif target_currency == "EUR":
-        target_currency_amount = float(EUR)
-
-    elif target_currency == "AED":
-        target_currency_amount = float(AED)
-
-    elif target_currency == "GBP":
-        target_currency_amount = float(GBP)
-
-    elif target_currency == "LIR":
-        target_currency_amount = float(LIR)
-
-    elif target_currency == "CHF":
-        target_currency_amount = float(CHF)
-
-    elif target_currency == "AED":
-        target_currency_amount = float(AED)
-
-    elif target_currency == "IRR":
-        target_currency_amount = float(IRR)
-
-    answer = round((source_currency_amount * float(amount)) / target_currency_amount, 5)
-
-    if answer % 1 == 0:
-        answer = int(answer)
-
-    return f"{amount} {currency_symbols[source_currency]} = <code> {answer} {currency_symbols[target_currency]} </code>"
+currency_flags = {"USD": "🇺🇸", "EUR": "🇪🇺", "GBP": "🇬🇧", "LIR": "🇹🇷", "CHF": "🇸🇪", "AED": "🇦🇪", "JPY": "🇯🇵",
+                  "IRR": "🇮🇷"}
+key_value_list = list(currency_flags.items())
+key = key_value_list[0][1]
 
 
-def momentarily_currency_rate(user_language):
-    rates_list = []
+async def current_currency_rate(session, currency: str):
+    url = f"https://fa.navasan.net/dayRates.php?item={currency.lower()}"
+    async with session.get(url) as response:
+        soup = BeautifulSoup(await response.text(), 'html.parser')
+        divs = soup.find('div', {'class': 'idesc lastrate pos'})
 
-    currency_symbols = {"USD": "$", "IRR": "T", "EUR": "€", "GBP": "£", "CHF": "₣", "LIR": "₺",
-                        "AED": languages[user_language]['derham_symbol']}
+        if divs is None:
+            divs = soup.find('div', {'class': 'idesc lastrate neg'})
 
-    # USD Rate
-    url = "https://fa.navasan.net/dayRates.php?item=usd"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    divs = soup.find('div', {'class': 'idesc lastrate pos'})
+            if divs is None:
+                divs = soup.find('div', {'class': 'idesc lastrate'})
 
-    if divs is None:
-        divs = soup.find('div', {'class': 'idesc lastrate neg'})
+            if divs is not None:
+                for div in divs:
+                    return re.sub(r'\s+', ' ', div.text).strip()
+            else:
+                return "?"
 
-        if divs is not None:
-            for div in divs:
-                rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-                break
         else:
-            rates_list.append(languages[user_language]['cant_fetch_data'])
-
-    else:
-        for div in divs:
-            rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-            break
-
-    # EUR Rate
-    url = "https://fa.navasan.net/dayRates.php?item=eur"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    divs = soup.find('div', {'class': 'idesc lastrate pos'})
-
-    if divs is None:
-        divs = soup.find('div', {'class': 'idesc lastrate neg'})
-
-        if divs is not None:
             for div in divs:
-                rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-                break
-        else:
-            rates_list.append(languages[user_language]['cant_fetch_data'])
+                return re.sub(r'\s+', ' ', div.text).strip()
 
-    else:
-        for div in divs:
-            rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-            break
 
-    # Pound Rate
-    url = "https://fa.navasan.net/dayRates.php?item=gbp"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    divs = soup.find('div', {'class': 'idesc lastrate pos'})
+async def momentarily_currency_rate(user_language):
+    currencies_list = ["USD", "EUR", "GBP", "TRY", "CHF", "AED", "JPY"]
+    currencies_list_after_process = currencies_list.copy()
 
-    if divs is None:
-        divs = soup.find('div', {'class': 'idesc lastrate neg'})
+    currency_names = [languages[user_language]['dollar_currency'], languages[user_language]['euro_currency'],
+                      languages[user_language]['pound_currency'], languages[user_language]['lir_currency'],
+                      languages[user_language]['swiss_franc_currency'], languages[user_language]['dirham_currency'],
+                      languages[user_language]['japan_yen']]
 
-        if divs is not None:
-            for div in divs:
-                rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-                break
-        else:
-            rates_list.append(languages[user_language]['cant_fetch_data'])
+    currencies_dictionary = {}
+    tasks = []
 
-    else:
-        for div in divs:
-            rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-            break
+    async with aiohttp.ClientSession() as session:
+        for currency in currencies_list:
+            tasks.append(asyncio.ensure_future(current_currency_rate(session, currency)))
 
-    # AED Rate
-    url = "https://fa.navasan.net/dayRates.php?item=aed"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    divs = soup.find('div', {'class': 'idesc lastrate pos'})
+        rates_list = await asyncio.gather(*tasks)
 
-    if divs is None:
-        divs = soup.find('div', {'class': 'idesc lastrate neg'})
+    currency_index = 0
+    for rate in rates_list:
+        try:
+            currencies_list[currency_index] = float(rate.replace(",", ""))
+            if currencies_list[currency_index] % 1 == 0:
+                currencies_list[currency_index] = int(currencies_list[currency_index])
+        except:
+            currencies_list[currency_index] = rate
 
-        if divs is not None:
-            for div in divs:
-                rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-                break
-        else:
-            rates_list.append(languages[user_language]['cant_fetch_data'])
+        currencies_dictionary.update(
+            {currencies_list_after_process[currency_index]: {
+                currencies_list[currency_index]: key_value_list[currency_index][1]}})
 
-    else:
-        for div in divs:
-            rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-            break
+        currency_index += 1
 
-    # LIR Rate
-    url = "https://fa.navasan.net/dayRates.php?item=try"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    divs = soup.find('div', {'class': 'idesc lastrate pos'})
+    output = ""
 
-    if divs is None:
-        divs = soup.find('div', {'class': 'idesc lastrate neg'})
+    index = 0
+    for currency_short_name, currency_rate_and_symbol in currencies_dictionary.items():
+        output += f"""
+{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} : {"🇮🇷"} <code> {'{:,}'.format(currencies_list[index])} {languages[user_language]['tooman_currency']} </code> {"🇮🇷"}
 
-        if divs is not None:
-            for div in divs:
-                rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-                break
-        else:
-            rates_list.append(languages[user_language]['cant_fetch_data'])
+        """
+        index += 1
 
-    else:
-        for div in divs:
-            rates_list.append(re.sub(r'\s+', ' ', div.text).strip())
-            break
+    question_mark_count = 0
+    for question_mark in currencies_list:
+        if question_mark == "?":
+            question_mark_count += 1
 
-    try:
-        USD = float(rates_list[0].replace(",", ""))
-        if USD % 1 == 0:
-            USD = int(USD)
-    except:
-        USD = rates_list[0]
+    has_so_many_question_marks = False
 
-    try:
-        EUR = float(rates_list[1].replace(",", ""))
-        if EUR % 1 == 0:
-            EUR = int(EUR)
-    except:
-        EUR = rates_list[1]
+    if question_mark_count >= 3:
+        has_so_many_question_marks = True
+        return output, has_so_many_question_marks
 
-    try:
-        GBP = float(rates_list[2].replace(",", ""))
-        if GBP % 1 == 0:
-            GBP = int(GBP)
-    except:
-        GBP = rates_list[2]
-
-    try:
-        AED = float(rates_list[3].replace(",", ""))
-        if AED % 1 == 0:
-            AED = int(AED)
-    except:
-        AED = rates_list[3]
-
-    try:
-        LIR = float(rates_list[4].replace(",", ""))
-        if LIR % 1 == 0:
-            LIR = int(LIR)
-    except:
-        LIR = rates_list[4]
-
-    return f"""{currency_symbols['USD']} {languages[user_language]['dollar_currency_converter']} {currency_symbols['USD']} : {currency_symbols['IRR']} <code> {USD} {languages[user_language]['tooman_currency_converter']} </code> {currency_symbols['IRR']}
-    
-{currency_symbols['EUR']} {languages[user_language]['euro_currency_converter']} {currency_symbols['EUR']} : {currency_symbols['IRR']} <code> {EUR} {languages[user_language]['tooman_currency_converter']} </code> {currency_symbols['IRR']}
-
-{currency_symbols['GBP']} {languages[user_language]['pound_currency_converter']} {currency_symbols['GBP']} : {currency_symbols['IRR']} <code> {GBP} {languages[user_language]['tooman_currency_converter']} </code> {currency_symbols['IRR']}
-
-{currency_symbols['LIR']} {languages[user_language]['lir_currency_converter']} {currency_symbols['LIR']} : {currency_symbols['IRR']} <code> {LIR} {languages[user_language]['tooman_currency_converter']} </code> {currency_symbols['IRR']}
-
-{currency_symbols['AED']} {languages[user_language]['dirham_currency_converter']} {currency_symbols['AED']} : {currency_symbols['IRR']} <code> {AED} {languages[user_language]['tooman_currency_converter']} </code> {currency_symbols['IRR']}
-"""
+    return output, has_so_many_question_marks

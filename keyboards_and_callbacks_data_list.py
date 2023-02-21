@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
-
+import unicodedata
 from Settings.languages.languages_dictionary import languages
 
 
@@ -10,7 +10,7 @@ def bot_options_keyboard(user_language):
     bot__date_option_button = KeyboardButton(languages[user_language]["date"])
     bot__currency_option_button = KeyboardButton(languages[user_language]["currency"])
     bot__settings_option_button = KeyboardButton(languages[user_language]["settings_option_selection"])
-    bot_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+    bot_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     bot_options_keyboard.add(bot__unit_conversion_option_button, bot__calculation_option_button,
                              bot__date_option_button, bot__currency_option_button).add(
         bot__settings_option_button)
@@ -23,7 +23,7 @@ def currency_options_keyboard(user_language):
     # currency_conversion_option_button = KeyboardButton(languages[user_language]["currency_conversion"])
     currency__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
 
-    currency_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2)
+    currency_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     currency_options_keyboard.add(now_currency_option_button).add(
         currency__back_option_button)
 
@@ -31,22 +31,37 @@ def currency_options_keyboard(user_language):
 
 
 def currency_conversion_numbers_inline_keyboard():
-    currency_converter__0_button = types.InlineKeyboardButton(text="0", callback_data="0_currency_converter")
-    currency_converter__1_button = types.InlineKeyboardButton(text="1", callback_data="1_currency_converter")
-    currency_converter__2_button = types.InlineKeyboardButton(text="2", callback_data="2_currency_converter")
-    currency_converter__3_button = types.InlineKeyboardButton(text="3", callback_data="3_currency_converter")
-    currency_converter__4_button = types.InlineKeyboardButton(text="4", callback_data="4_currency_converter")
-    currency_converter__5_button = types.InlineKeyboardButton(text="5", callback_data="5_currency_converter")
-    currency_converter__6_button = types.InlineKeyboardButton(text="6", callback_data="6_currency_converter")
-    currency_converter__7_button = types.InlineKeyboardButton(text="7", callback_data="7_currency_converter")
-    currency_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_currency_converter")
-    currency_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_currency_converter")
-    currency_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_currency_converter")
-    currency_converter__clear_button = types.InlineKeyboardButton(text="C",
-                                                                  callback_data="clear_currency_converter")
-    currency_converter__backward_button = types.InlineKeyboardButton(text="«",
-                                                                     callback_data="backward_currency_converter")
-    currency_converter__done_button = types.InlineKeyboardButton(text="✅", callback_data="done_currency_converter")
+    padding = 25
+    currency_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                              callback_data="0_currency_converter")
+    currency_converter__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                              callback_data="1_currency_converter")
+    currency_converter__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                              callback_data="2_currency_converter")
+    currency_converter__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                              callback_data="3_currency_converter")
+    currency_converter__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                              callback_data="4_currency_converter")
+    currency_converter__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                              callback_data="5_currency_converter")
+    currency_converter__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                              callback_data="6_currency_converter")
+    currency_converter__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                              callback_data="7_currency_converter")
+    currency_converter__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                              callback_data="8_currency_converter")
+    currency_converter__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                              callback_data="9_currency_converter")
+    currency_converter__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                                callback_data="dot_currency_converter")
+    currency_converter__clear_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "C".center(padding)),
+        callback_data="clear_currency_converter")
+    currency_converter__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)),
+        callback_data="backward_currency_converter")
+    currency_converter__done_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "✅".center(padding)), callback_data="done_currency_converter")
     currency_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(
         currency_converter__1_button,
         currency_converter__2_button,
@@ -149,7 +164,7 @@ def date__options_keyboard(user_language):
     date__date_convert_option_button = KeyboardButton(languages[user_language]["date_convert"])
     date__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
 
-    date__options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
+    date__options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
     date__options_keyboard.add(date__today_option_button, date__date_convert_option_button).add(
         date__back_option_button)
 
@@ -170,21 +185,35 @@ def date__date_conversion_options_inline_keyboard(user_language):
 
 
 def date__date_conversion_day_numbers_inline_keyboard():
-    date_conversion__0_button = types.InlineKeyboardButton(text="0", callback_data="0_date_conversion_day")
-    date_conversion__1_button = types.InlineKeyboardButton(text="1", callback_data="1_date_conversion_day")
-    date_conversion__2_button = types.InlineKeyboardButton(text="2", callback_data="2_date_conversion_day")
-    date_conversion__3_button = types.InlineKeyboardButton(text="3", callback_data="3_date_conversion_day")
-    date_conversion__4_button = types.InlineKeyboardButton(text="4", callback_data="4_date_conversion_day")
-    date_conversion__5_button = types.InlineKeyboardButton(text="5", callback_data="5_date_conversion_day")
-    date_conversion__6_button = types.InlineKeyboardButton(text="6", callback_data="6_date_conversion_day")
-    date_conversion__7_button = types.InlineKeyboardButton(text="7", callback_data="7_date_conversion_day")
-    date_conversion__8_button = types.InlineKeyboardButton(text="8", callback_data="8_date_conversion_day")
-    date_conversion__9_button = types.InlineKeyboardButton(text="9", callback_data="9_date_conversion_day")
-    date_conversion__backward_button = types.InlineKeyboardButton(text="«",
-                                                                  callback_data="backward_date_conversion_day")
-    date_conversion__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_date_conversion_day")
-    date_conversion__done_weight_button = types.InlineKeyboardButton(text="✅",
-                                                                     callback_data="done_date_conversion_day")
+    padding = 25
+
+    date_conversion__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                           callback_data="0_date_conversion_day")
+    date_conversion__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                           callback_data="1_date_conversion_day")
+    date_conversion__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                           callback_data="2_date_conversion_day")
+    date_conversion__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                           callback_data="3_date_conversion_day")
+    date_conversion__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                           callback_data="4_date_conversion_day")
+    date_conversion__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                           callback_data="5_date_conversion_day")
+    date_conversion__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                           callback_data="6_date_conversion_day")
+    date_conversion__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                           callback_data="7_date_conversion_day")
+    date_conversion__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                           callback_data="8_date_conversion_day")
+    date_conversion__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                           callback_data="9_date_conversion_day")
+    date_conversion__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)), callback_data="backward_date_conversion_day")
+    date_conversion__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                               callback_data="clear_date_conversion_day")
+    date_conversion__done_weight_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "✅".center(padding)), callback_data="done_date_conversion_day")
+
     date__date_conversion_day_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
 
     date__date_conversion_day_numbers_inline_keyboard.add(date_conversion__1_button, date_conversion__2_button,
@@ -200,21 +229,36 @@ def date__date_conversion_day_numbers_inline_keyboard():
 
 
 def date__date_conversion_month_numbers_inline_keyboard():
-    date_conversion__0_button = types.InlineKeyboardButton(text="0", callback_data="0_date_conversion_month")
-    date_conversion__1_button = types.InlineKeyboardButton(text="1", callback_data="1_date_conversion_month")
-    date_conversion__2_button = types.InlineKeyboardButton(text="2", callback_data="2_date_conversion_month")
-    date_conversion__3_button = types.InlineKeyboardButton(text="3", callback_data="3_date_conversion_month")
-    date_conversion__4_button = types.InlineKeyboardButton(text="4", callback_data="4_date_conversion_month")
-    date_conversion__5_button = types.InlineKeyboardButton(text="5", callback_data="5_date_conversion_month")
-    date_conversion__6_button = types.InlineKeyboardButton(text="6", callback_data="6_date_conversion_month")
-    date_conversion__7_button = types.InlineKeyboardButton(text="7", callback_data="7_date_conversion_month")
-    date_conversion__8_button = types.InlineKeyboardButton(text="8", callback_data="8_date_conversion_month")
-    date_conversion__9_button = types.InlineKeyboardButton(text="9", callback_data="9_date_conversion_month")
-    date_conversion__backward_button = types.InlineKeyboardButton(text="«",
-                                                                  callback_data="backward_date_conversion_month")
-    date_conversion__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_date_conversion_month")
-    date_conversion__done_weight_button = types.InlineKeyboardButton(text="✅",
-                                                                     callback_data="done_date_conversion_month")
+    padding = 25
+
+    date_conversion__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                           callback_data="0_date_conversion_month")
+    date_conversion__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                           callback_data="1_date_conversion_month")
+    date_conversion__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                           callback_data="2_date_conversion_month")
+    date_conversion__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                           callback_data="3_date_conversion_month")
+    date_conversion__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                           callback_data="4_date_conversion_month")
+    date_conversion__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                           callback_data="5_date_conversion_month")
+    date_conversion__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                           callback_data="6_date_conversion_month")
+    date_conversion__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                           callback_data="7_date_conversion_month")
+    date_conversion__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                           callback_data="8_date_conversion_month")
+    date_conversion__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                           callback_data="9_date_conversion_month")
+    date_conversion__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)), callback_data="backward_date_conversion_month")
+    date_conversion__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                               callback_data="clear_date_conversion_month")
+    date_conversion__done_weight_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "✅".center(padding)),
+        callback_data="done_date_conversion_month")
+
     date__date_conversion_month_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
 
     date__date_conversion_month_numbers_inline_keyboard.add(date_conversion__1_button, date_conversion__2_button,
@@ -230,21 +274,36 @@ def date__date_conversion_month_numbers_inline_keyboard():
 
 
 def date__date_conversion_year_numbers_inline_keyboard():
-    date_conversion__0_button = types.InlineKeyboardButton(text="0", callback_data="0_date_conversion_year")
-    date_conversion__1_button = types.InlineKeyboardButton(text="1", callback_data="1_date_conversion_year")
-    date_conversion__2_button = types.InlineKeyboardButton(text="2", callback_data="2_date_conversion_year")
-    date_conversion__3_button = types.InlineKeyboardButton(text="3", callback_data="3_date_conversion_year")
-    date_conversion__4_button = types.InlineKeyboardButton(text="4", callback_data="4_date_conversion_year")
-    date_conversion__5_button = types.InlineKeyboardButton(text="5", callback_data="5_date_conversion_year")
-    date_conversion__6_button = types.InlineKeyboardButton(text="6", callback_data="6_date_conversion_year")
-    date_conversion__7_button = types.InlineKeyboardButton(text="7", callback_data="7_date_conversion_year")
-    date_conversion__8_button = types.InlineKeyboardButton(text="8", callback_data="8_date_conversion_year")
-    date_conversion__9_button = types.InlineKeyboardButton(text="9", callback_data="9_date_conversion_year")
-    date_conversion__backward_button = types.InlineKeyboardButton(text="«",
-                                                                  callback_data="backward_date_conversion_year")
-    date_conversion__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_date_conversion_year")
-    date_conversion__done_weight_button = types.InlineKeyboardButton(text="✅",
-                                                                     callback_data="done_date_conversion_year")
+    padding = 25
+
+    date_conversion__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                           callback_data="0_date_conversion_year")
+    date_conversion__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                           callback_data="1_date_conversion_year")
+    date_conversion__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                           callback_data="2_date_conversion_year")
+    date_conversion__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                           callback_data="3_date_conversion_year")
+    date_conversion__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                           callback_data="4_date_conversion_year")
+    date_conversion__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                           callback_data="5_date_conversion_year")
+    date_conversion__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                           callback_data="6_date_conversion_year")
+    date_conversion__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                           callback_data="7_date_conversion_year")
+    date_conversion__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                           callback_data="8_date_conversion_year")
+    date_conversion__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                           callback_data="9_date_conversion_year")
+    date_conversion__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)), callback_data="backward_date_conversion_year")
+    date_conversion__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                               callback_data="clear_date_conversion_year")
+    date_conversion__done_weight_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "✅".center(padding)),
+        callback_data="done_date_conversion_year")
+
     date__date_conversion_year_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
 
     date__date_conversion_year_numbers_inline_keyboard.add(date_conversion__1_button, date_conversion__2_button,
@@ -274,7 +333,7 @@ def calculation__options_keyboard(user_language):
     calculation__calculator_option_button = KeyboardButton(languages[user_language]["calculator"])
     calculation__bmi_option_button = KeyboardButton(languages[user_language]["BMI"])
     calculation__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
-    calculation_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
+    calculation_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
     calculation_options_keyboard.add(calculation__bmi_option_button, calculation__calculator_option_button).add(
         calculation__back_option_button)
 
@@ -282,20 +341,36 @@ def calculation__options_keyboard(user_language):
 
 
 def bmi__conversion_weight_inline_keyboard():
-    bmi__0_button = types.InlineKeyboardButton(text="0", callback_data="0_weight_bmi")
-    bmi__1_button = types.InlineKeyboardButton(text="1", callback_data="1_weight_bmi")
-    bmi__2_button = types.InlineKeyboardButton(text="2", callback_data="2_weight_bmi")
-    bmi__3_button = types.InlineKeyboardButton(text="3", callback_data="3_weight_bmi")
-    bmi__4_button = types.InlineKeyboardButton(text="4", callback_data="4_weight_bmi")
-    bmi__5_button = types.InlineKeyboardButton(text="5", callback_data="5_weight_bmi")
-    bmi__6_button = types.InlineKeyboardButton(text="6", callback_data="6_weight_bmi")
-    bmi__7_button = types.InlineKeyboardButton(text="7", callback_data="7_weight_bmi")
-    bmi__8_button = types.InlineKeyboardButton(text="8", callback_data="8_weight_bmi")
-    bmi__9_button = types.InlineKeyboardButton(text="9", callback_data="9_weight_bmi")
-    bmi__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_weight_bmi")
-    bmi__backward_button = types.InlineKeyboardButton(text="«", callback_data="backward_weight_bmi")
-    bmi__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_weight_bmi")
-    bmi__done_weight_button = types.InlineKeyboardButton(text="✅", callback_data="done_weight_bmi")
+    padding = 25
+
+    bmi__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                               callback_data="0_weight_bmi")
+    bmi__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                               callback_data="1_weight_bmi")
+    bmi__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                               callback_data="2_weight_bmi")
+    bmi__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                               callback_data="3_weight_bmi")
+    bmi__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                               callback_data="4_weight_bmi")
+    bmi__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                               callback_data="5_weight_bmi")
+    bmi__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                               callback_data="6_weight_bmi")
+    bmi__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                               callback_data="7_weight_bmi")
+    bmi__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                               callback_data="8_weight_bmi")
+    bmi__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                               callback_data="9_weight_bmi")
+    bmi__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                 callback_data="dot_weight_bmi")
+    bmi__backward_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "«".center(padding)),
+                                                      callback_data="backward_weight_bmi")
+    bmi__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                   callback_data="clear_weight_bmi")
+    bmi__done_weight_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "✅".center(padding)),
+                                                         callback_data="done_weight_bmi")
     bmi__conversion_weight_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
     bmi__conversion_weight_inline_keyboard.add(bmi__1_button, bmi__2_button, bmi__3_button, bmi__4_button,
                                                bmi__5_button, bmi__6_button, bmi__7_button, bmi__8_button,
@@ -307,20 +382,36 @@ def bmi__conversion_weight_inline_keyboard():
 
 
 def bmi__conversion_height_inline_keyboard():
-    bmi__0_button = types.InlineKeyboardButton(text="0", callback_data="0_height_bmi")
-    bmi__1_button = types.InlineKeyboardButton(text="1", callback_data="1_height_bmi")
-    bmi__2_button = types.InlineKeyboardButton(text="2", callback_data="2_height_bmi")
-    bmi__3_button = types.InlineKeyboardButton(text="3", callback_data="3_height_bmi")
-    bmi__4_button = types.InlineKeyboardButton(text="4", callback_data="4_height_bmi")
-    bmi__5_button = types.InlineKeyboardButton(text="5", callback_data="5_height_bmi")
-    bmi__6_button = types.InlineKeyboardButton(text="6", callback_data="6_height_bmi")
-    bmi__7_button = types.InlineKeyboardButton(text="7", callback_data="7_height_bmi")
-    bmi__8_button = types.InlineKeyboardButton(text="8", callback_data="8_height_bmi")
-    bmi__9_button = types.InlineKeyboardButton(text="9", callback_data="9_height_bmi")
-    bmi__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_height_bmi")
-    bmi__backward_button = types.InlineKeyboardButton(text="«", callback_data="backward_height_bmi")
-    bmi__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_height_bmi")
-    bmi__done_height_button = types.InlineKeyboardButton(text="✅", callback_data="done_height_bmi")
+    padding = 25
+
+    bmi__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                               callback_data="0_height_bmi")
+    bmi__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                               callback_data="1_height_bmi")
+    bmi__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                               callback_data="2_height_bmi")
+    bmi__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                               callback_data="3_height_bmi")
+    bmi__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                               callback_data="4_height_bmi")
+    bmi__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                               callback_data="5_height_bmi")
+    bmi__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                               callback_data="6_height_bmi")
+    bmi__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                               callback_data="7_height_bmi")
+    bmi__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                               callback_data="8_height_bmi")
+    bmi__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                               callback_data="9_height_bmi")
+    bmi__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                 callback_data="dot_height_bmi")
+    bmi__backward_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "«".center(padding)),
+                                                      callback_data="backward_height_bmi")
+    bmi__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                   callback_data="clear_height_bmi")
+    bmi__done_height_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "✅".center(padding)),
+                                                         callback_data="done_height_bmi")
     bmi__conversion_height_inline_keyboard = types.InlineKeyboardMarkup(row_width=3)
     bmi__conversion_height_inline_keyboard.add(bmi__1_button, bmi__2_button, bmi__3_button, bmi__4_button,
                                                bmi__5_button, bmi__6_button, bmi__7_button, bmi__8_button,
@@ -341,40 +432,71 @@ def bmi__conversion_see_bmi_chart_inline_keyboard(user_language):
 
 
 def calculator__inline_keyboard():
-    calculator__0_button = types.InlineKeyboardButton(text="0", callback_data="0_calculator")
-    calculator__1_button = types.InlineKeyboardButton(text="1", callback_data="1_calculator")
-    calculator__2_button = types.InlineKeyboardButton(text="2", callback_data="2_calculator")
-    calculator__3_button = types.InlineKeyboardButton(text="3", callback_data="3_calculator")
-    calculator__4_button = types.InlineKeyboardButton(text="4", callback_data="4_calculator")
-    calculator__5_button = types.InlineKeyboardButton(text="5", callback_data="5_calculator")
-    calculator__6_button = types.InlineKeyboardButton(text="6", callback_data="6_calculator")
-    calculator__7_button = types.InlineKeyboardButton(text="7", callback_data="7_calculator")
-    calculator__8_button = types.InlineKeyboardButton(text="8", callback_data="8_calculator")
-    calculator__9_button = types.InlineKeyboardButton(text="9", callback_data="9_calculator")
-    calculator__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_calculator")
-    calculator__plus_button = types.InlineKeyboardButton(text="+", callback_data="plus_calculator")
-    calculator__mines_button = types.InlineKeyboardButton(text="-", callback_data="mines_calculator")
-    calculator__times_button = types.InlineKeyboardButton(text="×", callback_data="times_calculator")
-    calculator__fraction_button = types.InlineKeyboardButton(text="÷", callback_data="fraction_calculator")
-    calculator__sin_button = types.InlineKeyboardButton(text="sin", callback_data="sin_calculator")
-    calculator__cos_button = types.InlineKeyboardButton(text="cos", callback_data="cos_calculator")
-    calculator__tan_button = types.InlineKeyboardButton(text="tan", callback_data="tan_calculator")
-    calculator__cot_button = types.InlineKeyboardButton(text="cot", callback_data="cot_calculator")
-    calculator__pi_button = types.InlineKeyboardButton(text="π", callback_data="pi_calculator")
-    calculator__opening_parentheses_button = types.InlineKeyboardButton(text="(",
-                                                                        callback_data="opening_parentheses_calculator")
-    calculator__closing_parentheses_button = types.InlineKeyboardButton(text=")",
-                                                                        callback_data="closing_parentheses_calculator")
-    calculator__factorial_button = types.InlineKeyboardButton(text="!",
+    padding = 15
+
+    calculator__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                      callback_data="0_calculator")
+    calculator__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                      callback_data="1_calculator")
+    calculator__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                      callback_data="2_calculator")
+    calculator__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                      callback_data="3_calculator")
+    calculator__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                      callback_data="4_calculator")
+    calculator__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                      callback_data="5_calculator")
+    calculator__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                      callback_data="6_calculator")
+    calculator__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                      callback_data="7_calculator")
+    calculator__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                      callback_data="8_calculator")
+    calculator__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                      callback_data="9_calculator")
+    calculator__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                        callback_data="dot_calculator")
+    calculator__plus_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "+".center(padding)),
+                                                         callback_data="plus_calculator")
+    calculator__mines_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "-".center(padding)),
+                                                          callback_data="mines_calculator")
+    calculator__times_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "×".center(padding)),
+                                                          callback_data="times_calculator")
+    calculator__fraction_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "÷".center(padding)),
+                                                             callback_data="fraction_calculator")
+    calculator__sin_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "sin".center(padding)),
+                                                        callback_data="sin_calculator")
+    calculator__cos_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "cos".center(padding)),
+                                                        callback_data="cos_calculator")
+    calculator__tan_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "tan".center(padding)),
+                                                        callback_data="tan_calculator")
+    calculator__cot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "cot".center(padding)),
+                                                        callback_data="cot_calculator")
+    calculator__pi_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "π".center(padding)),
+                                                       callback_data="pi_calculator")
+    calculator__opening_parentheses_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "(".center(padding)),
+        callback_data="opening_parentheses_calculator")
+    calculator__closing_parentheses_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', ")".center(padding)),
+        callback_data="closing_parentheses_calculator")
+    calculator__factorial_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "!".center(padding)),
                                                               callback_data="factorial_calculator")
-    calculator__power_button = types.InlineKeyboardButton(text="^", callback_data="power_calculator")
-    calculator__sqrt_button = types.InlineKeyboardButton(text="√", callback_data="sqrt_calculator")
-    calculator__log_button = types.InlineKeyboardButton(text="Log", callback_data="log_calculator")
-    calculator__backward_button = types.InlineKeyboardButton(text="«", callback_data="backward_calculator")
-    calculator__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_calculator")
-    calculator__equal_button = types.InlineKeyboardButton(text="=", callback_data="done_calculator")
-    calculator__neg_or_pos_maker_button = types.InlineKeyboardButton(text="+/₋",
-                                                                     callback_data="neg_or_pos_maker_calculator")
+    calculator__power_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "^".center(padding)),
+                                                          callback_data="power_calculator")
+    calculator__sqrt_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "√".center(padding)),
+                                                         callback_data="sqrt_calculator")
+    calculator__log_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "log".center(padding)),
+                                                        callback_data="log_calculator")
+    calculator__backward_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "«".center(padding)),
+                                                             callback_data="backward_calculator")
+    calculator__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                          callback_data="clear_calculator")
+    calculator__equal_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "=".center(padding)),
+                                                          callback_data="done_calculator")
+    calculator__neg_or_pos_maker_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "+/₋".center(padding)),
+        callback_data="neg_or_pos_maker_calculator")
     calculator_inline_keyboard = types.InlineKeyboardMarkup(row_width=4).add(calculator__sin_button,
                                                                              calculator__cos_button,
                                                                              calculator__tan_button,
@@ -413,7 +535,7 @@ def unit_conversion_options_keyboard(user_language):
     conversion__time_option_button = KeyboardButton(languages[user_language]["time"])
     conversion__data_option_button = KeyboardButton(languages[user_language]["data"])
     conversion__back_option_button = KeyboardButton(languages[user_language]["back_option_selection"])
-    conversion_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
+    conversion_options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     conversion_options_keyboard.add(conversion__numeral_system_option_button, conversion__length_option_button,
                                     conversion__mass_option_button, conversion__temperature_option_button,
                                     conversion__time_option_button, conversion__data_option_button).add(
@@ -423,20 +545,36 @@ def unit_conversion_options_keyboard(user_language):
 
 
 def data_conversion_numbers_inline_keyboard():
-    data_converter__0_button = types.InlineKeyboardButton(text="0", callback_data="0_data_converter")
-    data_converter__1_button = types.InlineKeyboardButton(text="1", callback_data="1_data_converter")
-    data_converter__2_button = types.InlineKeyboardButton(text="2", callback_data="2_data_converter")
-    data_converter__3_button = types.InlineKeyboardButton(text="3", callback_data="3_data_converter")
-    data_converter__4_button = types.InlineKeyboardButton(text="4", callback_data="4_data_converter")
-    data_converter__5_button = types.InlineKeyboardButton(text="5", callback_data="5_data_converter")
-    data_converter__6_button = types.InlineKeyboardButton(text="6", callback_data="6_data_converter")
-    data_converter__7_button = types.InlineKeyboardButton(text="7", callback_data="7_data_converter")
-    data_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_data_converter")
-    data_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_data_converter")
-    data_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_data_converter")
-    data_converter__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_data_converter")
-    data_converter__backward_button = types.InlineKeyboardButton(text="«", callback_data="backward_data_converter")
-    data_converter__done_button = types.InlineKeyboardButton(text="✅", callback_data="done_data_converter")
+    padding = 25
+
+    data_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                          callback_data="0_data_converter")
+    data_converter__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                          callback_data="1_data_converter")
+    data_converter__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                          callback_data="2_data_converter")
+    data_converter__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                          callback_data="3_data_converter")
+    data_converter__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                          callback_data="4_data_converter")
+    data_converter__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                          callback_data="5_data_converter")
+    data_converter__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                          callback_data="6_data_converter")
+    data_converter__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                          callback_data="7_data_converter")
+    data_converter__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                          callback_data="8_data_converter")
+    data_converter__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                          callback_data="9_data_converter")
+    data_converter__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                            callback_data="dot_data_converter")
+    data_converter__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                              callback_data="clear_data_converter")
+    data_converter__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)), callback_data="backward_data_converter")
+    data_converter__done_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "✅".center(padding)),
+                                                             callback_data="done_data_converter")
     data_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(data_converter__1_button,
                                                                                           data_converter__2_button,
                                                                                           data_converter__3_button,
@@ -540,20 +678,37 @@ def data_conversion_destination_inline_keyboard(user_language):
 
 
 def length_conversion_numbers_inline_keyboard():
-    length_converter__0_button = types.InlineKeyboardButton(text="0", callback_data="0_length_converter")
-    length_converter__1_button = types.InlineKeyboardButton(text="1", callback_data="1_length_converter")
-    length_converter__2_button = types.InlineKeyboardButton(text="2", callback_data="2_length_converter")
-    length_converter__3_button = types.InlineKeyboardButton(text="3", callback_data="3_length_converter")
-    length_converter__4_button = types.InlineKeyboardButton(text="4", callback_data="4_length_converter")
-    length_converter__5_button = types.InlineKeyboardButton(text="5", callback_data="5_length_converter")
-    length_converter__6_button = types.InlineKeyboardButton(text="6", callback_data="6_length_converter")
-    length_converter__7_button = types.InlineKeyboardButton(text="7", callback_data="7_length_converter")
-    length_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_length_converter")
-    length_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_length_converter")
-    length_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_length_converter")
-    length_converter__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_length_converter")
-    length_converter__backward_button = types.InlineKeyboardButton(text="«", callback_data="backward_length_converter")
-    length_converter__done_button = types.InlineKeyboardButton(text="✅", callback_data="done_length_converter")
+    padding = 25
+
+    length_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                            callback_data="0_length_converter")
+    length_converter__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                            callback_data="1_length_converter")
+    length_converter__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                            callback_data="2_length_converter")
+    length_converter__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                            callback_data="3_length_converter")
+    length_converter__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                            callback_data="4_length_converter")
+    length_converter__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                            callback_data="5_length_converter")
+    length_converter__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                            callback_data="6_length_converter")
+    length_converter__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                            callback_data="7_length_converter")
+    length_converter__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                            callback_data="8_length_converter")
+    length_converter__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                            callback_data="9_length_converter")
+
+    length_converter__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                              callback_data="dot_length_converter")
+    length_converter__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                                callback_data="clear_length_converter")
+    length_converter__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)), callback_data="backward_length_converter")
+    length_converter__done_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "✅".center(padding)),
+                                                               callback_data="done_length_converter")
     length_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(length_converter__1_button,
                                                                                             length_converter__2_button,
                                                                                             length_converter__3_button,
@@ -699,20 +854,37 @@ def length_conversion_destination_inline_keyboard(user_language):
 
 
 def mass_conversion_numbers_inline_keyboard():
-    mass_converter__0_button = types.InlineKeyboardButton(text="0", callback_data="0_mass_converter")
-    mass_converter__1_button = types.InlineKeyboardButton(text="1", callback_data="1_mass_converter")
-    mass_converter__2_button = types.InlineKeyboardButton(text="2", callback_data="2_mass_converter")
-    mass_converter__3_button = types.InlineKeyboardButton(text="3", callback_data="3_mass_converter")
-    mass_converter__4_button = types.InlineKeyboardButton(text="4", callback_data="4_mass_converter")
-    mass_converter__5_button = types.InlineKeyboardButton(text="5", callback_data="5_mass_converter")
-    mass_converter__6_button = types.InlineKeyboardButton(text="6", callback_data="6_mass_converter")
-    mass_converter__7_button = types.InlineKeyboardButton(text="7", callback_data="7_mass_converter")
-    mass_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_mass_converter")
-    mass_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_mass_converter")
-    mass_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_mass_converter")
-    mass_converter__clear_button = types.InlineKeyboardButton(text="C", callback_data="clear_mass_converter")
-    mass_converter__backward_button = types.InlineKeyboardButton(text="«", callback_data="backward_mass_converter")
-    mass_converter__done_button = types.InlineKeyboardButton(text="✅", callback_data="done_mass_converter")
+    padding = 25
+
+    mass_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                          callback_data="0_mass_converter")
+    mass_converter__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                          callback_data="1_mass_converter")
+
+    mass_converter__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                          callback_data="2_mass_converter")
+    mass_converter__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                          callback_data="3_mass_converter")
+    mass_converter__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                          callback_data="4_mass_converter")
+    mass_converter__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                          callback_data="5_mass_converter")
+    mass_converter__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                          callback_data="6_mass_converter")
+    mass_converter__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                          callback_data="7_mass_converter")
+    mass_converter__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                          callback_data="8_mass_converter")
+    mass_converter__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                          callback_data="9_mass_converter")
+    mass_converter__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                            callback_data="dot_mass_converter")
+    mass_converter__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                              callback_data="clear_mass_converter")
+    mass_converter__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)), callback_data="backward_mass_converter")
+    mass_converter__done_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "✅".center(padding)),
+                                                             callback_data="done_mass_converter")
     mass_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(mass_converter__1_button,
                                                                                           mass_converter__2_button,
                                                                                           mass_converter__3_button,
@@ -900,25 +1072,48 @@ def mass_conversion_destination_inline_keyboard(user_language):
 
 
 def temperature_conversion_numbers_inline_keyboard():
-    temperature_converter__0_button = types.InlineKeyboardButton(text="0", callback_data="0_temperature_converter")
-    temperature_converter__1_button = types.InlineKeyboardButton(text="1", callback_data="1_temperature_converter")
-    temperature_converter__2_button = types.InlineKeyboardButton(text="2", callback_data="2_temperature_converter")
-    temperature_converter__3_button = types.InlineKeyboardButton(text="3", callback_data="3_temperature_converter")
-    temperature_converter__4_button = types.InlineKeyboardButton(text="4", callback_data="4_temperature_converter")
-    temperature_converter__5_button = types.InlineKeyboardButton(text="5", callback_data="5_temperature_converter")
-    temperature_converter__6_button = types.InlineKeyboardButton(text="6", callback_data="6_temperature_converter")
-    temperature_converter__7_button = types.InlineKeyboardButton(text="7", callback_data="7_temperature_converter")
-    temperature_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_temperature_converter")
-    temperature_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_temperature_converter")
-    temperature_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_temperature_converter")
-    temperature_converter__mines_button = types.InlineKeyboardButton(text="+/₋",
-                                                                     callback_data="neg_or_pos_maker_temperature_converter")
-    temperature_converter__clear_button = types.InlineKeyboardButton(text="C",
-                                                                     callback_data="clear_temperature_converter")
-    temperature_converter__backward_button = types.InlineKeyboardButton(text="«",
-                                                                        callback_data="backward_temperature_converter")
-    temperature_converter__done_button = types.InlineKeyboardButton(text="✅",
-                                                                    callback_data="done_temperature_converter")
+    padding = 25
+
+    temperature_converter__0_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "0".center(padding)), callback_data="0_temperature_converter")
+    temperature_converter__1_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "1".center(padding)), callback_data="1_temperature_converter")
+    temperature_converter__2_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "2".center(padding)), callback_data="2_temperature_converter")
+    temperature_converter__3_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "3".center(padding)), callback_data="3_temperature_converter")
+    temperature_converter__4_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "4".center(padding)), callback_data="4_temperature_converter")
+    temperature_converter__5_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "5".center(padding)), callback_data="5_temperature_converter")
+    temperature_converter__6_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "6".center(padding)), callback_data="6_temperature_converter")
+    temperature_converter__7_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "7".center(padding)), callback_data="7_temperature_converter")
+    temperature_converter__8_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "8".center(padding)), callback_data="8_temperature_converter")
+    temperature_converter__9_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "9".center(padding)), callback_data="9_temperature_converter")
+
+    temperature_converter__dot_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', ".".center(padding)), callback_data="dot_temperature_converter")
+
+    temperature_converter__mines_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "+/₋".center(padding)),
+        callback_data="neg_or_pos_maker_temperature_converter")
+
+    temperature_converter__clear_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "C".center(padding)),
+        callback_data="clear_temperature_converter")
+
+    temperature_converter__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)),
+        callback_data="backward_temperature_converter")
+
+    temperature_converter__done_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "✅".center(padding)),
+        callback_data="done_temperature_converter")
+
     temperature_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(
         temperature_converter__1_button,
         temperature_converter__2_button,
@@ -978,22 +1173,37 @@ def temperature_conversion_destination_inline_keyboard(user_language):
 
 
 def time_conversion_numbers_inline_keyboard():
-    time_converter__0_button = types.InlineKeyboardButton(text="0", callback_data="0_time_converter")
-    time_converter__1_button = types.InlineKeyboardButton(text="1", callback_data="1_time_converter")
-    time_converter__2_button = types.InlineKeyboardButton(text="2", callback_data="2_time_converter")
-    time_converter__3_button = types.InlineKeyboardButton(text="3", callback_data="3_time_converter")
-    time_converter__4_button = types.InlineKeyboardButton(text="4", callback_data="4_time_converter")
-    time_converter__5_button = types.InlineKeyboardButton(text="5", callback_data="5_time_converter")
-    time_converter__6_button = types.InlineKeyboardButton(text="6", callback_data="6_time_converter")
-    time_converter__7_button = types.InlineKeyboardButton(text="7", callback_data="7_time_converter")
-    time_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_time_converter")
-    time_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_time_converter")
-    time_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_time_converter")
-    time_converter__clear_button = types.InlineKeyboardButton(text="C",
+    padding = 25
+
+    time_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                          callback_data="0_time_converter")
+    time_converter__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                          callback_data="1_time_converter")
+    time_converter__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                          callback_data="2_time_converter")
+    time_converter__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                          callback_data="3_time_converter")
+    time_converter__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                          callback_data="4_time_converter")
+    time_converter__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                          callback_data="5_time_converter")
+    time_converter__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                          callback_data="6_time_converter")
+    time_converter__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                          callback_data="7_time_converter")
+    time_converter__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                          callback_data="8_time_converter")
+    time_converter__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                          callback_data="9_time_converter")
+    time_converter__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                            callback_data="dot_time_converter")
+    time_converter__clear_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
                                                               callback_data="clear_time_converter")
-    time_converter__backward_button = types.InlineKeyboardButton(text="«",
-                                                                 callback_data="backward_time_converter")
-    time_converter__done_button = types.InlineKeyboardButton(text="✅",
+    time_converter__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)),
+        callback_data="backward_time_converter")
+
+    time_converter__done_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "✅".center(padding)),
                                                              callback_data="done_time_converter")
     time_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=3).add(
         time_converter__1_button,
@@ -1129,51 +1339,95 @@ def time_conversion_destination_inline_keyboard(user_language):
 
 
 def numeral_conversion_numbers_inline_keyboard():
-    numeral_converter__0_button = types.InlineKeyboardButton(text="0", callback_data="0_numeral_converter")
-    numeral_converter__1_button = types.InlineKeyboardButton(text="1", callback_data="1_numeral_converter")
-    numeral_converter__2_button = types.InlineKeyboardButton(text="2", callback_data="2_numeral_converter")
-    numeral_converter__3_button = types.InlineKeyboardButton(text="3", callback_data="3_numeral_converter")
-    numeral_converter__4_button = types.InlineKeyboardButton(text="4", callback_data="4_numeral_converter")
-    numeral_converter__5_button = types.InlineKeyboardButton(text="5", callback_data="5_numeral_converter")
-    numeral_converter__6_button = types.InlineKeyboardButton(text="6", callback_data="6_numeral_converter")
-    numeral_converter__7_button = types.InlineKeyboardButton(text="7", callback_data="7_numeral_converter")
-    numeral_converter__8_button = types.InlineKeyboardButton(text="8", callback_data="8_numeral_converter")
-    numeral_converter__9_button = types.InlineKeyboardButton(text="9", callback_data="9_numeral_converter")
+    padding = 15
 
-    numeral_converter__A_button = types.InlineKeyboardButton(text="A", callback_data="a_numeral_converter")
-    numeral_converter__B_button = types.InlineKeyboardButton(text="B", callback_data="b_numeral_converter")
-    numeral_converter__C_button = types.InlineKeyboardButton(text="C", callback_data="c_numeral_converter")
-    numeral_converter__D_button = types.InlineKeyboardButton(text="D", callback_data="d_numeral_converter")
-    numeral_converter__E_button = types.InlineKeyboardButton(text="E", callback_data="e_numeral_converter")
-    numeral_converter__F_button = types.InlineKeyboardButton(text="F", callback_data="f_numeral_converter")
-    numeral_converter__G_button = types.InlineKeyboardButton(text="G", callback_data="g_numeral_converter")
-    numeral_converter__H_button = types.InlineKeyboardButton(text="H", callback_data="h_numeral_converter")
-    numeral_converter__I_button = types.InlineKeyboardButton(text="I", callback_data="i_numeral_converter")
-    numeral_converter__J_button = types.InlineKeyboardButton(text="J", callback_data="j_numeral_converter")
-    numeral_converter__K_button = types.InlineKeyboardButton(text="K", callback_data="k_numeral_converter")
-    numeral_converter__L_button = types.InlineKeyboardButton(text="L", callback_data="l_numeral_converter")
-    numeral_converter__M_button = types.InlineKeyboardButton(text="M", callback_data="m_numeral_converter")
-    numeral_converter__N_button = types.InlineKeyboardButton(text="N", callback_data="n_numeral_converter")
-    numeral_converter__O_button = types.InlineKeyboardButton(text="O", callback_data="o_numeral_converter")
-    numeral_converter__P_button = types.InlineKeyboardButton(text="P", callback_data="p_numeral_converter")
-    numeral_converter__Q_button = types.InlineKeyboardButton(text="Q", callback_data="q_numeral_converter")
-    numeral_converter__R_button = types.InlineKeyboardButton(text="R", callback_data="r_numeral_converter")
-    numeral_converter__S_button = types.InlineKeyboardButton(text="S", callback_data="s_numeral_converter")
-    numeral_converter__T_button = types.InlineKeyboardButton(text="T", callback_data="t_numeral_converter")
-    numeral_converter__U_button = types.InlineKeyboardButton(text="U", callback_data="u_numeral_converter")
-    numeral_converter__V_button = types.InlineKeyboardButton(text="V", callback_data="v_numeral_converter")
-    numeral_converter__W_button = types.InlineKeyboardButton(text="W", callback_data="w_numeral_converter")
-    numeral_converter__X_button = types.InlineKeyboardButton(text="X", callback_data="x_numeral_converter")
-    numeral_converter__Y_button = types.InlineKeyboardButton(text="Y", callback_data="y_numeral_converter")
-    numeral_converter__Z_button = types.InlineKeyboardButton(text="Z", callback_data="z_numeral_converter")
+    numeral_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
+                                                             callback_data="0_numeral_converter")
+    numeral_converter__1_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "1".center(padding)),
+                                                             callback_data="1_numeral_converter")
+    numeral_converter__2_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "2".center(padding)),
+                                                             callback_data="2_numeral_converter")
+    numeral_converter__3_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "3".center(padding)),
+                                                             callback_data="3_numeral_converter")
+    numeral_converter__4_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "4".center(padding)),
+                                                             callback_data="4_numeral_converter")
+    numeral_converter__5_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "5".center(padding)),
+                                                             callback_data="5_numeral_converter")
+    numeral_converter__6_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "6".center(padding)),
+                                                             callback_data="6_numeral_converter")
+    numeral_converter__7_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "7".center(padding)),
+                                                             callback_data="7_numeral_converter")
+    numeral_converter__8_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "8".center(padding)),
+                                                             callback_data="8_numeral_converter")
+    numeral_converter__9_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "9".center(padding)),
+                                                             callback_data="9_numeral_converter")
 
-    numeral_converter__dot_button = types.InlineKeyboardButton(text=".", callback_data="dot_numeral_converter")
-    numeral_converter__clear_button = types.InlineKeyboardButton(text="C",
-                                                                 callback_data="clear_numeral_converter")
-    numeral_converter__backward_button = types.InlineKeyboardButton(text="«",
-                                                                    callback_data="backward_numeral_converter")
-    numeral_converter__done_button = types.InlineKeyboardButton(text="✅",
+    numeral_converter__A_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "A".center(padding)),
+                                                             callback_data="a_numeral_converter")
+    numeral_converter__B_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "B".center(padding)),
+                                                             callback_data="b_numeral_converter")
+    numeral_converter__C_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "C".center(padding)),
+                                                             callback_data="c_numeral_converter")
+    numeral_converter__D_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "D".center(padding)),
+                                                             callback_data="d_numeral_converter")
+    numeral_converter__E_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "E".center(padding)),
+                                                             callback_data="e_numeral_converter")
+    numeral_converter__F_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "F".center(padding)),
+                                                             callback_data="f_numeral_converter")
+    numeral_converter__G_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "G".center(padding)),
+                                                             callback_data="g_numeral_converter")
+    numeral_converter__H_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "H".center(padding)),
+                                                             callback_data="h_numeral_converter")
+    numeral_converter__I_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "I".center(padding)),
+                                                             callback_data="i_numeral_converter")
+    numeral_converter__J_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "J".center(padding)),
+                                                             callback_data="j_numeral_converter")
+    numeral_converter__K_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "K".center(padding)),
+                                                             callback_data="k_numeral_converter")
+    numeral_converter__L_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "L".center(padding)),
+                                                             callback_data="l_numeral_converter")
+    numeral_converter__M_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "M".center(padding)),
+                                                             callback_data="m_numeral_converter")
+    numeral_converter__N_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "N".center(padding)),
+                                                             callback_data="n_numeral_converter")
+    numeral_converter__O_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "O".center(padding)),
+                                                             callback_data="o_numeral_converter")
+    numeral_converter__P_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "P".center(padding)),
+                                                             callback_data="p_numeral_converter")
+    numeral_converter__Q_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "Q".center(padding)),
+                                                             callback_data="q_numeral_converter")
+    numeral_converter__R_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "R".center(padding)),
+                                                             callback_data="r_numeral_converter")
+    numeral_converter__S_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "S".center(padding)),
+                                                             callback_data="s_numeral_converter")
+    numeral_converter__T_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "T".center(padding)),
+                                                             callback_data="t_numeral_converter")
+    numeral_converter__U_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "U".center(padding)),
+                                                             callback_data="u_numeral_converter")
+    numeral_converter__V_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "V".center(padding)),
+                                                             callback_data="v_numeral_converter")
+    numeral_converter__W_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "W".center(padding)),
+                                                             callback_data="w_numeral_converter")
+    numeral_converter__X_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "X".center(padding)),
+                                                             callback_data="x_numeral_converter")
+    numeral_converter__Y_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "Y".center(padding)),
+                                                             callback_data="y_numeral_converter")
+    numeral_converter__Z_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "Z".center(padding)),
+                                                             callback_data="z_numeral_converter")
+
+    numeral_converter__dot_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', ".".center(padding)),
+                                                               callback_data="dot_numeral_converter")
+    numeral_converter__clear_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "C".center(padding)),
+        callback_data="clear_numeral_converter")
+
+    numeral_converter__backward_button = types.InlineKeyboardButton(
+        text=unicodedata.normalize('NFKC', "«".center(padding)),
+        callback_data="backward_numeral_converter")
+
+    numeral_converter__done_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "✅".center(padding)),
                                                                 callback_data="done_numeral_converter")
+
     numeral_conversion_numbers_inline_keyboard = types.InlineKeyboardMarkup(row_width=4).add(
         numeral_converter__1_button, numeral_converter__2_button, numeral_converter__3_button).add(
         numeral_converter__4_button, numeral_converter__5_button, numeral_converter__6_button).add(
@@ -1321,7 +1575,7 @@ def numeral_conversion_to_base_inline_keyboard():
 def settings__options_keyboard(user_language):
     settings__language_option_button = languages[user_language]['language_option_selection']
     settings__back_option_button = languages[user_language]['back_option_selection']
-    settings__options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
+    settings__options_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
     settings__options_keyboard.add(settings__language_option_button).add(settings__back_option_button)
 
     return settings__options_keyboard
