@@ -66,15 +66,27 @@ async def momentarily_currency_rate(user_language):
 
         currency_index += 1
 
+    for currency in currencies_dictionary:
+        if '-' in currencies_dictionary[currency]:
+            currencies_dictionary[currency]['?'] = currencies_dictionary[currency].pop('-')
+
+    rates_list = ['?' if rate == '-' else rate for rate in rates_list]
+
     output = ""
+    currencies_list = ['?' if rate == '-' else rate for rate in currencies_list]
 
     index = 0
     for currency_short_name, currency_rate_and_symbol in currencies_dictionary.items():
-        output += f"""
-{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} :\t {"🇮🇷"} <code> {'{:,}'.format(currencies_list[index])} {languages[user_language]['tooman_currency']} </code> {"🇮🇷"}
-        """
-        index += 1
-
+        try:
+            output += f"""
+{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} : {"🇮🇷"} <code> {'{:,}'.format(currencies_list[index])} {languages[user_language]['tooman_currency']} </code> {"🇮🇷"}
+"""
+            index += 1
+        except:
+            output += f"""
+{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} : {"🇮🇷"} <code> {currencies_list[index]} {languages[user_language]['tooman_currency']} </code> {"🇮🇷"}
+"""
+            index += 1
     question_mark_count = 0
     for question_mark in currencies_list:
         if question_mark == "?":
