@@ -185,7 +185,7 @@ def date__date_conversion_options_inline_keyboard(user_language):
 
 
 def date__date_conversion_day_numbers_inline_keyboard():
-    padding = 19
+    padding = 21
 
     date_conversion__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                            callback_data="0_date_conversion_day")
@@ -229,7 +229,7 @@ def date__date_conversion_day_numbers_inline_keyboard():
 
 
 def date__date_conversion_month_numbers_inline_keyboard():
-    padding = 19
+    padding = 21
 
     date_conversion__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                            callback_data="0_date_conversion_month")
@@ -274,7 +274,7 @@ def date__date_conversion_month_numbers_inline_keyboard():
 
 
 def date__date_conversion_year_numbers_inline_keyboard():
-    padding = 19
+    padding = 21
 
     date_conversion__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                            callback_data="0_date_conversion_year")
@@ -341,7 +341,7 @@ def calculation__options_keyboard(user_language):
 
 
 def bmi__conversion_weight_inline_keyboard():
-    padding = 19
+    padding = 21
 
     bmi__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                callback_data="0_weight_bmi")
@@ -382,7 +382,7 @@ def bmi__conversion_weight_inline_keyboard():
 
 
 def bmi__conversion_height_inline_keyboard():
-    padding = 19
+    padding = 21
 
     bmi__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                callback_data="0_height_bmi")
@@ -545,7 +545,7 @@ def unit_conversion_options_keyboard(user_language):
 
 
 def data_conversion_numbers_inline_keyboard():
-    padding = 19
+    padding = 23
 
     data_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                           callback_data="0_data_converter")
@@ -678,7 +678,7 @@ def data_conversion_destination_inline_keyboard(user_language):
 
 
 def length_conversion_numbers_inline_keyboard():
-    padding = 19
+    padding = 23
 
     length_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                             callback_data="0_length_converter")
@@ -854,7 +854,7 @@ def length_conversion_destination_inline_keyboard(user_language):
 
 
 def mass_conversion_numbers_inline_keyboard():
-    padding = 19
+    padding = 23
 
     mass_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                           callback_data="0_mass_converter")
@@ -1072,7 +1072,7 @@ def mass_conversion_destination_inline_keyboard(user_language):
 
 
 def temperature_conversion_numbers_inline_keyboard():
-    padding = 19
+    padding = 23
 
     temperature_converter__0_button = types.InlineKeyboardButton(
         text=unicodedata.normalize('NFKC', "0".center(padding)), callback_data="0_temperature_converter")
@@ -1173,7 +1173,7 @@ def temperature_conversion_destination_inline_keyboard(user_language):
 
 
 def time_conversion_numbers_inline_keyboard():
-    padding = 19
+    padding = 23
 
     time_converter__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                           callback_data="0_time_converter")
