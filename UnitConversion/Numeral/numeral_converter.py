@@ -1,7 +1,9 @@
 import string
 
+from Settings.languages.languages_dictionary import languages
 
-def numeral_converter(from_base, to_base, data):
+
+def numeral_converter(from_base, to_base, data, user_language):
     global global_answer, global_phrase, global_from_base, global_to_base
     if len(from_base) == 12:
         from_base = from_base[:2]
@@ -19,7 +21,7 @@ def numeral_converter(from_base, to_base, data):
     global_phrase = number
 
     if global_from_base in range(2, 11) and not str(number).isdigit():
-        global_answer = f"""Sorry , Only digits are allowed when you are converting a number from base {global_from_base} to base {global_to_base}!"""
+        global_answer = languages[user_language]['only_digits_in_this_starting_base']
         return global_answer, data, from_base, to_base,
 
     else:

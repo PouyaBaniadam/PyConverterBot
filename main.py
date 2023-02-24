@@ -4067,11 +4067,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4095,9 +4095,9 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
 {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
@@ -4123,11 +4123,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4151,11 +4151,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4179,11 +4179,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4207,11 +4207,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4235,11 +4235,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4263,11 +4263,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4291,11 +4291,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4319,11 +4319,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4347,11 +4347,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4375,11 +4375,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4403,11 +4403,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4431,11 +4431,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4459,11 +4459,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4487,11 +4487,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4515,11 +4515,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4543,11 +4543,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4571,11 +4571,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4599,11 +4599,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4627,11 +4627,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4655,11 +4655,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4683,11 +4683,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4711,11 +4711,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4739,11 +4739,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4767,11 +4767,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4795,11 +4795,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4823,11 +4823,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4851,11 +4851,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4879,11 +4879,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4907,11 +4907,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4935,11 +4935,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4963,11 +4963,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_i["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -4991,11 +4991,11 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+{languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+{languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
-{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+{languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 
@@ -5013,16 +5013,19 @@ async def query_handler(call: types.CallbackQuery):
                                                        "to_base": to_base,
                                                        "message_id": call.message.message_id}})
 
+            user_language = get_user_current_language(user_id=chat_id)
+            print(user_language)
+
             try:
                 for chat_id, data_and_from_base_and_to_base_and_message_id in numeral_status.items():
                     try:
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[1]}
-            {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[2]}
-            {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[3]}
-            {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"])[0]}</code>""",
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
+            {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
+            {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
+            {languages[user_language]['answer']} : <code>{numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[0]}</code>""",
                                 chat_id=chat_id, message_id=data_and_from_base_and_to_base_and_message_id["message_id"],
                                 parse_mode="HTML")
 

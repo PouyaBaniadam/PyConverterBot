@@ -209,6 +209,9 @@ PouyaLj هستم. هنوز نمیتونم خودمو برنامه نویس صد�
         "see_bmi_chart":
             """📈 مشاهده نمودار بی ام آی 📈""",
 
+        "only_digits_in_this_starting_base":
+            """فقط ارقام در این مبنای شروع مجاز هستند.""",
+
         "data_converter_enter_number":
             """لطفاً مقدار عددی داده مورد نظر خود را برای شروع تبدیل وارد کنید :""",
 
@@ -714,6 +717,9 @@ I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love 
 
          "see_bmi_chart":
              """📈 See BMI chart 📈""",
+
+         "only_digits_in_this_starting_base":
+             """Only digits are allowed in this starting base.""",
 
          "data_converter_enter_number":
              """Please enter the data-number :""",
