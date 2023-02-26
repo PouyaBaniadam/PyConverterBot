@@ -432,7 +432,7 @@ def bmi__conversion_see_bmi_chart_inline_keyboard(user_language):
 
 
 def calculator__inline_keyboard():
-    padding = 14
+    padding = 16
 
     calculator__0_button = types.InlineKeyboardButton(text=unicodedata.normalize('NFKC', "0".center(padding)),
                                                       callback_data="0_calculator")
