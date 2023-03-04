@@ -580,11 +580,11 @@ You should see a doctor!🧑🏻‍⚕️""",
 
          "little_underweight":
              """You are a little underweight!
-        You should see a doctor!🧑🏻‍⚕️""",
+You should see a doctor!🧑🏻‍⚕️""",
 
          "way_underweight":
              """You are way underweight!
-        You should see a doctor as soon as possible!🧑🏻‍⚕️""",
+You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "bmi_chart":
              """BMI chart""",
