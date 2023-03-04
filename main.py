@@ -21,7 +21,7 @@ from keyboards_and_callbacks_data_list import *
 
 tracemalloc.start()
 
-TOKEN = "6274531376:AAFpANuUIlnS6XEX7b84ZnpImUReimZGMtE"
+TOKEN = "YOUR_BOT_TOKEN"
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
