@@ -564,15 +564,15 @@ I'm PouyaLj. I'm not allowed to call myself a programmer yet ; but still , love 
 
          "extremely_obese":
              """You are extremely obese!
-        You should see a doctor as soon as possible!🧑🏻‍⚕️""",
+You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "obese":
              """You are obese!
-        You should see a doctor as soon as possible!🧑🏻‍⚕️""",
+You should see a doctor as soon as possible!🧑🏻‍⚕️""",
 
          "little_overweight":
              """You are a little overweight!
-        You should see a doctor!🧑🏻‍⚕️""",
+You should see a doctor!🧑🏻‍⚕️""",
 
          "healthy":
              """You are at total health!
