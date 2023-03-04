@@ -576,7 +576,7 @@ You should see a doctor!🧑🏻‍⚕️""",
 
          "healthy":
              """You are at total health!
-        Keep that body!⛹🏻‍♂️""",
+Keep that body!⛹🏻‍♂️""",
 
          "little_underweight":
              """You are a little underweight!
