@@ -4963,7 +4963,7 @@ async def query_handler(call: types.CallbackQuery):
                         if len(numeral_status[call.from_user.id]) == 4:
                             user_language = get_user_current_language(user_id=chat_id)
                             await bot.edit_message_text(
-                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_i["data"], user_language=user_language)[1]}
+                                text=f"""{languages[user_language]['phrase']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[1]}
 {languages[user_language]['from_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[2]}
 {languages[user_language]['to_base']} : {numeral_converter(from_base=data_and_from_base_and_to_base_and_message_id["from_base"], to_base=data_and_from_base_and_to_base_and_message_id["to_base"], data=data_and_from_base_and_to_base_and_message_id["data"], user_language=user_language)[3]}
 
