@@ -97,11 +97,11 @@ async def momentarily_currency_rate(user_language):
   for currency_short_name, currency_rate_and_symbol in currencies_dictionary.items(
   ):
     try:
-      output += f"""<code>{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} : {"🇮🇷"} {'{:,}'.format(currencies_list[index])} {languages[user_language]['tooman_currency']}{"🇮🇷"}</code>
+      output += f"""<code>{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} : {"🇮🇷"} {'{:,}'.format(currencies_list[index])} {languages[user_language]['tooman_currency']} {"🇮🇷"}</code>
 """
       index += 1
     except:
-      output += f"""<code>{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} : {"🇮🇷"} {currencies_list[index]} {languages[user_language]['tooman_currency']}{"🇮🇷"}</code>
+      output += f"""<code>{currency_rate_and_symbol[currencies_list[index]]} {currency_names[index]} {currency_rate_and_symbol[currencies_list[index]]} : {"🇮🇷"} {currencies_list[index]} {languages[user_language]['tooman_currency']} {"🇮🇷"}</code>
 """
       index += 1
   question_mark_count = 0
